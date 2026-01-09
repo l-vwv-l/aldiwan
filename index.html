@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الديوان الجامعي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50; /* لون الخلفية */
+            --accent-color: #e74c3c;  /* لون مميز للأزرار */
+            --text-color: #ecf0f1;
+        }
+
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* تنسيق صورة البروفايل */
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            margin-top: 50px;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .title {
+            font-size: 1.5rem;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .bio {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+            margin-bottom: 30px;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        /* تنسيق الأزرار */
+        .links-container {
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            backdrop-filter: blur(5px);
+        }
+
+        .link-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .link-card i {
+            font-size: 1.5rem;
+            margin-left: 15px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+    </style>
+</head>
+<body>
+
+    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="الديوان الجامعي" class="profile-img">
+
+    <div class="title">الديوان الجامعي 🥷</div>
+    <div class="bio">بوابتك لكل المصادر، الملخصات، والقنوات الجامعية في مكان واحد.</div>
+
+    <div class="links-container">
+        <a href="#" class="link-card">
+            <i class="fab fa-telegram-plane" style="color: #0088cc;"></i>
+            <span>القناة الرسمية (تليجرام)</span>
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fab fa-google-drive" style="color: #0F9D58;"></i>
+            <span>مكتبة الملخصات (Drive)</span>
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fas fa-robot" style="color: #f39c12;"></i>
+            <span>بوت الاستفسارات</span>
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+            <span>تواصل معنا (واتساب)</span>
+        </a>
+    </div>
+
+    <div class="footer">
+        © 2024 الديوان الجامعي - جميع الحقوق محفوظة
+    </div>
+
+</body>
+</html>
