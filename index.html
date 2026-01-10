@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الديوان الجامعي</title>
     
-    <link rel="shortcut icon" href="logo.png?v=6" type="image/x-icon">
-    <link rel="icon" href="logo.png?v=6" type="image/png">
-    <link rel="apple-touch-icon" href="logo.png?v=6">
+    <link rel="shortcut icon" href="logo.png?v=5" type="image/x-icon">
+    <link rel="icon" href="logo.png?v=5" type="image/png">
+    <link rel="apple-touch-icon" href="logo.png?v=5">
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* المتغيرات والألوان */
         :root {
-            --glass-bg: rgba(30, 30, 30, 0.65); /* زدت الشفافية قليلاً للوضوح */
+            --glass-bg: rgba(30, 30, 30, 0.6);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-white: #ffffff;
             --text-gray: #a1a1aa;
@@ -25,12 +25,12 @@
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
-            min-height: 100vh; /* استخدام min-height بدلاً من height للتجاوب */
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover;
-            overflow-x: hidden; /* منع التمرير الأفقي */
+            overflow: hidden;
         }
 
         body::before {
@@ -39,7 +39,6 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.5);
             z-index: -1;
-            position: fixed; /* تثبيت الخلفية */
         }
 
         .glass-card {
@@ -56,7 +55,6 @@
             opacity: 0;
             transform: translateY(30px);
             animation: cardEntrance 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            margin: 20px; /* مسافة أمان للجوال */
         }
 
         .profile-section {
@@ -71,16 +69,15 @@
         }
 
         .profile-img {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%; /* هذا السطر يضمن أن الصورة دائرية */
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
             object-fit: cover;
             margin-bottom: 20px;
-            border: 3px solid rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
             background-color: #000;
             opacity: 0;
             animation: fadeIn 0.8s ease-out 0.4s forwards;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
         }
 
         h1 {
@@ -130,8 +127,8 @@
             flex: 1.2;
             padding: 50px;
             background: rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
+            display: flex; /* إضافة لتنسيق الفوتر */
+            flex-direction: column; /* إضافة لتنسيق الفوتر */
         }
 
         .section-title {
@@ -147,7 +144,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 15px;
-            margin-bottom: auto; /* يدفع الحقوق للأسفل */
+            margin-bottom: auto; /* يدفع الفوتر للأسفل */
         }
 
         .link-pill {
@@ -172,20 +169,16 @@
             transform: translateY(-2px);
         }
 
-        /* تنسيق قسم الحقوق (Footer) الجديد */
-        .footer-rights {
-            margin-top: 40px;
+        /* تنسيق الفوتر الجديد */
+        .footer-info {
+            margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid var(--glass-border);
-            text-align: center;
-            color: var(--text-gray);
-            font-size: 0.8rem;
-            opacity: 0;
-            animation: fadeIn 1s ease-out 2s forwards; /* يظهر في الأخير */
-        }
-        
-        .footer-rights b {
-            color: var(--text-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .d-1 { animation: fadeInUp 0.5s ease-out 1.4s forwards; }
@@ -199,11 +192,12 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
-            body { display: block; padding: 20px 0; }
-            .glass-card { flex-direction: column; width: 90%; margin: 0 auto; }
-            .profile-section { border-left: none; border-bottom: 1px solid var(--glass-border); padding: 40px 20px; }
+            body { height: auto; padding: 40px 0; overflow-y: auto; }
+            .glass-card { flex-direction: column; width: 90%; }
+            .profile-section { border-left: none; border-bottom: 1px solid var(--glass-border); padding: 30px; }
             .social-icons { justify-content: center; }
-            .links-section { padding: 30px 20px; }
+            .links-section { padding: 30px; }
+            .footer-info { flex-direction: column; justify-content: center; text-align: center; }
         }
     </style>
 </head>
@@ -252,13 +246,18 @@
                     <i class="fab fa-whatsapp"></i>
                     <span>تواصل واتس</span>
                 </a>
+
             </div>
 
-            <div class="footer-rights">
-                <p>جميع الحقوق محفوظة © 2026 <b>الديوان الجامعي</b></p>
-                <p style="font-size: 0.7rem; margin-top: 5px; opacity: 0.7;">
-                    Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> & Code 🥷
-                </p>
+            <div class="footer-info">
+                <div style="color: var(--text-gray); font-size: 0.8rem;">
+                    <i class="fas fa-users" style="color: #3b82f6;"></i> +1000 طالب مستفيد
+                </div>
+                
+                <div style="color: var(--text-gray); font-size: 0.7rem; opacity: 0.8;">
+                    جميع الحقوق محفوظة © 2026 <br> 
+                    <span style="color: white; font-weight: bold;">الديوان الجامعي 🥷</span>
+                </div>
             </div>
 
         </div>
