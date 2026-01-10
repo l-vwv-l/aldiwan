@@ -6,62 +6,56 @@
     <title>الديوان الجامعي</title>
     
     <link rel="icon" type="image/png" href="logo.png">
-
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* إعدادات الألوان والخطوط */
+        /* المتغيرات والألوان */
         :root {
-            --glass-bg: rgba(20, 20, 20, 0.7); /* لون البطاقة داكن وشفاف */
+            --glass-bg: rgba(30, 30, 30, 0.6);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-white: #ffffff;
             --text-gray: #a1a1aa;
-            --accent-color: #ffffff; /* لون التوهج الأبيض للشعار */
         }
 
         body {
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* خلفية الصفحة (داكنة وفخمة) */
-            background: #0f0f0f url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2074&auto=format&fit=crop') no-repeat center center/cover;
-            overflow-x: hidden;
+            /* خلفية داكنة وفخمة */
+            background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover;
+            overflow: hidden;
         }
 
-        /* طبقة تغميق للخلفية لتركيز النظر على البطاقة */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.5); /* تغميق بسيط للخلفية */
             z-index: -1;
         }
 
-        /* البطاقة الزجاجية */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 30px;
             width: 90%;
             max-width: 900px;
             display: flex;
             overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            
-            /* أنيميشن دخول البطاقة */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             opacity: 0;
             transform: translateY(30px);
             animation: cardEntrance 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
-        /* القسم الأيمن (البروفايل والشعار) */
         .profile-section {
             flex: 1;
             padding: 50px;
@@ -69,19 +63,18 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-start; /* محاذاة لليمين */
-            position: relative;
+            align-items: center; /* توسيط المحتوى */
+            text-align: center;
         }
 
-        /* تنسيق صورة الشعار (النينجا) */
         .profile-img {
-            width: 110px;
-            height: 110px;
-            object-fit: contain; /* عشان الشعار يظهر بالكامل بدون قص */
-            margin-bottom: 25px;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); /* توهج خفيف حول الشعار */
-            
-            /* أنيميشن ظهور الشعار */
+            width: 120px; /* كبرت الصورة قليلاً لتناسب الشعار */
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover; /* لضمان ظهور الشعار كاملاً */
+            margin-bottom: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background-color: #000; /* خلفية سوداء للشعار في حال كان شفافاً */
             opacity: 0;
             animation: fadeIn 0.8s ease-out 0.4s forwards;
         }
@@ -89,23 +82,20 @@
         h1 {
             color: var(--text-white);
             margin: 0 0 10px 0;
-            font-size: 2.2rem;
-            font-weight: 700;
+            font-size: 2rem;
             opacity: 0;
             animation: slideInRight 0.8s ease-out 0.6s forwards;
         }
 
         .bio {
             color: var(--text-gray);
-            font-size: 1rem;
+            font-size: 0.95rem;
             line-height: 1.6;
             margin-bottom: 30px;
-            max-width: 90%;
             opacity: 0;
             animation: slideInRight 0.8s ease-out 0.8s forwards;
         }
 
-        /* أيقونات السوشيال ميديا الصغيرة */
         .social-icons {
             display: flex;
             gap: 15px;
@@ -114,28 +104,26 @@
         }
 
         .icon-btn {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-white);
             text-decoration: none;
             transition: all 0.3s;
-            background: rgba(255,255,255,0.05);
         }
 
         .icon-btn:hover {
             background: white;
             color: black;
-            transform: translateY(-3px);
+            transform: scale(1.1);
         }
 
-        /* القسم الأيسر (الأزرار والروابط) */
         .links-section {
-            flex: 1.3;
+            flex: 1.2;
             padding: 50px;
             background: rgba(0,0,0,0.2);
         }
@@ -143,87 +131,56 @@
         .section-title {
             color: var(--text-white);
             font-size: 1.1rem;
-            margin-bottom: 25px;
-            font-weight: 700;
+            margin-bottom: 20px;
+            font-weight: 600;
             opacity: 0;
             animation: fadeIn 0.8s ease-out 1.2s forwards;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .section-title::before {
-            content: '';
-            width: 5px;
-            height: 20px;
-            background: var(--text-white);
-            border-radius: 2px;
         }
 
-        /* شبكة الروابط */
         .links-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 15px;
         }
 
         .link-pill {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: rgba(255,255,255,0.03);
+            gap: 10px;
+            background: rgba(255,255,255,0.05);
             border: 1px solid var(--glass-border);
-            padding: 15px 20px;
-            border-radius: 16px;
+            padding: 12px 20px;
+            border-radius: 50px;
             text-decoration: none;
             color: var(--text-gray);
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
             opacity: 0;
         }
 
         .link-pill:hover {
             background: rgba(255,255,255,0.1);
             color: white;
-            border-color: rgba(255,255,255,0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
         }
 
-        .link-pill i {
-            font-size: 1.2rem;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* توقيت ظهور الأزرار */
         .d-1 { animation: fadeInUp 0.5s ease-out 1.4s forwards; }
         .d-2 { animation: fadeInUp 0.5s ease-out 1.5s forwards; }
         .d-3 { animation: fadeInUp 0.5s ease-out 1.6s forwards; }
         .d-4 { animation: fadeInUp 0.5s ease-out 1.7s forwards; }
 
-        /* الأنيميشن */
         @keyframes cardEntrance { to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { to { opacity: 1; } }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* للتجاوب مع الجوال */
         @media (max-width: 768px) {
-            body { padding: 20px 0; align-items: flex-start; height: auto; }
-            .glass-card { flex-direction: column; width: 92%; margin-top: 20px; }
-            .profile-section { 
-                border-left: none; 
-                border-bottom: 1px solid var(--glass-border); 
-                padding: 40px 30px; 
-                align-items: center; 
-                text-align: center; 
-            }
-            .links-section { padding: 30px 20px; }
-            .section-title { justify-content: center; }
+            body { height: auto; padding: 40px 0; overflow-y: auto; }
+            .glass-card { flex-direction: column; width: 90%; }
+            .profile-section { border-left: none; border-bottom: 1px solid var(--glass-border); padding: 30px; }
+            .social-icons { justify-content: center; }
+            .links-section { padding: 30px; }
         }
     </style>
 </head>
@@ -236,47 +193,50 @@
             
             <h1>الديوان الجامعي</h1>
             <div class="bio">
-                نجمع لك شتات الجامعة في مكان واحد.<br>
-                بوتات ذكية، ملخصات شاملة، ومصادر لا غنى عنها. 🥷✨
+                طالب كيمياء ومطور بوتات. <br>
+                أساعدك في الدراسة وفي التكنولوجيا. 🥷✨
             </div>
 
             <div class="social-icons">
                 <a href="#" class="icon-btn"><i class="fas fa-envelope"></i></a>
-                <a href="#" class="icon-btn"><i class="fab fa-tiktok"></i></a>
                 <a href="#" class="icon-btn"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="icon-btn"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
 
         <div class="links-section">
             
-            <div class="section-title">القائمة الرئيسية</div>
+            <div class="section-title">أهم المصادر</div>
+            <p style="color: #666; font-size: 0.8rem; margin-bottom: 20px;">اضغط للوصول المباشر 👇</p>
 
             <div class="links-grid">
-                
                 <a href="https://t.me/YOUR_CHANNEL" class="link-pill d-1" target="_blank">
-                    <i class="fab fa-telegram-plane" style="color: #3eadff;"></i>
+                    <i class="fab fa-telegram-plane"></i>
                     <span>القناة الرسمية</span>
                 </a>
 
                 <a href="https://t.me/YOUR_BOT" class="link-pill d-2" target="_blank">
-                    <i class="fas fa-robot" style="color: #ffbd2e;"></i>
+                    <i class="fas fa-robot"></i>
                     <span>بوت الخدمات</span>
                 </a>
 
                 <a href="https://drive.google.com" class="link-pill d-3" target="_blank">
-                    <i class="fab fa-google-drive" style="color: #00e676;"></i>
+                    <i class="fab fa-google-drive"></i>
                     <span>مكتبة الدرايف</span>
                 </a>
 
                 <a href="https://wa.me/966xxxx" class="link-pill d-4" target="_blank">
-                    <i class="fab fa-whatsapp" style="color: #25D366;"></i>
-                    <span>تواصل معنا</span>
+                    <i class="fab fa-whatsapp"></i>
+                    <span>تواصل واتس</span>
                 </a>
 
             </div>
 
-            <div style="margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px; text-align: center; color: #666; font-size: 0.8rem;">
-                © 2026 جميع الحقوق محفوظة للديوان الجامعي
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
+                <div class="section-title" style="font-size: 0.9rem;">إحصائيات</div>
+                <div style="color: var(--text-gray); font-size: 0.8rem;">
+                    <i class="fas fa-users"></i> +1000 طالب مستفيد
+                </div>
             </div>
 
         </div>
