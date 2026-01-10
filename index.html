@@ -9,11 +9,11 @@
     <link rel="icon" href="logo.png?v=5" type="image/png">
     <link rel="apple-touch-icon" href="logo.png?v=5">
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <style>
-        /* المتغيرات والألوان */
         :root {
             --glass-bg: rgba(30, 30, 30, 0.6);
             --glass-border: rgba(255, 255, 255, 0.1);
@@ -24,7 +24,8 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Cairo', sans-serif;
+            /* 👇 هنا تم تفعيل الخط الجديد */
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -83,15 +84,17 @@
         h1 {
             color: var(--text-white);
             margin: 0 0 10px 0;
-            font-size: 2rem;
+            font-size: 1.8rem; /* صغرت العنوان قليلاً */
+            font-weight: 600; /* قللت السماكة */
             opacity: 0;
             animation: slideInRight 0.8s ease-out 0.6s forwards;
         }
 
         .bio {
             color: var(--text-gray);
-            font-size: 0.95rem;
-            line-height: 1.6;
+            /* 👇 هنا التعديل المهم: صغرت الخط وأعطيت مساحة للتنفس */
+            font-size: 0.85rem; 
+            line-height: 1.8; 
             margin-bottom: 30px;
             opacity: 0;
             animation: slideInRight 0.8s ease-out 0.8s forwards;
@@ -127,8 +130,8 @@
             flex: 1.2;
             padding: 50px;
             background: rgba(0,0,0,0.2);
-            display: flex; /* إضافة لتنسيق الفوتر */
-            flex-direction: column; /* إضافة لتنسيق الفوتر */
+            display: flex;
+            flex-direction: column;
         }
 
         .section-title {
@@ -144,7 +147,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 15px;
-            margin-bottom: auto; /* يدفع الفوتر للأسفل */
+            margin-bottom: auto;
         }
 
         .link-pill {
@@ -169,7 +172,6 @@
             transform: translateY(-2px);
         }
 
-        /* تنسيق الفوتر الجديد */
         .footer-info {
             margin-top: 30px;
             padding-top: 20px;
@@ -210,16 +212,16 @@
             
             <h1>الديوان الجامعي</h1>
             <div class="bio">
-    نعمل في الخفاء لخدمتكم في العلن 🥷 <br>
-    ظل يرافقك في رحلتك الجامعية 😎 <br>
-    هدفنا نجمع لك المصادر ونختصر عليك الطريق ✨
-</div>
+                نعمل في الخفاء لخدمتكم في العلن 🥷 <br>
+                ظل يرافقك في رحلتك الجامعية 😎 <br>
+                هدفنا نجمع لك المصادر ونختصر عليك الطريق ✨
+            </div>
 
             <div class="social-icons">
                 <a href="https://www.tiktok.com/@l.u_u.l?_r=1&_t=ZS-92xEwljhCaH" class="icon-btn"><i class="fab fa-tiktok"></i></a>
                 <a href="https://x.com/llu_o_ull?s=11" class="icon-btn"><i class="fab fa-x-twitter"></i></a>
                 <a href="https://www.instagram.com/u0_do?igsh=a3BmMHVycXR0aTZv&utm_source=qr" class="icon-btn"><i class="fab fa-instagram"></i></a>
-                  <a href="https://www.threads.com/@u0_do?igshid=NTc4MTIwNjQ2YQ==" class="icon-btn"><i class="fa-brands fa-threads"></i></a>
+                <a href="https://www.threads.com/@u0_do?igshid=NTc4MTIwNjQ2YQ==" class="icon-btn"><i class="fa-brands fa-threads"></i></a>
             </div>
         </div>
 
