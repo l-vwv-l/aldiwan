@@ -168,11 +168,28 @@
             transition: all 0.3s;
         }
 
-        .icon-btn:hover {
+               /* 1. تأثير الكمبيوتر (يشتغل فقط عند مرور الماوس) */
+        @media (hover: hover) {
+            .icon-btn:hover {
+                background: white;
+                color: black;
+                transform: scale(1.1);
+            }
+        }
+
+        /* 2. تأثير الجوال (يشتغل لحظة الضغط فقط) */
+        .icon-btn:active {
             background: white;
             color: black;
-            transform: scale(1.1);
+            transform: scale(0.95);
         }
+
+        /* 3. ضمان عدم تعليق اللون عند الرجوع للصفحة */
+        .icon-btn:focus {
+            background: transparent;
+            color: var(--text-white);
+        }
+
 
         .links-section {
             flex: 1.2;
