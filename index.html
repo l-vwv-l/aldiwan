@@ -28,19 +28,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 👇 الصورة الأصلية */
             background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
             background-size: cover;
             overflow: hidden;
             position: relative;
         }
 
-        /* 👇 تعديل: تخفيف التعتيم لتظهر الصورة */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.4); /* كان 0.85 وهذا سبب السواد */
+            background: rgba(0, 0, 0, 0.4);
             z-index: 0;
         }
 
@@ -51,7 +49,7 @@
             z-index: 1;
         }
 
-        /* توليد النجوم (تم تعديل الألوان لتكون ساطعة جداً) */
+        /* --- كود النجوم --- */
         .stars1 {
             width: 2px; height: 2px;
             background: transparent;
@@ -168,7 +166,8 @@
             transition: all 0.3s;
         }
 
-               /* 1. تأثير الكمبيوتر (يشتغل فقط عند مرور الماوس) */
+        /* 🟢 الجزء الخاص بحل مشكلة اللون في الجوال */
+        /* 1. تأثير الكمبيوتر (يشتغل فقط عند مرور الماوس) */
         @media (hover: hover) {
             .icon-btn:hover {
                 background: white;
@@ -189,7 +188,7 @@
             background: transparent;
             color: var(--text-white);
         }
-
+        /* ------------------------------------- */
 
         .links-section {
             flex: 1.2;
@@ -251,6 +250,7 @@
         }
 
         .d-1 { animation: fadeInUp 0.5s ease-out 1.8s forwards; }
+        .d-2 { animation: fadeInUp 0.5s ease-out 1.9s forwards; } /* للبوتات */
         .d-3 { animation: fadeInUp 0.5s ease-out 2.0s forwards; }
         .d-4 { animation: fadeInUp 0.5s ease-out 2.2s forwards; }
 
@@ -311,7 +311,7 @@
                 
                 <a href="https://t.me/YOUR_BOT" class="link-pill d-2" target="_blank">
                     <i class="fas fa-robot"></i>
-                    <span>البوتات </span>
+                    <span>البوتات</span>
                 </a>
                 
                  <a href="https://t.me/U0_D0" class="link-pill d-3" target="_blank">
@@ -333,6 +333,7 @@
                 
                 <div style="color: var(--text-gray); font-size: 0.7rem; opacity: 0.8;">
                     جميع الحقوق محفوظة © 2026 <br> 
+                    <span style="color: white; font-weight: bold;">الديوان الجامعي </span>
                 </div>
             </div>
 
