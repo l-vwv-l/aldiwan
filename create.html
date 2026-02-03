@@ -309,16 +309,14 @@
                 setType('online');
             }
 
-            // 3. التاريخ والوقت (أصعب جزء)
+            // 3. التاريخ والوقت
             if(dateMatch) {
-                let dateStr = dateMatch[0].replace(/\//g, '-'); // توحيد الفواصل
+                let dateStr = dateMatch[0].replace(/\//g, '-'); 
                 
-                // محاولة ضبط الوقت
                 let hour = 12; 
                 let minute = 0;
                 
                 if(timeMatch) {
-                    // استخراج الساعة
                     let h = parseInt(timeMatch[1]);
                     if(cleanText.includes('مساء') || cleanText.includes('م') || cleanText.includes('PM')) {
                         if(h < 12) h += 12;
@@ -327,25 +325,22 @@
                     if(timeMatch[2]) minute = parseInt(timeMatch[2]);
                 }
 
-                // دمج التاريخ والوقت وتحديث التقويم
-                // Flatpickr يقبل صيغة YYYY-MM-DD HH:MM
-                // نحتاج ترتيب التاريخ صح (بعض الأحيان يجي يوم/شهر/سنة)
                 const parts = dateStr.split('-');
                 let y, m, d;
                 if(parts[0].length === 4) { y=parts[0]; m=parts[1]; d=parts[2]; }
                 else { d=parts[0]; m=parts[1]; y=parts[2]; }
 
                 const finalDateObj = new Date(y, m-1, d, hour, minute);
-                fp.setDate(finalDateObj, true); // True تعني "أطلق حدث التغيير" لتحديث الهجري
+                fp.setDate(finalDateObj, true); 
             }
 
-            // 4. الوصف (النص كاملاً)
-            document.getElementById('desc').value = text;
+            // 4. الوصف (تم تركه فارغاً بناءً على طلبك)
+            document.getElementById('desc').value = ""; 
 
             closeMagicModal();
         }
 
-        // --- باقي الكود الأساسي (النجوم، الهجري، الروابط) ---
+        // --- باقي الكود الأساسي ---
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
