@@ -15,12 +15,12 @@
 
     <style>
         :root {
-            --glass-bg: rgba(20, 20, 20, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(25, 25, 25, 0.6); /* شفافية أكثر */
+            --glass-border: rgba(255, 255, 255, 0.12);
             --text-white: #ffffff;
-            --text-gray: #a1a1aa;
-            --accent: #2563eb;
-            --input-bg: rgba(255, 255, 255, 0.03);
+            --text-gray: #b0b0b0;
+            --accent: #3b82f6; /* أزرق حديث */
+            --input-bg: rgba(255, 255, 255, 0.05);
         }
 
         body {
@@ -28,60 +28,59 @@
             font-family: 'IBM Plex Sans Arabic', sans-serif;
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            /* نفس خلفية موقعك */
             background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
             background-size: cover;
             overflow: hidden; position: relative;
         }
 
-        /* طبقة تعتيم للخلفية */
+        /* طبقة التعتيم */
         body::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.6); z-index: 0;
+            background: rgba(5, 5, 5, 0.6); z-index: 0;
+            pointer-events: none; /* مهم جداً للكتابة */
         }
 
-        canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        canvas#stars { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 1; pointer-events: none; /* مهم جداً للكتابة */
+        }
 
-        /* === البطاقة الرئيسية (غرفة التحكم) === */
+        /* === البطاقة الزجاجية === */
         .admin-card {
             position: relative; z-index: 10;
-            background: var(--glass-bg);
+            background: rgba(30, 30, 30, 0.5); /* زجاجي */
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 30px;
             padding: 40px;
             width: 90%; max-width: 550px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
             text-align: right;
             max-height: 90vh; overflow-y: auto;
-            animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         
-        .admin-card::-webkit-scrollbar { width: 0px; } /* إخفاء السكرول بار */
+        .admin-card::-webkit-scrollbar { width: 0px; } 
 
-        /* === رأس الصفحة === */
-        .header-section {
-            display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;
-        }
+        /* === الرأس === */
+        .header-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
         .logo-img {
-            width: 90px; height: 90px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.1);
-            box-shadow: 0 0 40px rgba(37, 99, 235, 0.3);
+            width: 85px; height: 85px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
             margin-bottom: 15px; transition: transform 0.3s;
         }
         .logo-img:hover { transform: scale(1.05); }
-        
-        h2 { margin: 0; color: var(--text-white); font-size: 1.5rem; }
-        p.subtitle { margin: 5px 0 0; color: var(--text-gray); font-size: 0.9rem; }
+        h2 { margin: 0; color: var(--text-white); font-size: 1.4rem; font-weight: 600; }
+        p.subtitle { margin: 5px 0 0; color: var(--text-gray); font-size: 0.85rem; }
 
-        /* === الحقول (Inputs) === */
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-gray); font-weight: 500; }
+        /* === الحقول (Inputs) - إصلاح الكتابة === */
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; font-weight: 500; }
         
         input, textarea, select {
             width: 100%;
             background: var(--input-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 14px;
             color: #fff;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -89,40 +88,73 @@
             box-sizing: border-box;
             outline: none;
             transition: 0.3s;
+            position: relative; 
+            z-index: 20; /* رفع الطبقة للكتابة */
         }
+
         input:focus, textarea:focus, select:focus { 
             border-color: var(--accent); 
-            background: rgba(37, 99, 235, 0.05);
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.1);
+            background: rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
         }
 
-        /* === تنسيقات خاصة === */
-        /* أيقونة التقويم */
+        /* === إصلاح مكان أيقونة التقويم (RTL) === */
         .date-input-wrapper { position: relative; flex: 2; }
-        .calendar-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); pointer-events: none; }
-        input.flatpickr-input { text-align: left; padding-left: 40px; font-family: 'Roboto', sans-serif !important; direction: ltr; }
+        
+        /* الأيقونة يمين */
+        .calendar-icon { 
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%); 
+            color: var(--accent); pointer-events: none; z-index: 25; font-size: 1.1rem;
+        }
+        
+        /* النص يبدأ بعد الأيقونة */
+        input.flatpickr-input { 
+            padding-right: 45px !important; padding-left: 10px !important;
+            font-family: 'Roboto', sans-serif !important; direction: ltr; text-align: right; 
+        }
 
-        /* القائمة المنسدلة */
+        /* === تخصيص القوائم المنسدلة (Glassy Dropdowns) === */
         select {
             appearance: none; cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: left 12px center; background-size: 16px; padding-left: 40px;
+            /* سهم يسار */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: left 15px center; background-size: 18px;
+            padding-left: 40px;
         }
-        select option { background-color: #1a1a1a; color: #fff; }
+        /* القائمة الداخلية */
+        select option { background-color: #1f1f1f; color: #fff; padding: 10px; }
 
-        /* الهجري */
-        #hijriDisplay {
-            text-align: center; margin-top: 5px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s;
+        /* === تخصيص التقويم (Flatpickr Glassy Theme) === */
+        .flatpickr-calendar {
+            background: rgba(30, 30, 30, 0.85) !important; /* خلفية زجاجية */
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
+            border-radius: 16px !important;
+            font-family: 'IBM Plex Sans Arabic', sans-serif !important;
+        }
+        .flatpickr-day { color: #ddd !important; }
+        .flatpickr-day.selected { 
+            background: var(--accent) !important; border-color: var(--accent) !important; 
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        .flatpickr-months .flatpickr-month { color: #fff !important; fill: #fff !important; }
+        .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months { 
+            font-family: 'IBM Plex Sans Arabic', sans-serif !important; 
+            font-weight: bold;
         }
 
         /* المجموعات */
         .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
         .flex-1 { flex: 1; }
 
+        #hijriDisplay { text-align: center; margin-top: 5px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
+
         /* === الأزرار التفاعلية === */
         .btn-generate {
-            width: 100%; padding: 16px; margin-top: 10px;
-            background: rgba(255, 255, 255, 0.05);
+            width: 100%; padding: 16px; margin-top: 15px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
             color: #fff; border: 1px solid var(--glass-border);
             border-radius: 15px; font-size: 1.1rem; font-weight: 700;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -130,18 +162,16 @@
         }
         .btn-generate:hover {
             background: var(--accent); border-color: var(--accent);
-            box-shadow: 0 0 25px rgba(37, 99, 235, 0.4); transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); transform: translateY(-2px);
         }
 
-        /* زر العصا السحرية */
         .magic-btn {
             position: absolute; top: 25px; left: 25px;
             width: 45px; height: 45px; border-radius: 50%;
             background: linear-gradient(135deg, #8b5cf6, #d946ef);
             border: none; color: white; cursor: pointer;
             display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-            box-shadow: 0 0 20px rgba(217, 70, 239, 0.4);
-            transition: 0.3s; z-index: 20;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.4); transition: 0.3s; z-index: 30;
         }
         .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
 
@@ -152,34 +182,33 @@
         }
         .result-actions { display: flex; gap: 10px; margin-top: 10px; }
         .action-btn {
-            flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03);
-            border: 1px solid var(--glass-border); color: var(--text-gray); cursor: pointer;
+            flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border); color: #ccc; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-weight: 600;
         }
-        .action-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
-        .btn-shorten:hover { color: #f472b6; border-color: #f472b6; }
+        .action-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
+        .btn-shorten:hover { color: #f472b6; border-color: #f472b6; background: rgba(244, 114, 182, 0.1); }
         
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
         /* === النافذة المنبثقة (Modal) === */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 100;
+            background: rgba(0,0,0,0.7); z-index: 100;
             display: none; align-items: center; justify-content: center;
             backdrop-filter: blur(10px);
         }
         .modal-box {
-            background: #1a1a1a; width: 90%; max-width: 450px;
-            padding: 30px; border-radius: 25px; border: 1px solid #333;
-            text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            background: rgba(30, 30, 30, 0.9); width: 90%; max-width: 450px;
+            padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
+            text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
             animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-textarea { height: 150px; margin-top: 15px; resize: none; background: #0f0f0f; }
+        .modal-textarea { height: 150px; margin-top: 15px; resize: none; background: rgba(0,0,0,0.5); }
         .modal-btn { width: 100%; padding: 14px; margin-top: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
         .btn-parse { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
-        .btn-close { background: transparent; color: #666; }
+        .btn-close { background: transparent; color: #888; }
 
-        @keyframes cardEntrance { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -190,19 +219,19 @@
     <canvas id="stars"></canvas>
 
     <div class="admin-card">
-        <button class="magic-btn" onclick="openMagicModal()" title="لصق ذكي (واتس/إيميل)">
+        <button class="magic-btn" onclick="openMagicModal()" title="لصق ذكي">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
         </button>
 
         <div class="header-section">
             <img src="logo.png" alt="Admin" class="logo-img">
             <h2>غرفة القيادة</h2>
-            <p class="subtitle">نظام إنشاء روابط الديوان الجامعي</p>
+            <p class="subtitle">نظام إنشاء الروابط الذكي</p>
         </div>
 
         <div style="margin-bottom: 20px;">
             <label>عنوان الحدث</label>
-            <input type="text" id="title" placeholder="مثال: التدريب الميداني...">
+            <input type="text" id="title" placeholder="عنوان الدورة أو الاجتماع...">
         </div>
 
         <div class="row-group">
@@ -266,9 +295,9 @@
     <div class="modal-overlay" id="magicModal">
         <div class="modal-box">
             <h3 style="margin:0; color:#fff;"><i class="fa-solid fa-wand-magic-sparkles" style="color:#d946ef;"></i> تعبئة ذكية</h3>
-            <p style="color:#aaa; font-size:0.9rem; margin:5px 0;">انسخ رسالة الواتس أو الإيميل كما هي والصقها هنا:</p>
-            <textarea id="pasteArea" class="modal-textarea" placeholder="مثال: يسرنا دعوتكم... يوم الأربعاء 2026/2/4 الساعة 8 مساءً..."></textarea>
-            <button class="modal-btn btn-parse" onclick="parseInvite()">تحليل وتعبئة البيانات</button>
+            <p style="color:#aaa; font-size:0.9rem; margin:5px 0;">الصق نص الدعوة هنا:</p>
+            <textarea id="pasteArea" class="modal-textarea" placeholder="مثال: يسرنا دعوتكم..."></textarea>
+            <button class="modal-btn btn-parse" onclick="parseInvite()">تحليل البيانات</button>
             <button class="modal-btn btn-close" onclick="closeMagicModal()">إلغاء</button>
         </div>
     </div>
@@ -277,7 +306,7 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> 
     
     <script>
-        // === 1. إعدادات النجوم (Canvas) ===
+        // === 1. إعدادات النجوم ===
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
@@ -292,7 +321,7 @@
         }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // === 2. التقويم المسطح ===
+        // === 2. التقويم المسطح (تم إصلاح الستايل) ===
         const fp = flatpickr("#start", {
             enableTime: true, dateFormat: "Y-m-d h:i K", time_24hr: false, locale: "ar", disableMobile: "true", 
             onChange: function(selectedDates) { updateHijri(selectedDates[0]); }
@@ -305,11 +334,10 @@
             display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`; display.style.opacity = "1";
         }
 
-        // === 3. النافذة المنبثقة ===
+        // === 3. النوافذ والذكاء ===
         function openMagicModal() { document.getElementById('magicModal').style.display = 'flex'; document.getElementById('pasteArea').focus(); }
         function closeMagicModal() { document.getElementById('magicModal').style.display = 'none'; }
 
-        // === 4. الذكاء الصناعي البسيط (تحليل النص) ===
         function parseInvite() {
             const text = document.getElementById('pasteArea').value;
             if(!text) return;
@@ -346,7 +374,7 @@
             closeMagicModal();
         }
 
-        // === 5. إنشاء الرابط ===
+        // === 4. توليد الروابط ===
         function generateLink() {
             const title = document.getElementById('title').value;
             const selectedDates = fp.selectedDates;
@@ -374,11 +402,9 @@
             const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html";
             const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${formatLocal(startDate)}&end=${formatLocal(endDate)}&desc=${encodeURIComponent(finalDesc)}`;
 
-            // إظهار النتائج
             document.getElementById('resultArea').style.display = 'block';
             document.getElementById('finalUrlBox').value = finalUrl;
             
-            // توليد QR
             document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById("qrcode"), {
                 text: finalUrl, width: 128, height: 128, colorDark : "#000000", colorLight : "#ffffff"
@@ -412,7 +438,6 @@
                     const shortUrl = await response.text();
                     document.getElementById('finalUrlBox').value = shortUrl;
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> تم!';
-                    // تحديث QR
                     document.getElementById('qrcode').innerHTML = ""; 
                     new QRCode(document.getElementById("qrcode"), { text: shortUrl, width: 128, height: 128 });
                 } else { throw new Error(); }
