@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>غرفة التحكم | الديوان</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+
     <style>
         :root {
             --primary: #fff;
@@ -48,7 +51,8 @@
             text-align: right;
         }
 
-        .logo-header { text-align: center; margin-bottom: 25px; }
+        /* === الشعار === */
+        .logo-header { text-align: center; margin-bottom: 30px; }
         .logo-img {
             width: 80px; height: 80px; border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.1);
@@ -57,6 +61,7 @@
         }
         .logo-img:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(37, 99, 235, 0.6); }
 
+        /* === الحقول === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
         
         input, textarea, select {
@@ -77,22 +82,34 @@
             background: rgba(37, 99, 235, 0.05); 
         }
 
-        /* === منطقة التاريخ والهجري === */
+        /* === تخصيص حقل التاريخ === */
         .date-section { margin-bottom: 20px; }
+        .date-container { display: flex; gap: 15px; }
+        .date-input-wrapper { flex: 2; position: relative; }
         
-        .date-container {
-            display: flex; gap: 15px;
-        }
-        
-        .date-input-wrapper { flex: 2; }
-        input[type="datetime-local"] {
-            font-family: 'Roboto', sans-serif;
+        /* هذا الكلاس يخص مكتبة Flatpickr */
+        input.flatpickr-input {
+            font-family: 'Roboto', sans-serif !important; /* أرقام إنجليزية */
             font-size: 1.1rem;
             color: #60a5fa;
-            direction: ltr; text-align: right;
-            color-scheme: dark;
+            direction: ltr; 
+            text-align: left; /* المحاذاة لليسار عشان التاريخ والوقت يكونون مرتبين */
+            padding-left: 40px; /* مسافة للأيقونة */
+            cursor: pointer;
         }
         
+        /* أيقونة التقويم داخل الحقل */
+        .calendar-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #60a5fa;
+            font-size: 1.1rem;
+            pointer-events: none;
+            z-index: 5;
+        }
+
         .duration-wrapper { flex: 1; }
         select.duration-select { text-align: center; cursor: pointer; color: #ddd; }
 
@@ -100,18 +117,46 @@
         #hijriDisplay {
             margin-top: 8px;
             font-size: 0.85rem;
-            color: #fbbf24; /* لون ذهبي */
+            color: #fbbf24; 
             background: rgba(251, 191, 36, 0.1);
             padding: 5px 10px;
             border-radius: 6px;
             display: inline-block;
             border: 1px solid rgba(251, 191, 36, 0.2);
             font-family: 'Tajawal';
-            opacity: 0; /* مخفي حتى يتم اختيار التاريخ */
+            opacity: 0; 
             transition: opacity 0.3s;
         }
 
-        /* === شريط الخيارات === */
+        /* === تخصيص شكل التقويم المنبثق (Flatpickr Theme) === */
+        .flatpickr-calendar {
+            background: #1a1a1a !important;
+            border: 1px solid #333 !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+            font-family: 'Roboto', sans-serif !important;
+            border-radius: 12px !important;
+        }
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+            background: var(--accent) !important;
+            border-color: var(--accent) !important;
+        }
+        .flatpickr-day:hover {
+            background: #333 !important;
+        }
+        .flatpickr-months .flatpickr-month {
+            background: #1a1a1a !important;
+            color: #fff !important;
+            fill: #fff !important;
+        }
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            font-family: 'Tajawal', sans-serif !important; /* أسماء الأشهر بالعربي */
+        }
+        .flatpickr-time input {
+            color: #fff !important;
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        /* === باقي التنسيقات === */
         .options-bar {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px; padding: 0 5px;
@@ -129,7 +174,6 @@
         .meta-info { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-family: 'Roboto'; }
         .meta-item { display: flex; align-items: center; gap: 6px; }
 
-        /* === أزرار الموقع === */
         .location-section {
             background: rgba(255,255,255,0.02);
             padding: 6px; border-radius: 14px;
@@ -156,7 +200,6 @@
             transition: 0.3s; margin-top: 10px;
         }
         .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); }
-
     </style>
 </head>
 <body>
@@ -176,7 +219,8 @@
         <div class="date-section">
             <div class="date-container">
                 <div class="date-input-wrapper">
-                    <input type="datetime-local" id="start" onchange="updateHijri()">
+                    <i class="fa-regular fa-calendar-days calendar-icon"></i>
+                    <input type="text" id="start" placeholder="اختر التاريخ والوقت">
                 </div>
                 <div class="duration-wrapper">
                     <select id="duration" class="duration-select">
@@ -226,8 +270,21 @@
         </button>
     </div>
 
-    <script>
-        // === كود النجوم ===
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> <script>
+        // === 1. تفعيل التقويم الاحترافي (Flatpickr) ===
+        const fp = flatpickr("#start", {
+            enableTime: true,
+            dateFormat: "Y-m-d h:i K", // التنسيق: 2026-02-03 09:00 PM
+            time_24hr: false,
+            locale: "ar", // أسماء الأشهر بالعربي
+            disableMobile: "true", // إجبار الموبايل على استخدام هذا الشكل الجميل بدلاً من الافتراضي
+            onChange: function(selectedDates, dateStr, instance) {
+                updateHijri(selectedDates[0]);
+            }
+        });
+
+        // === 2. كود النجوم ===
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
@@ -242,22 +299,15 @@
         }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // === دالة التحويل للهجري (المدمجة) ===
-        function updateHijri() {
-            const input = document.getElementById("start").value;
+        // === 3. التحويل للهجري (تلقائي) ===
+        function updateHijri(dateObj) {
             const display = document.getElementById("hijriDisplay");
-            
-            if (!input) {
-                display.style.opacity = "0";
-                return;
-            }
+            if (!dateObj) { display.style.opacity = "0"; return; }
 
-            let g = new Date(input);
-            let day = g.getDate();
-            let month = g.getMonth() + 1;
-            let year = g.getFullYear();
+            let day = dateObj.getDate();
+            let month = dateObj.getMonth() + 1;
+            let year = dateObj.getFullYear();
 
-            // معادلة التحويل التقريبية
             let jd = Math.floor((1461 * (year + 4800 + Math.floor((month - 14) / 12))) / 4)
                    + Math.floor((367 * (month - 2 - 12 * Math.floor((month - 14) / 12))) / 12)
                    - Math.floor((3 * Math.floor((year + 4900 + Math.floor((month - 14) / 12)) / 100)) / 4)
@@ -271,12 +321,11 @@
             let d = l - Math.floor((709 * m) / 24);
             let y = 30 * n + j - 30;
 
-            // عرض النتيجة
             display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق هجرياً: ${y}/${m}/${d}`;
             display.style.opacity = "1";
         }
 
-        // === باقي دوال النظام ===
+        // === 4. باقي الوظائف (موقع، إنشاء الرابط) ===
         let locationType = 'online';
         function setType(type) {
             locationType = type;
@@ -294,14 +343,15 @@
 
         function generateLink() {
             const title = document.getElementById('title').value;
-            const startInput = document.getElementById('start').value;
+            // نأخذ التاريخ من كائن Flatpickr مباشرة لضمان الدقة
+            const selectedDates = fp.selectedDates;
             const durationMinutes = parseInt(document.getElementById('duration').value);
             const desc = document.getElementById('desc').value;
             const loc = document.getElementById('locationInput').value;
 
-            if(!title || !startInput) { alert('⚠️ يرجى تعبئة العنوان والوقت!'); return; }
+            if(!title || selectedDates.length === 0) { alert('⚠️ يرجى تعبئة العنوان والوقت!'); return; }
 
-            const startDate = new Date(startInput);
+            const startDate = selectedDates[0];
             const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
             
             const formatLocal = (d) => {
