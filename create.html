@@ -3,99 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منشئ روابط الديوان</title>
+    <title>لوحة تحكم الديوان</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0d1117;
+            --sidebar-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent: #238636;
+            --accent-hover: #2ea043;
+            --blue: #58a6ff;
+        }
+
         body {
-            background-color: #0d1117;
-            color: #c9d1d9;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            overflow: hidden; /* عشان ما يصير فيه سكرول للصفحة كاملة */
+        }
+
+        /* === 1. القائمة الجانبية === */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 5px;
+        }
+        .menu-item:hover { background-color: #21262d; color: var(--text-main); }
+        .menu-item.active {
+            background-color: rgba(56, 139, 253, 0.15);
+            color: var(--blue);
+            font-weight: bold;
+        }
+
+        /* === 2. منطقة العمل (الوسط) === */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
         }
-        .container {
-            background-color: #161b22;
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid #30363d;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        .editor-container {
+            width: 100%;
+            max-width: 600px;
         }
-        h2 { text-align: center; color: #58a6ff; margin-top: 0; }
-        label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: bold; }
+        h1 { margin-top: 0; margin-bottom: 30px; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
         input, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background-color: #0d1117;
-            border: 1px solid #30363d;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             color: white;
+            font-size: 1rem;
             box-sizing: border-box;
+            transition: 0.2s;
         }
-        button {
+        input:focus, textarea:focus {
+            border-color: var(--blue);
+            outline: none;
+        }
+        
+        .row { display: flex; gap: 20px; }
+        .col { flex: 1; }
+
+        /* === 3. المعاينة الحية (اليسار) === */
+        .preview-pane {
+            width: 400px;
+            background-color: #010409;
+            border-right: 1px solid var(--border-color);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .preview-header {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* شكل البطاقة في المعاينة */
+        .card-preview {
+            background-color: #161b22;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
             width: 100%;
-            padding: 12px;
-            background-color: #238636;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .preview-title {
+            color: var(--blue);
+            font-size: 1.4rem;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+        .preview-time {
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-bottom: 20px;
+            display: block;
+            background: #21262d;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .preview-btn {
+            background: var(--accent);
+            color: white;
+            padding: 10px 0;
+            width: 100%;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: block;
+            opacity: 0.7; /* باهت لأنه معاينة */
+        }
+
+        /* زر الحفظ النهائي */
+        .save-bar {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent);
             color: white;
             border: none;
             border-radius: 6px;
             font-size: 1.1rem;
             cursor: pointer;
-            margin-top: 20px;
             font-weight: bold;
         }
-        button:hover { background-color: #2ea043; }
-        
-        .result-box {
-            margin-top: 20px;
-            display: none;
-            background-color: #21262d;
+        .btn-primary:hover { background-color: var(--accent-hover); }
+
+        /* منطقة الرابط الناتج */
+        .result-overlay {
+            margin-top: 15px;
+            background: #21262d;
             padding: 15px;
             border-radius: 6px;
-            border: 1px solid #30363d;
+            border: 1px solid var(--blue);
+            display: none;
         }
-        .link-text {
+        .link-box {
             word-break: break-all;
-            color: #58a6ff;
             font-family: monospace;
+            color: var(--blue);
             margin-bottom: 10px;
-        }
-        .copy-btn {
-            background-color: #1f6feb;
-            margin-top: 5px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>🎛️ لوحة تحكم المناسبات</h2>
-        
-        <label>عنوان الدورة:</label>
-        <input type="text" id="title" placeholder="مثال: مراجعة الكيمياء العضوية">
-
-        <label>التاريخ والوقت (بداية):</label>
-        <input type="datetime-local" id="start">
-
-        <label>التاريخ والوقت (نهاية):</label>
-        <input type="datetime-local" id="end">
-
-        <label>وصف / تفاصيل:</label>
-        <textarea id="desc" rows="3" placeholder="رابط الزوم، القاعة، أو ملاحظات..."></textarea>
-
-        <button onclick="generateLink()">🔗 إنشاء الرابط السحري</button>
-
-        <div class="result-box" id="resultArea">
-            <label>انسخ هذا الرابط وأرسله في القناة:</label>
-            <div class="link-text" id="generatedLink"></div>
-            <button class="copy-btn" onclick="copyToClipboard()">نسخ الرابط</button>
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="material-icons-round">science</span>
+            الديوان الجامعي
         </div>
-    </div>
+        <div class="menu-item active">
+            <span class="material-icons-round">add_circle</span>
+            إنشاء مناسبة
+        </div>
+        <div class="menu-item">
+            <span class="material-icons-round">dashboard</span>
+            لوحة المعلومات
+        </div>
+        <div class="menu-item">
+            <span class="material-icons-round">settings</span>
+            الإعدادات
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="editor-container">
+            <h1>بيانات الدورة الجديدة</h1>
+
+            <div class="form-group">
+                <label>عنوان الدورة / الحدث</label>
+                <input type="text" id="title" placeholder="مثال: مراجعة العضوية النهائية" oninput="updatePreview()">
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label>يبدأ في</label>
+                    <input type="datetime-local" id="start" oninput="updatePreview()">
+                </div>
+                <div class="col form-group">
+                    <label>ينتهي في</label>
+                    <input type="datetime-local" id="end" oninput="updatePreview()">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>التفاصيل والروابط</label>
+                <textarea id="desc" rows="5" placeholder="أضف وصفاً، محاور الدورة، أو رابط الزوم..." oninput="updatePreview()"></textarea>
+            </div>
+
+            <div class="save-bar">
+                <button class="btn-primary" onclick="generateLink()">
+                    <span class="material-icons-round" style="vertical-align: middle;">link</span>
+                    إنشاء ونسخ الرابط
+                </button>
+
+                <div class="result-overlay" id="resultArea">
+                    <div class="link-box" id="generatedLink"></div>
+                    <small style="color: #8b949e;">تم نسخ الرابط للحافظة تلقائياً! 📋</small>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <aside class="preview-pane">
+        <div class="preview-header">معاينة الصفحة للطلاب</div>
+        
+        <div class="card-preview">
+            <span class="material-icons-round card-icon" style="color: #eac54f;">emoji_events</span>
+            <div class="preview-title" id="previewTitle">عنوان الدورة</div>
+            <span class="preview-time" id="previewTime">--/--/----</span>
+            <p style="color: #8b949e; font-size: 0.9rem;" id="previewDesc">التفاصيل ستظهر هنا...</p>
+            
+            <div class="preview-btn">إضافة للتقويم (Google)</div>
+            <div class="preview-btn" style="background: white; color: black;">إضافة للتقويم (Apple)</div>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+            <p>هذا مجرد عرض تقريبي</p>
+            <p>الشكل النهائي يعتمد على جهاز الطالب</p>
+        </div>
+    </aside>
 
     <script>
+        // === كود المعاينة الحية (Live Preview) ===
+        function updatePreview() {
+            // جلب القيم
+            const title = document.getElementById('title').value;
+            const start = document.getElementById('start').value;
+            const desc = document.getElementById('desc').value;
+
+            // تحديث البطاقة فوراً
+            if(title) document.getElementById('previewTitle').innerText = title;
+            else document.getElementById('previewTitle').innerText = "عنوان الدورة";
+
+            if(start) {
+                const dateObj = new Date(start);
+                const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+                document.getElementById('previewTime').innerText = dateObj.toLocaleDateString('ar-SA', options);
+            }
+
+            if(desc) document.getElementById('previewDesc').innerText = desc.substring(0, 50) + (desc.length > 50 ? "..." : "");
+            else document.getElementById('previewDesc').innerText = "التفاصيل ستظهر هنا...";
+        }
+
+        // === كود إنشاء الرابط ===
         function generateLink() {
             const title = document.getElementById('title').value;
             const startInput = document.getElementById('start').value;
@@ -107,7 +309,6 @@
                 return;
             }
 
-            // دالة لتحويل وقت المتصفح لصيغة التقويم
             function formatTime(isoString) {
                 return isoString.replace(/[-:]/g, '').replace('T', 'T') + '00';
             }
@@ -115,21 +316,21 @@
             const startFormatted = formatTime(startInput);
             const endFormatted = formatTime(endInput);
 
-            // ==========================================
-            // التعديل هنا: تحديد الرابط بشكل ثابت ودقيق
-            // ==========================================
+            // الرابط الثابت لموقعك
             const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html"; 
             
             const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${startFormatted}&end=${endFormatted}&desc=${encodeURIComponent(desc)}`;
 
+            // عرض ونسخ الرابط
             document.getElementById('generatedLink').innerText = finalUrl;
             document.getElementById('resultArea').style.display = 'block';
-        }
-
-        function copyToClipboard() {
-            const linkText = document.getElementById('generatedLink').innerText;
-            navigator.clipboard.writeText(linkText).then(() => {
-                alert("تم نسخ الرابط! جاهز للنشر 🚀");
+            
+            navigator.clipboard.writeText(finalUrl).then(() => {
+                // تأثير بسيط يؤكد النسخ
+                const btn = document.querySelector('.btn-primary');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✅ تم النسخ!";
+                setTimeout(() => btn.innerHTML = originalText, 2000);
             });
         }
     </script>
