@@ -33,7 +33,7 @@
             border: 1px solid #30363d;
             border-radius: 6px;
             color: white;
-            box-sizing: border-box; /* مهم عشان الحواف */
+            box-sizing: border-box;
         }
         button {
             width: 100%;
@@ -51,7 +51,7 @@
         
         .result-box {
             margin-top: 20px;
-            display: none; /* مخفي لين تضغط الزر */
+            display: none;
             background-color: #21262d;
             padding: 15px;
             border-radius: 6px;
@@ -107,7 +107,7 @@
                 return;
             }
 
-            // دالة لتحويل وقت المتصفح لصيغة التقويم (YYYYMMDDTHHMMSS)
+            // دالة لتحويل وقت المتصفح لصيغة التقويم
             function formatTime(isoString) {
                 return isoString.replace(/[-:]/g, '').replace('T', 'T') + '00';
             }
@@ -115,8 +115,10 @@
             const startFormatted = formatTime(startInput);
             const endFormatted = formatTime(endInput);
 
-            // بناء الرابط (تأكد أن اسم الصفحة event.html صحيح)
-            const baseUrl = window.location.origin + "/event.html"; // يحدد الرابط تلقائيا
+            // ==========================================
+            // التعديل هنا: تحديد الرابط بشكل ثابت ودقيق
+            // ==========================================
+            const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html"; 
             
             const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${startFormatted}&end=${endFormatted}&desc=${encodeURIComponent(desc)}`;
 
