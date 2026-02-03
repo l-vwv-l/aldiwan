@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>غرفة التحكم | الديوان</title>
+    <title>غرفة التحكم الذكية | الديوان</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -51,199 +51,115 @@
             text-align: right;
         }
 
-        /* === الشعار === */
+        /* === زر العصا السحرية (الذكاء) === */
+        .magic-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            border: none;
+            color: white;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
+            transition: transform 0.3s;
+            z-index: 20;
+        }
+        .magic-btn:hover { transform: scale(1.1) rotate(10deg); }
+        .magic-tooltip {
+            position: absolute; top: 65px; left: 10px;
+            background: #333; color: #fff; font-size: 0.75rem;
+            padding: 5px 10px; border-radius: 6px; display: none;
+        }
+        .magic-btn:hover + .magic-tooltip { display: block; }
+
+        /* === النافذة المنبثقة للصق النص === */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: #1a1a1a;
+            width: 90%; max-width: 400px;
+            padding: 25px; border-radius: 20px;
+            border: 1px solid #333;
+            text-align: right;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-textarea {
+            width: 100%; height: 150px;
+            background: #0f0f0f; border: 1px solid #333;
+            border-radius: 10px; color: #fff; padding: 10px;
+            font-family: 'Tajawal'; font-size: 0.9rem;
+            margin-top: 15px; resize: none;
+        }
+        .modal-btn {
+            width: 100%; padding: 12px; margin-top: 15px;
+            border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
+        }
+        .btn-parse { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
+        .btn-close { background: transparent; color: #888; margin-top: 5px; }
+
+        /* ... (نفس الستايلات السابقة للشعار والحقول) ... */
         .logo-header { text-align: center; margin-bottom: 30px; }
         .logo-img {
             width: 80px; height: 80px; border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
-            transition: 0.3s;
         }
-        .logo-img:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(37, 99, 235, 0.6); }
-
-        /* === الحقول والقوائم (تحديث شامل للتناسق) === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
-        
         input, textarea, select {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px;
-            color: #fff;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-            outline: none;
-            transition: 0.2s;
+            width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px; color: #fff;
+            font-family: 'Tajawal', sans-serif; font-size: 0.95rem; box-sizing: border-box; outline: none; transition: 0.2s;
         }
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); background: rgba(37, 99, 235, 0.05); }
 
-        input:focus, textarea:focus, select:focus { 
-            border-color: var(--accent); 
-            background: rgba(37, 99, 235, 0.05); 
-        }
-
-        /* === تخصيص القوائم المنسدلة (Dropdowns) === */
+        /* تخصيص القوائم */
         select {
-            appearance: none; /* إخفاء سهم المتصفح الافتراضي */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            cursor: pointer;
-            /* إضافة سهم مخصص */
+            appearance: none; -webkit-appearance: none; cursor: pointer;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: left 12px center; /* السهم يسار لأن الصفحة RTL */
-            background-size: 16px;
-            padding-left: 40px; /* مساحة للسهم */
+            background-repeat: no-repeat; background-position: left 12px center; background-size: 16px; padding-left: 40px;
         }
+        select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
 
-        /* جعل خيارات القائمة سوداء وليست بيضاء */
-        select option {
-            background-color: #1a1a1a;
-            color: #fff;
-            padding: 10px;
-        }
-
-        /* === تخصيص حقل التاريخ === */
-        .date-section { margin-bottom: 20px; }
-        .date-container { display: flex; gap: 15px; }
-        .date-input-wrapper { flex: 2; position: relative; }
-        
-        /* هذا الكلاس يخص مكتبة Flatpickr */
+        /* التاريخ المسطح */
         input.flatpickr-input {
-            font-family: 'Roboto', sans-serif !important;
-            font-size: 1.1rem;
-            color: #60a5fa;
-            direction: ltr; 
-            text-align: left;
-            padding-left: 45px; 
-            cursor: pointer;
+            font-family: 'Roboto', sans-serif !important; font-size: 1.1rem; color: #60a5fa; direction: ltr; text-align: left; padding-left: 45px; cursor: pointer;
         }
-        
-        /* أيقونة التقويم داخل الحقل */
-        .calendar-icon {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            color: #60a5fa; font-size: 1.1rem; pointer-events: none; z-index: 5;
-        }
+        .calendar-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #60a5fa; font-size: 1.1rem; pointer-events: none; z-index: 5; }
 
-        .duration-wrapper { flex: 1; }
-        select.duration-select { text-align: center; color: #ddd; }
-
-        /* شارة التاريخ الهجري */
+        /* شارة الهجري */
         #hijriDisplay {
-            margin-top: 8px;
-            font-size: 0.85rem;
-            color: #fbbf24; 
-            background: rgba(251, 191, 36, 0.1);
-            padding: 5px 10px;
-            border-radius: 6px;
-            display: inline-block;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            font-family: 'Tajawal';
-            opacity: 0; 
-            transition: opacity 0.3s;
-        }
-
-        /* === تخصيص شكل التقويم المنبثق === */
-        .flatpickr-calendar {
-            background: #0f0f0f !important;
-            border: 1px solid #333 !important;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
-            border-radius: 16px !important;
-            font-family: 'Roboto', sans-serif !important;
-        }
-        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-            background: var(--accent) !important;
-            border-color: var(--accent) !important;
-            box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
-        }
-        .flatpickr-day:hover { background: #333 !important; }
-        .flatpickr-months .flatpickr-month {
-            background: #0f0f0f !important;
-            color: #fff !important;
-            fill: #fff !important;
-        }
-        .flatpickr-current-month .flatpickr-monthDropdown-months {
-            font-family: 'Tajawal', sans-serif !important;
-        }
-        .flatpickr-time input {
-            color: #fff !important;
-            font-family: 'Roboto', sans-serif !important;
-        }
-
-        /* === باقي التنسيقات === */
-        .options-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding: 0 5px;
-        }
-        .reminder-wrapper { position: relative; width: 140px; }
-        
-        .reminder-select {
-            width: 100%;
-            text-align: right;
-            /* السهم مضاف عبر الـ CSS العام للـ select */
+            margin-top: 8px; font-size: 0.85rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1);
+            padding: 5px 10px; border-radius: 6px; display: inline-block; border: 1px solid rgba(251, 191, 36, 0.2); opacity: 0; transition: opacity 0.3s;
         }
         
-        /* إخفاء الأيقونة القديمة لأننا وضعنا سهماً جديداً في الـ Select */
-        .reminder-icon { display: none; } 
+        /* زر الإنشاء */
+        .btn-generate {
+            width: 100%; padding: 16px 20px; margin-top: 15px; background-color: var(--bg-dark);
+            color: #ffffff; font-size: 1.1rem; font-weight: 700; border: 2px solid var(--border);
+            border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease-in-out;
+        }
+        .btn-generate:hover { border-color: var(--accent); background-color: rgba(37, 99, 235, 0.1); box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+        .btn-generate:hover svg { transform: translateX(5px) scale(1.1); stroke: var(--accent); }
 
-        .meta-info { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-family: 'Roboto'; }
-        .meta-item { display: flex; align-items: center; gap: 6px; }
-
-        .location-section {
-            background: rgba(255,255,255,0.02);
-            padding: 6px; border-radius: 14px;
-            display: flex; gap: 10px; align-items: center;
-            margin-bottom: 20px; border: 1px solid var(--border);
-        }
-        .loc-type-btn {
-            background: transparent; border: none; color: var(--text-muted);
-            padding: 10px 20px; border-radius: 10px; cursor: pointer;
-            font-family: 'Tajawal'; font-size: 0.9rem; font-weight: 600;
-            display: flex; align-items: center; gap: 8px; transition: 0.3s;
-        }
-        .loc-type-btn.active {
-            background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
+        /* باقي التنسيقات (موقع، تذكير...) */
+        .location-section { background: rgba(255,255,255,0.02); padding: 6px; border-radius: 14px; display: flex; gap: 10px; align-items: center; margin-bottom: 20px; border: 1px solid var(--border); }
+        .loc-type-btn { background: transparent; border: none; color: var(--text-muted); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: 'Tajawal'; font-weight: 600; transition: 0.3s; }
+        .loc-type-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
         .loc-input { border: none; background: transparent; padding: 0 10px; box-shadow: none !important; }
 
-        /* === زر الإنشاء === */
-        .btn-generate {
-            width: 100%;
-            padding: 16px 20px;
-            margin-top: 15px;
-            background-color: var(--bg-dark);
-            color: #ffffff;
-            font-size: 1.1rem;
-            font-weight: 700;
-            font-family: 'Tajawal', sans-serif;
-            border: 2px solid var(--border);
-            border-radius: 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: all 0.3s ease-in-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-generate svg { transition: transform 0.3s ease-in-out; }
-
-        .btn-generate:hover {
-            border-color: var(--accent);
-            background-color: rgba(37, 99, 235, 0.1);
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-generate:hover svg {
-            transform: translateX(5px) scale(1.1);
-            stroke: var(--accent);
-        }
-
-        .btn-generate:active { transform: scale(0.98); }
-
+        .date-container { display: flex; gap: 15px; } .date-input-wrapper { flex: 2; position: relative; } .duration-wrapper { flex: 1; }
+        .options-bar { display: flex; justify-content: space-between; margin-bottom: 25px; } .reminder-wrapper { width: 140px; } .meta-info { display: flex; gap: 15px; color: var(--text-muted); font-size: 0.85rem; align-items: center; }
     </style>
 </head>
 <body>
@@ -251,6 +167,11 @@
     <canvas id="stars"></canvas>
 
     <div class="admin-card">
+        <button class="magic-btn" onclick="openMagicModal()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </button>
+        <div class="magic-tooltip">تعبئة ذكية من النص</div>
+
         <div class="logo-header">
             <img src="logo.png" alt="Logo" class="logo-img">
             <h2 style="margin: 15px 0 0; font-size: 1.4rem;">إضافة حدث جديد</h2>
@@ -316,11 +237,21 @@
         </button>
     </div>
 
+    <div class="modal-overlay" id="magicModal">
+        <div class="modal-box">
+            <h3 style="margin:0; color:#fff;"><i class="fa-solid fa-wand-magic-sparkles" style="color:#d946ef;"></i> تعبئة ذكية</h3>
+            <p style="color:#aaa; font-size:0.9rem; margin:5px 0;">الصق نص الدعوة (واتس/إيميل) هنا:</p>
+            <textarea id="pasteArea" class="modal-textarea" placeholder="مثال: يسرنا دعوتكم... يوم الأربعاء 2026/2/4 الساعة 8 مساءً..."></textarea>
+            <button class="modal-btn btn-parse" onclick="parseInvite()">✨ تحليل وتعبئة</button>
+            <button class="modal-btn btn-close" onclick="closeMagicModal()">إلغاء</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> 
     
     <script>
-        // === 1. تفعيل التقويم الاحترافي ===
+        // 1. إعدادات التقويم
         const fp = flatpickr("#start", {
             enableTime: true,
             dateFormat: "Y-m-d h:i K", 
@@ -332,7 +263,89 @@
             }
         });
 
-        // === 2. كود النجوم ===
+        // 2. دوال النافذة المنبثقة
+        function openMagicModal() {
+            document.getElementById('magicModal').style.display = 'flex';
+            document.getElementById('pasteArea').focus();
+        }
+        function closeMagicModal() {
+            document.getElementById('magicModal').style.display = 'none';
+        }
+
+        // 3. الذكاء (تحليل النص)
+        function parseInvite() {
+            const text = document.getElementById('pasteArea').value;
+            if(!text) return;
+
+            // أ. تحويل الأرقام العربية لإنجليزية
+            const cleanText = text.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+
+            // ب. البحث عن التاريخ (YYYY/MM/DD)
+            const dateRegex = /(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})|(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})/;
+            const dateMatch = cleanText.match(dateRegex);
+
+            // ج. البحث عن الوقت (8 مساء، 20:00)
+            const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(مساء|صباحا|م|ص|PM|AM)?/i;
+            const timeMatch = cleanText.match(timeRegex);
+
+            // د. البحث عن الروابط
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const urlMatch = cleanText.match(urlRegex);
+
+            // هـ. تخمين العنوان (أول سطر لا يحتوي تاريخ)
+            const lines = cleanText.split('\n').filter(line => line.trim() !== '');
+            let title = lines[0] || "لقاء جديد";
+            // إذا السطر الأول دعوة، خذ الثاني
+            if(title.includes('دعوة') && lines.length > 1) title = lines[1];
+
+            // === التطبيق في الحقول === //
+            
+            // 1. العنوان
+            document.getElementById('title').value = title.substring(0, 50);
+
+            // 2. الرابط (الموقع)
+            if(urlMatch) {
+                document.getElementById('locationInput').value = urlMatch[0];
+                setType('online');
+            }
+
+            // 3. التاريخ والوقت (أصعب جزء)
+            if(dateMatch) {
+                let dateStr = dateMatch[0].replace(/\//g, '-'); // توحيد الفواصل
+                
+                // محاولة ضبط الوقت
+                let hour = 12; 
+                let minute = 0;
+                
+                if(timeMatch) {
+                    // استخراج الساعة
+                    let h = parseInt(timeMatch[1]);
+                    if(cleanText.includes('مساء') || cleanText.includes('م') || cleanText.includes('PM')) {
+                        if(h < 12) h += 12;
+                    }
+                    hour = h;
+                    if(timeMatch[2]) minute = parseInt(timeMatch[2]);
+                }
+
+                // دمج التاريخ والوقت وتحديث التقويم
+                // Flatpickr يقبل صيغة YYYY-MM-DD HH:MM
+                // نحتاج ترتيب التاريخ صح (بعض الأحيان يجي يوم/شهر/سنة)
+                const parts = dateStr.split('-');
+                let y, m, d;
+                if(parts[0].length === 4) { y=parts[0]; m=parts[1]; d=parts[2]; }
+                else { d=parts[0]; m=parts[1]; y=parts[2]; }
+
+                const finalDateObj = new Date(y, m-1, d, hour, minute);
+                fp.setDate(finalDateObj, true); // True تعني "أطلق حدث التغيير" لتحديث الهجري
+            }
+
+            // 4. الوصف (النص كاملاً)
+            document.getElementById('desc').value = text;
+
+            closeMagicModal();
+        }
+
+        // --- باقي الكود الأساسي (النجوم، الهجري، الروابط) ---
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
@@ -347,34 +360,21 @@
         }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // === 3. التحويل للهجري (تقويم أم القرى) ===
         function updateHijri(dateObj) {
             const display = document.getElementById("hijriDisplay");
             if (!dateObj) { display.style.opacity = "0"; return; }
-
-            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }).format(dateObj);
-
-            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`;
-            display.style.opacity = "1";
+            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(dateObj);
+            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`; display.style.opacity = "1";
         }
 
-        // === 4. باقي الوظائف ===
         let locationType = 'online';
         function setType(type) {
             locationType = type;
             const input = document.getElementById('locationInput');
             if(type === 'online') {
-                document.getElementById('btnOnline').classList.add('active');
-                document.getElementById('btnLoc').classList.remove('active');
-                input.placeholder = "رابط الاجتماع (Zoom)...";
+                document.getElementById('btnOnline').classList.add('active'); document.getElementById('btnLoc').classList.remove('active'); input.placeholder = "رابط الاجتماع (Zoom)...";
             } else {
-                document.getElementById('btnLoc').classList.add('active');
-                document.getElementById('btnOnline').classList.remove('active');
-                input.placeholder = "اسم القاعة أو المدينة...";
+                document.getElementById('btnLoc').classList.add('active'); document.getElementById('btnOnline').classList.remove('active'); input.placeholder = "اسم القاعة أو المدينة...";
             }
         }
 
@@ -407,15 +407,11 @@
             navigator.clipboard.writeText(finalUrl).then(() => {
                 const btn = document.querySelector('.btn-generate');
                 const originalText = btn.innerHTML;
-                
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ!';
-                btn.style.borderColor = "#10b981";
-                btn.style.color = "#10b981";
-                
+                btn.style.borderColor = "#10b981"; btn.style.color = "#10b981";
                 setTimeout(() => {
                     btn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> إنشاء الرابط';
-                    btn.style.borderColor = "var(--border)";
-                    btn.style.color = "#fff";
+                    btn.style.borderColor = "var(--border)"; btn.style.color = "#fff";
                 }, 2000);
             });
         }
