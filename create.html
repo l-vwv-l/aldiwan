@@ -3,172 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>غرفة التحكم الذكية | الديوان</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>غرفة القيادة | الديوان الجامعي</title>
+    
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
-            --primary: #fff;
-            --accent: #2563eb; 
-            --bg-dark: #050505;
-            --glass: rgba(22, 22, 22, 0.9); 
-            --border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(255, 255, 255, 0.05);
-            --text-muted: #9ca3af;
+            --glass-bg: rgba(20, 20, 20, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-white: #ffffff;
+            --text-gray: #a1a1aa;
+            --accent: #2563eb;
+            --input-bg: rgba(255, 255, 255, 0.03);
         }
 
         body {
-            margin: 0;
-            background-color: var(--bg-dark);
-            color: #fff;
-            font-family: 'Tajawal', sans-serif;
+            margin: 0; padding: 0;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            /* نفس خلفية موقعك */
+            background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+            overflow: hidden; position: relative;
         }
 
-        canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        /* طبقة تعتيم للخلفية */
+        body::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6); z-index: 0;
+        }
 
+        canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* === البطاقة الرئيسية (غرفة التحكم) === */
         .admin-card {
-            position: relative;
-            z-index: 10;
-            background: var(--glass);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 35px;
-            width: 90%;
-            max-width: 550px;
-            box-shadow: 0 0 80px rgba(0,0,0,0.8);
+            position: relative; z-index: 10;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px;
+            width: 90%; max-width: 550px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
             text-align: right;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-height: 90vh; overflow-y: auto;
+            animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
+        .admin-card::-webkit-scrollbar { width: 0px; } /* إخفاء السكرول بار */
+
+        /* === رأس الصفحة === */
+        .header-section {
+            display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;
+        }
+        .logo-img {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 40px rgba(37, 99, 235, 0.3);
+            margin-bottom: 15px; transition: transform 0.3s;
+        }
+        .logo-img:hover { transform: scale(1.05); }
+        
+        h2 { margin: 0; color: var(--text-white); font-size: 1.5rem; }
+        p.subtitle { margin: 5px 0 0; color: var(--text-gray); font-size: 0.9rem; }
+
+        /* === الحقول (Inputs) === */
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-gray); font-weight: 500; }
+        
+        input, textarea, select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px;
+            color: #fff;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus, textarea:focus, select:focus { 
+            border-color: var(--accent); 
+            background: rgba(37, 99, 235, 0.05);
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.1);
         }
 
-        /* اخفاء شريط التمرير */
-        .admin-card::-webkit-scrollbar { width: 0px; background: transparent; }
+        /* === تنسيقات خاصة === */
+        /* أيقونة التقويم */
+        .date-input-wrapper { position: relative; flex: 2; }
+        .calendar-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); pointer-events: none; }
+        input.flatpickr-input { text-align: left; padding-left: 40px; font-family: 'Roboto', sans-serif !important; direction: ltr; }
 
-        /* === زر العصا السحرية === */
+        /* القائمة المنسدلة */
+        select {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: left 12px center; background-size: 16px; padding-left: 40px;
+        }
+        select option { background-color: #1a1a1a; color: #fff; }
+
+        /* الهجري */
+        #hijriDisplay {
+            text-align: center; margin-top: 5px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s;
+        }
+
+        /* المجموعات */
+        .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
+        .flex-1 { flex: 1; }
+
+        /* === الأزرار التفاعلية === */
+        .btn-generate {
+            width: 100%; padding: 16px; margin-top: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff; border: 1px solid var(--glass-border);
+            border-radius: 15px; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s;
+        }
+        .btn-generate:hover {
+            background: var(--accent); border-color: var(--accent);
+            box-shadow: 0 0 25px rgba(37, 99, 235, 0.4); transform: translateY(-2px);
+        }
+
+        /* زر العصا السحرية */
         .magic-btn {
-            position: absolute; top: 20px; left: 20px;
+            position: absolute; top: 25px; left: 25px;
+            width: 45px; height: 45px; border-radius: 50%;
             background: linear-gradient(135deg, #8b5cf6, #d946ef);
-            border: none; color: white; width: 40px; height: 40px; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; box-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
-            transition: transform 0.3s; z-index: 20;
+            border: none; color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.4);
+            transition: 0.3s; z-index: 20;
         }
-        .magic-btn:hover { transform: scale(1.1) rotate(10deg); }
+        .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
 
-        /* === النافذة المنبثقة للصق النص === */
+        /* === منطقة النتائج === */
+        #resultArea {
+            display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);
+            animation: fadeInUp 0.5s forwards;
+        }
+        .result-actions { display: flex; gap: 10px; margin-top: 10px; }
+        .action-btn {
+            flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border); color: var(--text-gray); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-weight: 600;
+        }
+        .action-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .btn-shorten:hover { color: #f472b6; border-color: #f472b6; }
+        
+        #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
+
+        /* === النافذة المنبثقة (Modal) === */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); z-index: 100;
             display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
         }
         .modal-box {
-            background: #1a1a1a; width: 90%; max-width: 400px;
-            padding: 25px; border-radius: 20px; border: 1px solid #333;
-            text-align: right; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #1a1a1a; width: 90%; max-width: 450px;
+            padding: 30px; border-radius: 25px; border: 1px solid #333;
+            text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
-        .modal-textarea {
-            width: 100%; height: 150px; background: #0f0f0f; border: 1px solid #333;
-            border-radius: 10px; color: #fff; padding: 10px; font-family: 'Tajawal'; font-size: 0.9rem;
-            margin-top: 15px; resize: none;
-        }
-        .modal-btn {
-            width: 100%; padding: 12px; margin-top: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
-        }
+        .modal-textarea { height: 150px; margin-top: 15px; resize: none; background: #0f0f0f; }
+        .modal-btn { width: 100%; padding: 14px; margin-top: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
         .btn-parse { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
-        .btn-close { background: transparent; color: #888; margin-top: 5px; }
+        .btn-close { background: transparent; color: #666; }
 
-        /* ... ستايلات سابقة ... */
-        .logo-header { text-align: center; margin-bottom: 20px; }
-        .logo-img {
-            width: 80px; height: 80px; border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
-        }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
-        input, textarea, select {
-            width: 100%; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 12px; padding: 14px; color: #fff;
-            font-family: 'Tajawal', sans-serif; font-size: 0.95rem; box-sizing: border-box; outline: none; transition: 0.2s;
-        }
-        input:focus, textarea:focus, select:focus { border-color: var(--accent); background: rgba(37, 99, 235, 0.05); }
-
-        select {
-            appearance: none; -webkit-appearance: none; cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: left 12px center; background-size: 16px; padding-left: 40px;
-        }
-        select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
-
-        input.flatpickr-input {
-            font-family: 'Roboto', sans-serif !important; font-size: 1.1rem; color: #60a5fa; direction: ltr; text-align: left; padding-left: 45px; cursor: pointer;
-        }
-        .calendar-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #60a5fa; font-size: 1.1rem; pointer-events: none; z-index: 5; }
-
-        #hijriDisplay {
-            margin-top: 8px; font-size: 0.85rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1);
-            padding: 5px 10px; border-radius: 6px; display: inline-block; border: 1px solid rgba(251, 191, 36, 0.2); opacity: 0; transition: opacity 0.3s;
-        }
-        
-        .btn-generate {
-            width: 100%; padding: 16px 20px; margin-top: 15px; background-color: var(--bg-dark);
-            color: #ffffff; font-size: 1.1rem; font-weight: 700; border: 2px solid var(--border);
-            border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease-in-out;
-        }
-        .btn-generate:hover { border-color: var(--accent); background-color: rgba(37, 99, 235, 0.1); box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
-        .btn-generate:hover svg { transform: translateX(5px) scale(1.1); stroke: var(--accent); }
-
-        .location-section { background: rgba(255,255,255,0.02); padding: 6px; border-radius: 14px; display: flex; gap: 10px; align-items: center; margin-bottom: 20px; border: 1px solid var(--border); }
-        .loc-type-btn { background: transparent; border: none; color: var(--text-muted); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: 'Tajawal'; font-weight: 600; transition: 0.3s; }
-        .loc-type-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
-        .loc-input { border: none; background: transparent; padding: 0 10px; box-shadow: none !important; }
-
-        .date-container { display: flex; gap: 15px; } .date-input-wrapper { flex: 2; position: relative; } .duration-wrapper { flex: 1; }
-        .options-bar { display: flex; justify-content: space-between; margin-bottom: 25px; } .reminder-wrapper { width: 140px; } .meta-info { display: flex; gap: 15px; color: var(--text-muted); font-size: 0.85rem; align-items: center; }
-
-        /* === منطقة النتائج والتقصير === */
-        #resultArea {
-            display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);
-            animation: fadeIn 0.5s;
-        }
-        .action-row { display: flex; gap: 10px; margin-top: 10px; }
-        
-        .action-btn {
-            flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
-            background: rgba(255,255,255,0.05); color: #fff; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold;
-            transition: 0.3s;
-        }
-        .action-btn:hover { background: rgba(255,255,255,0.1); }
-        .btn-copy { color: #4ade80; border-color: #4ade80; }
-        .btn-copy:hover { background: rgba(74, 222, 128, 0.1); }
-        
-        .btn-shorten { color: #f472b6; border-color: #f472b6; }
-        .btn-shorten:hover { background: rgba(244, 114, 182, 0.1); }
-
-        /* منطقة QR Code */
-        #qrcode {
-            display: flex; justify-content: center; margin-top: 20px;
-            background: #fff; padding: 10px; border-radius: 10px; width: fit-content; margin: 20px auto 0;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cardEntrance { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     </style>
 </head>
@@ -177,99 +190,85 @@
     <canvas id="stars"></canvas>
 
     <div class="admin-card">
-        <button class="magic-btn" onclick="openMagicModal()" title="لصق ذكي">
+        <button class="magic-btn" onclick="openMagicModal()" title="لصق ذكي (واتس/إيميل)">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
         </button>
 
-        <div class="logo-header">
-            <img src="logo.png" alt="Logo" class="logo-img">
-            <h2 style="margin: 15px 0 0; font-size: 1.4rem;">إضافة حدث جديد</h2>
+        <div class="header-section">
+            <img src="logo.png" alt="Admin" class="logo-img">
+            <h2>غرفة القيادة</h2>
+            <p class="subtitle">نظام إنشاء روابط الديوان الجامعي</p>
         </div>
 
         <div style="margin-bottom: 20px;">
-            <input type="text" id="title" placeholder="عنوان الدورة أو الاجتماع..." style="font-size: 1.1rem;">
+            <label>عنوان الحدث</label>
+            <input type="text" id="title" placeholder="مثال: التدريب الميداني...">
         </div>
 
-        <div class="date-section">
-            <div class="date-container">
-                <div class="date-input-wrapper">
-                    <i class="fa-regular fa-calendar-days calendar-icon"></i>
-                    <input type="text" id="start" placeholder="اختر التاريخ والوقت">
-                </div>
-                <div class="duration-wrapper">
-                    <select id="duration" class="duration-select">
-                        <option value="60" selected>ساعة</option>
-                        <option value="90">ساعة ونصف</option>
-                        <option value="120">ساعتان</option>
-                        <option value="180">3 ساعات</option>
-                    </select>
-                </div>
+        <div class="row-group">
+            <div class="date-input-wrapper">
+                <label>بداية اللقاء</label>
+                <i class="fa-regular fa-calendar-days calendar-icon"></i>
+                <input type="text" id="start" placeholder="اختر الموعد">
             </div>
-            <div id="hijriDisplay"></div>
-        </div>
-
-        <div class="options-bar">
-            <div class="reminder-wrapper">
-                <select id="reminder" class="reminder-select">
-                    <option value="30" selected>تنبيه: قبل 30 دقيقة</option>
-                    <option value="60">تنبيه: قبل ساعة</option>
-                    <option value="1440">تنبيه: قبل يوم</option>
+            <div class="flex-1">
+                <label>المدة</label>
+                <select id="duration">
+                    <option value="60">ساعة</option>
+                    <option value="90">ساعة ونصف</option>
+                    <option value="120">ساعتان</option>
+                    <option value="180">3 ساعات</option>
                 </select>
             </div>
-            <div class="meta-info">
-                <div class="meta-item"><i class="fa-solid fa-globe"></i> Riyadh</div>
-                <div class="meta-item" style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:0.75rem;">AM/PM</div>
+        </div>
+        <div id="hijriDisplay"></div>
+
+        <div class="row-group" style="margin-top: 20px;">
+            <div class="flex-1">
+                <label>المكان / الرابط</label>
+                <input type="text" id="locationInput" placeholder="رابط زوم أو اسم القاعة">
+            </div>
+            <div class="flex-1">
+                <label>وقت التذكير</label>
+                <select id="reminder">
+                    <option value="30">قبل 30 دقيقة</option>
+                    <option value="60">قبل ساعة</option>
+                    <option value="1440">قبل يوم</option>
+                </select>
             </div>
         </div>
 
-        <div class="location-section">
-            <div style="display:flex; gap:5px;">
-                <button class="loc-type-btn active" id="btnOnline" onclick="setType('online')">
-                    <i class="fa-solid fa-video"></i> أونلاين
-                </button>
-                <button class="loc-type-btn" id="btnLoc" onclick="setType('location')">
-                    <i class="fa-solid fa-location-dot"></i> موقع
-                </button>
-            </div>
-            <input type="text" id="locationInput" class="loc-input" placeholder="رابط الاجتماع (Zoom)...">
-        </div>
-
-        <div style="margin-bottom: 10px;">
-            <textarea id="desc" rows="3" placeholder="تفاصيل إضافية..."></textarea>
+        <div style="margin-bottom: 20px;">
+            <label>تفاصيل إضافية (اختياري)</label>
+            <textarea id="desc" rows="3" placeholder="ملاحظات، محاور، متطلبات..."></textarea>
         </div>
 
         <button class="btn-generate" onclick="generateLink()">
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg> 
-            إنشاء الرابط
+            <i class="fa-solid fa-link"></i> إنشاء الرابط
         </button>
 
         <div id="resultArea">
-            <div style="text-align: center; color: #aaa; font-size: 0.9rem; margin-bottom: 10px;">تم إنشاء الرابط بنجاح! 🎉</div>
+            <input type="text" id="finalUrlBox" readonly style="font-size: 0.8rem; direction: ltr; text-align: left; color: #60a5fa;">
             
-            <input type="text" id="finalUrlBox" readonly style="font-size: 0.8rem; color: #2563eb; direction: ltr; text-align: left;">
-
-            <div class="action-row">
-                <button class="action-btn btn-copy" onclick="copyFinalLink()">
+            <div class="result-actions">
+                <button class="action-btn" onclick="copyFinalLink()" id="copyBtn">
                     <i class="fa-regular fa-copy"></i> نسخ
                 </button>
-                <button class="action-btn btn-shorten" onclick="shortenUrl()">
-                    <i class="fa-solid fa-scissors"></i> تقصير (تلقائي)
+                <button class="action-btn btn-shorten" onclick="shortenUrl()" id="shortenBtn">
+                    <i class="fa-solid fa-scissors"></i> تقصير
                 </button>
             </div>
 
             <div id="qrcode"></div>
         </div>
-
     </div>
 
     <div class="modal-overlay" id="magicModal">
         <div class="modal-box">
             <h3 style="margin:0; color:#fff;"><i class="fa-solid fa-wand-magic-sparkles" style="color:#d946ef;"></i> تعبئة ذكية</h3>
-            <p style="color:#aaa; font-size:0.9rem; margin:5px 0;">الصق نص الدعوة (واتس/إيميل) هنا:</p>
+            <p style="color:#aaa; font-size:0.9rem; margin:5px 0;">انسخ رسالة الواتس أو الإيميل كما هي والصقها هنا:</p>
             <textarea id="pasteArea" class="modal-textarea" placeholder="مثال: يسرنا دعوتكم... يوم الأربعاء 2026/2/4 الساعة 8 مساءً..."></textarea>
-            <button class="modal-btn btn-parse" onclick="parseInvite()">✨ تحليل وتعبئة</button>
+            <button class="modal-btn btn-parse" onclick="parseInvite()">تحليل وتعبئة البيانات</button>
             <button class="modal-btn btn-close" onclick="closeMagicModal()">إلغاء</button>
         </div>
     </div>
@@ -278,19 +277,39 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> 
     
     <script>
-        // ... (إعدادات Flatpickr والنجوم والهجري واللصق الذكي - نفس الكود السابق) ... 
-        // سأعيد كتابة الجزء المهم للتقصير والباركود هنا:
+        // === 1. إعدادات النجوم (Canvas) ===
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        function initStars() {
+            width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height;
+            stars = []; for(let i=0; i<80; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1});
+        }
+        function drawStars() {
+            ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)";
+            stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;});
+            requestAnimationFrame(drawStars);
+        }
+        window.addEventListener('resize', initStars); initStars(); drawStars();
 
+        // === 2. التقويم المسطح ===
         const fp = flatpickr("#start", {
             enableTime: true, dateFormat: "Y-m-d h:i K", time_24hr: false, locale: "ar", disableMobile: "true", 
             onChange: function(selectedDates) { updateHijri(selectedDates[0]); }
         });
 
-        // دوال النافذة المنبثقة
+        function updateHijri(dateObj) {
+            const display = document.getElementById("hijriDisplay");
+            if (!dateObj) { display.style.opacity = "0"; return; }
+            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(dateObj);
+            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`; display.style.opacity = "1";
+        }
+
+        // === 3. النافذة المنبثقة ===
         function openMagicModal() { document.getElementById('magicModal').style.display = 'flex'; document.getElementById('pasteArea').focus(); }
         function closeMagicModal() { document.getElementById('magicModal').style.display = 'none'; }
 
-        // التحليل الذكي
+        // === 4. الذكاء الصناعي البسيط (تحليل النص) ===
         function parseInvite() {
             const text = document.getElementById('pasteArea').value;
             if(!text) return;
@@ -307,7 +326,7 @@
             if(title.includes('دعوة') && lines.length > 1) title = lines[1];
 
             document.getElementById('title').value = title.substring(0, 50);
-            if(urlMatch) { document.getElementById('locationInput').value = urlMatch[0]; setType('online'); }
+            if(urlMatch) { document.getElementById('locationInput').value = urlMatch[0]; }
             
             if(dateMatch) {
                 let dateStr = dateMatch[0].replace(/\//g, '-');
@@ -327,40 +346,7 @@
             closeMagicModal();
         }
 
-        // نجوم الخلفية
-        const canvas = document.getElementById('stars');
-        const ctx = canvas.getContext('2d');
-        let width, height, stars = [];
-        function initStars() {
-            width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height;
-            stars = []; for(let i=0; i<60; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1});
-        }
-        function drawStars() {
-            ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)";
-            stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;});
-            requestAnimationFrame(drawStars);
-        }
-        window.addEventListener('resize', initStars); initStars(); drawStars();
-
-        function updateHijri(dateObj) {
-            const display = document.getElementById("hijriDisplay");
-            if (!dateObj) { display.style.opacity = "0"; return; }
-            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(dateObj);
-            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`; display.style.opacity = "1";
-        }
-
-        let locationType = 'online';
-        function setType(type) {
-            locationType = type;
-            const input = document.getElementById('locationInput');
-            if(type === 'online') {
-                document.getElementById('btnOnline').classList.add('active'); document.getElementById('btnLoc').classList.remove('active'); input.placeholder = "رابط الاجتماع (Zoom)...";
-            } else {
-                document.getElementById('btnLoc').classList.add('active'); document.getElementById('btnOnline').classList.remove('active'); input.placeholder = "اسم القاعة أو المدينة...";
-            }
-        }
-
-        // === إنشاء الرابط وعرض النتائج ===
+        // === 5. إنشاء الرابط ===
         function generateLink() {
             const title = document.getElementById('title').value;
             const selectedDates = fp.selectedDates;
@@ -379,69 +365,59 @@
             };
 
             let finalDesc = desc;
-            if(loc) {
-                const prefix = locationType === 'online' ? "رابط الاجتماع: " : "الموقع: ";
-                finalDesc = prefix + loc + "\n\n" + desc;
+            if(loc && (loc.startsWith('http') || loc.startsWith('www'))) {
+                finalDesc = "رابط اللقاء: " + loc + "\n\n" + desc;
+            } else if (loc) {
+                finalDesc = "الموقع: " + loc + "\n\n" + desc;
             }
 
             const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html";
             const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${formatLocal(startDate)}&end=${formatLocal(endDate)}&desc=${encodeURIComponent(finalDesc)}`;
 
-            // 1. عرض النتيجة
+            // إظهار النتائج
             document.getElementById('resultArea').style.display = 'block';
             document.getElementById('finalUrlBox').value = finalUrl;
             
-            // 2. توليد QR Code
-            document.getElementById('qrcode').innerHTML = ""; // تنظيف القديم
+            // توليد QR
+            document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById("qrcode"), {
-                text: finalUrl,
-                width: 128,
-                height: 128,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
+                text: finalUrl, width: 128, height: 128, colorDark : "#000000", colorLight : "#ffffff"
             });
 
-            // تمرير للأسفل لرؤية النتيجة
             document.getElementById('resultArea').scrollIntoView({behavior: "smooth"});
         }
 
         function copyFinalLink() {
             const box = document.getElementById('finalUrlBox');
             box.select(); navigator.clipboard.writeText(box.value);
-            const btn = document.querySelector('.btn-copy');
+            const btn = document.getElementById('copyBtn');
+            const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ';
-            setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> نسخ'; }, 2000);
+            btn.style.borderColor = "#10b981"; btn.style.color = "#10b981";
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.style.borderColor = "var(--glass-border)"; btn.style.color = "var(--text-gray)";
+            }, 2000);
         }
 
-        // === دالة التقصير التلقائي (باستخدام API بسيط) ===
         async function shortenUrl() {
             const longUrl = document.getElementById('finalUrlBox').value;
-            const btn = document.querySelector('.btn-shorten');
-            
+            const btn = document.getElementById('shortenBtn');
             if(!longUrl) return;
 
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التقصير...';
-            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
             try {
-                // استخدام خدمة TinyURL عبر وكيل لتجاوز CORS (حل سحري)
                 const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
                 if (response.ok) {
                     const shortUrl = await response.text();
                     document.getElementById('finalUrlBox').value = shortUrl;
-                    btn.innerHTML = '<i class="fa-solid fa-check"></i> تم التقصير!';
-                    
-                    // تحديث الـ QR Code للرابط القصير
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> تم!';
+                    // تحديث QR
                     document.getElementById('qrcode').innerHTML = ""; 
-                    new QRCode(document.getElementById("qrcode"), {
-                        text: shortUrl, width: 128, height: 128
-                    });
-                } else {
-                    throw new Error("فشل");
-                }
+                    new QRCode(document.getElementById("qrcode"), { text: shortUrl, width: 128, height: 128 });
+                } else { throw new Error(); }
             } catch (e) {
-                alert('⚠️ لم نتمكن من تقصير الرابط تلقائياً. يرجى استخدام موقع خارجي.');
-                btn.innerHTML = '<i class="fa-solid fa-scissors"></i> تقصير (تلقائي)';
+                alert('فشل التقصير التلقائي'); btn.innerHTML = '<i class="fa-solid fa-scissors"></i> تقصير';
             }
         }
     </script>
