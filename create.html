@@ -61,7 +61,7 @@
         }
         .logo-img:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(37, 99, 235, 0.6); }
 
-        /* === الحقول === */
+        /* === الحقول والقوائم (تحديث شامل للتناسق) === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
         
         input, textarea, select {
@@ -77,9 +77,31 @@
             outline: none;
             transition: 0.2s;
         }
+
         input:focus, textarea:focus, select:focus { 
             border-color: var(--accent); 
             background: rgba(37, 99, 235, 0.05); 
+        }
+
+        /* === تخصيص القوائم المنسدلة (Dropdowns) === */
+        select {
+            appearance: none; /* إخفاء سهم المتصفح الافتراضي */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            /* إضافة سهم مخصص */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 12px center; /* السهم يسار لأن الصفحة RTL */
+            background-size: 16px;
+            padding-left: 40px; /* مساحة للسهم */
+        }
+
+        /* جعل خيارات القائمة سوداء وليست بيضاء */
+        select option {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 10px;
         }
 
         /* === تخصيص حقل التاريخ === */
@@ -87,23 +109,25 @@
         .date-container { display: flex; gap: 15px; }
         .date-input-wrapper { flex: 2; position: relative; }
         
+        /* هذا الكلاس يخص مكتبة Flatpickr */
         input.flatpickr-input {
             font-family: 'Roboto', sans-serif !important;
             font-size: 1.1rem;
             color: #60a5fa;
             direction: ltr; 
             text-align: left;
-            padding-left: 45px; /* مسافة للأيقونة */
+            padding-left: 45px; 
             cursor: pointer;
         }
         
+        /* أيقونة التقويم داخل الحقل */
         .calendar-icon {
             position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
             color: #60a5fa; font-size: 1.1rem; pointer-events: none; z-index: 5;
         }
 
         .duration-wrapper { flex: 1; }
-        select.duration-select { text-align: center; cursor: pointer; color: #ddd; }
+        select.duration-select { text-align: center; color: #ddd; }
 
         /* شارة التاريخ الهجري */
         #hijriDisplay {
@@ -120,7 +144,7 @@
             transition: opacity 0.3s;
         }
 
-        /* === تخصيص شكل التقويم المنبثق ليطابق الثيم === */
+        /* === تخصيص شكل التقويم المنبثق === */
         .flatpickr-calendar {
             background: #0f0f0f !important;
             border: 1px solid #333 !important;
@@ -133,9 +157,7 @@
             border-color: var(--accent) !important;
             box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
         }
-        .flatpickr-day:hover {
-            background: #333 !important;
-        }
+        .flatpickr-day:hover { background: #333 !important; }
         .flatpickr-months .flatpickr-month {
             background: #0f0f0f !important;
             color: #fff !important;
@@ -155,15 +177,16 @@
             margin-bottom: 25px; padding: 0 5px;
         }
         .reminder-wrapper { position: relative; width: 140px; }
+        
         .reminder-select {
-            appearance: none; background: transparent; border: none;
-            color: var(--text-muted); font-size: 0.9rem; padding-right: 25px; cursor: pointer;
-            text-align: right; width: 100%;
+            width: 100%;
+            text-align: right;
+            /* السهم مضاف عبر الـ CSS العام للـ select */
         }
-        .reminder-icon {
-            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-            color: var(--text-muted); pointer-events: none;
-        }
+        
+        /* إخفاء الأيقونة القديمة لأننا وضعنا سهماً جديداً في الـ Select */
+        .reminder-icon { display: none; } 
+
         .meta-info { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-family: 'Roboto'; }
         .meta-item { display: flex; align-items: center; gap: 6px; }
 
@@ -184,7 +207,7 @@
         }
         .loc-input { border: none; background: transparent; padding: 0 10px; box-shadow: none !important; }
 
-        /* === تصميم الزر الجديد (Explore Me Style) === */
+        /* === زر الإنشاء === */
         .btn-generate {
             width: 100%;
             padding: 16px 20px;
@@ -206,9 +229,7 @@
             overflow: hidden;
         }
 
-        .btn-generate svg {
-            transition: transform 0.3s ease-in-out;
-        }
+        .btn-generate svg { transition: transform 0.3s ease-in-out; }
 
         .btn-generate:hover {
             border-color: var(--accent);
@@ -217,13 +238,11 @@
         }
 
         .btn-generate:hover svg {
-            transform: translateX(5px) scale(1.1); /* تحريك الأيقونة عند الهوفر */
+            transform: translateX(5px) scale(1.1);
             stroke: var(--accent);
         }
 
-        .btn-generate:active {
-            transform: scale(0.98);
-        }
+        .btn-generate:active { transform: scale(0.98); }
 
     </style>
 </head>
@@ -261,11 +280,10 @@
 
         <div class="options-bar">
             <div class="reminder-wrapper">
-                <i class="fa-regular fa-bell reminder-icon"></i>
                 <select id="reminder" class="reminder-select">
-                    <option value="30" selected>قبل 30 دقيقة</option>
-                    <option value="60">قبل ساعة</option>
-                    <option value="1440">قبل يوم</option>
+                    <option value="30" selected>تنبيه: قبل 30 دقيقة</option>
+                    <option value="60">تنبيه: قبل ساعة</option>
+                    <option value="1440">تنبيه: قبل يوم</option>
                 </select>
             </div>
             <div class="meta-info">
@@ -302,12 +320,12 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> 
     
     <script>
-        // === 1. تفعيل التقويم الاحترافي (Flatpickr) ===
+        // === 1. تفعيل التقويم الاحترافي ===
         const fp = flatpickr("#start", {
             enableTime: true,
-            dateFormat: "Y-m-d h:i K", // التنسيق: 2026-02-03 09:00 PM
+            dateFormat: "Y-m-d h:i K", 
             time_24hr: false,
-            locale: "ar", // أسماء الأشهر بالعربي
+            locale: "ar", 
             disableMobile: "true", 
             onChange: function(selectedDates, dateStr, instance) {
                 updateHijri(selectedDates[0]);
@@ -329,13 +347,11 @@
         }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // === 3. التحويل للهجري (باستخدام مكتبة Intl لدقة 100%) ===
+        // === 3. التحويل للهجري (تقويم أم القرى) ===
         function updateHijri(dateObj) {
             const display = document.getElementById("hijriDisplay");
             if (!dateObj) { display.style.opacity = "0"; return; }
 
-            // استخدام Intl.DateTimeFormat مع تقويم أم القرى (Umm al-Qura)
-            // هذا يعطي التاريخ الرسمي المستخدم في السعودية
             const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', {
                 day: 'numeric',
                 month: 'long',
@@ -392,13 +408,11 @@
                 const btn = document.querySelector('.btn-generate');
                 const originalText = btn.innerHTML;
                 
-                // تغيير محتوى الزر مؤقتاً عند النسخ
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ!';
                 btn.style.borderColor = "#10b981";
                 btn.style.color = "#10b981";
                 
                 setTimeout(() => {
-                    // إرجاع الزر لوضعه الطبيعي
                     btn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> إنشاء الرابط';
                     btn.style.borderColor = "var(--border)";
                     btn.style.color = "#fff";
