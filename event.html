@@ -3,106 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إضافة موعد الدورة | الديوان الجامعي</title>
+    <title>تذكير الديوان الجامعي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary: #58a6ff;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
         body {
-            background-color: #0d1117; /* لون خلفية غامق */
-            color: #c9d1d9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Tajawal', sans-serif;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
+            overflow: hidden;
+            position: relative;
         }
+
+        /* خلفية النجوم (Canvas) */
+        canvas#stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* البطاقة الزجاجية */
         .card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 15px;
-            padding: 2rem;
+            position: relative;
+            z-index: 10;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
             width: 90%;
             max-width: 400px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: float 6s ease-in-out infinite;
         }
-        h1 { color: #58a6ff; margin-bottom: 0.5rem; }
-        p { margin-bottom: 2rem; font-size: 1.1rem; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* الشعار والأيقونة */
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        h1 { margin: 0 0 10px; font-weight: 800; font-size: 1.5rem; }
+        
+        .date-badge {
+            display: inline-block;
+            background: rgba(88, 166, 255, 0.2);
+            color: #58a6ff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border: 1px solid rgba(88, 166, 255, 0.3);
+        }
+
+        p.desc {
+            color: #8b949e;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* الأزرار */
         .btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 6px;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
             text-decoration: none;
-            font-weight: bold;
-            transition: transform 0.2s;
+            transition: 0.3s;
+            margin-bottom: 12px;
+            border: none;
         }
-        .btn:hover { transform: scale(1.02); }
-        .google { background-color: #ea4335; color: white; }
-        .apple { background-color: #ffffff; color: black; }
-        .outlook { background-color: #0078d4; color: white; }
+
+        .btn-google {
+            background: #fff;
+            color: #000;
+        }
+        .btn-google:hover { background: #f0f0f0; transform: scale(1.02); }
+
+        .btn-apple {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid var(--border);
+        }
+        .btn-apple:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.02); }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: #484f58;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1 id="eventTitle">عنوان الدورة</h1>
-        <p id="eventTime">جاري تحميل التوقيت...</p>
+    <canvas id="stars"></canvas>
 
-        <a id="googleBtn" class="btn google" target="_blank">📅 تقويم Google</a>
-        <a id="appleBtn" class="btn apple">🍏 تقويم Apple (iOS)</a>
-        <a id="outlookBtn" class="btn outlook" target="_blank">📧 تقويم Outlook</a>
+    <div class="card">
+        <div class="icon-box">
+            <i class="fa-regular fa-calendar-check"></i>
+        </div>
+        
+        <h1 id="eventTitle">جاري التحميل...</h1>
+        <div class="date-badge" id="eventDate">--/--/----</div>
+        
+        <p class="desc" id="eventDesc">
+            يرجى الانتظار قليلاً بينما نجهز لك تفاصيل الموعد...
+        </p>
+
+        <a id="googleBtn" class="btn btn-google" target="_blank">
+            <i class="fa-brands fa-google"></i> تقويم Google
+        </a>
+        
+        <button id="appleBtn" class="btn btn-apple">
+            <i class="fa-brands fa-apple"></i> تقويم Apple
+        </button>
+
+        <div class="footer">الديوان الجامعي &copy; 2026</div>
     </div>
 
     <script>
-        // دالة لجلب البيانات من الرابط
+        // === 1. كود النجوم المتحركة (Background Animation) ===
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+
+        function initStars() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            stars = [];
+            for(let i=0; i<100; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    r: Math.random() * 2,
+                    d: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = "white";
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+                ctx.fill();
+                star.y -= star.d; // تحريك للأعلى
+                if(star.y < 0) star.y = height;
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        window.addEventListener('resize', initStars);
+        initStars();
+        drawStars();
+
+        // === 2. كود جلب البيانات والروابط ===
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        // قراءة البيانات من الرابط
-        const title = getQueryParam('title') || 'لقاء الديوان الجامعي';
-        const start = getQueryParam('start'); // الصيغة: YYYYMMDDTHHMMSS
-        const end = getQueryParam('end');     // الصيغة: YYYYMMDDTHHMMSS
-        const details = getQueryParam('desc') || 'لا يوجد تفاصيل إضافية';
-        
-        // عرض البيانات في الصفحة
+        const title = getQueryParam('title') || 'موعد الديوان الجامعي';
+        const start = getQueryParam('start');
+        const end = getQueryParam('end');
+        const desc = getQueryParam('desc') || 'لا توجد تفاصيل إضافية';
+
+        // عرض البيانات
         document.getElementById('eventTitle').innerText = title;
+        document.getElementById('eventDesc').innerText = desc;
+
         if(start) {
-            // تنسيق الوقت للعرض بشكل جميل
+            // تنسيق التاريخ للعرض (20260203T...)
             const year = start.substring(0,4);
             const month = start.substring(4,6);
             const day = start.substring(6,8);
             const hour = start.substring(9,11);
             const min = start.substring(11,13);
-            document.getElementById('eventTime').innerText = `${day}/${month}/${year} - الساعة ${hour}:${min}`;
+            
+            // تحويل الساعة لنظام 12 ساعة
+            let h = parseInt(hour);
+            let ampm = h >= 12 ? 'م' : 'ص';
+            h = h % 12;
+            h = h ? h : 12; 
+
+            document.getElementById('eventDate').innerText = `${day}/${month}/${year} • ${h}:${min} ${ampm}`;
         }
 
-        // 1. رابط جوجل
-        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(details)}`;
+        // رابط جوجل
+        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(desc)}`;
         document.getElementById('googleBtn').href = googleUrl;
 
-        // 2. رابط أوتلوك
-        const outlookUrl = `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(title)}&startdt=${start}&enddt=${end}&body=${encodeURIComponent(details)}`;
-        document.getElementById('outlookBtn').href = outlookUrl;
-
-        // 3. ملف ICS للآيفون (إنشاء ملف ديناميكي)
+        // تحميل ملف ICS للآيفون
         document.getElementById('appleBtn').onclick = function() {
             const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Aldiwan Aljamei//NONSGML Event//EN
+PRODID:-//Aldiwan//NONSGML Event//EN
 BEGIN:VEVENT
 UID:${Date.now()}@aldiwan.dev
 DTSTAMP:${start}Z
 DTSTART:${start}Z
 DTEND:${end}Z
 SUMMARY:${title}
-DESCRIPTION:${details}
+DESCRIPTION:${desc}
 END:VEVENT
 END:VCALENDAR`;
 
@@ -115,6 +260,5 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         };
     </script>
-
 </body>
 </html>
