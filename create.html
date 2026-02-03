@@ -48,8 +48,7 @@
             text-align: right;
         }
 
-        /* === الشعار === */
-        .logo-header { text-align: center; margin-bottom: 30px; }
+        .logo-header { text-align: center; margin-bottom: 25px; }
         .logo-img {
             width: 80px; height: 80px; border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.1);
@@ -58,7 +57,6 @@
         }
         .logo-img:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(37, 99, 235, 0.6); }
 
-        /* === الحقول === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
         
         input, textarea, select {
@@ -79,37 +77,45 @@
             background: rgba(37, 99, 235, 0.05); 
         }
 
-        /* === تنسيق خاص للتاريخ (Elegant Date) === */
+        /* === منطقة التاريخ والهجري === */
+        .date-section { margin-bottom: 20px; }
+        
         .date-container {
-            display: flex; gap: 15px; margin-bottom: 20px;
+            display: flex; gap: 15px;
         }
         
-        /* حقل التاريخ الكبير */
-        .date-input-wrapper { flex: 2; position: relative; }
+        .date-input-wrapper { flex: 2; }
         input[type="datetime-local"] {
             font-family: 'Roboto', sans-serif;
             font-size: 1.1rem;
             color: #60a5fa;
             direction: ltr; text-align: right;
             color-scheme: dark;
-            letter-spacing: 0.5px;
         }
         
-        /* حقل المدة (بديل وقت الانتهاء) */
         .duration-wrapper { flex: 1; }
-        select.duration-select {
-            font-family: 'Tajawal', sans-serif;
-            text-align: center; cursor: pointer;
-            color: #ddd;
+        select.duration-select { text-align: center; cursor: pointer; color: #ddd; }
+
+        /* شارة التاريخ الهجري */
+        #hijriDisplay {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #fbbf24; /* لون ذهبي */
+            background: rgba(251, 191, 36, 0.1);
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            font-family: 'Tajawal';
+            opacity: 0; /* مخفي حتى يتم اختيار التاريخ */
+            transition: opacity 0.3s;
         }
 
-        /* === شريط الخيارات (التذكير + المدينة) === */
+        /* === شريط الخيارات === */
         .options-bar {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px; padding: 0 5px;
         }
-
-        /* قائمة التذكير (Dropdown) */
         .reminder-wrapper { position: relative; width: 140px; }
         .reminder-select {
             appearance: none; background: transparent; border: none;
@@ -120,9 +126,6 @@
             position: absolute; right: 0; top: 50%; transform: translateY(-50%);
             color: var(--text-muted); pointer-events: none;
         }
-        .reminder-wrapper:hover .reminder-select { color: #fff; }
-
-        /* أيقونات المعلومات */
         .meta-info { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-family: 'Roboto'; }
         .meta-item { display: flex; align-items: center; gap: 6px; }
 
@@ -142,11 +145,8 @@
         .loc-type-btn.active {
             background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
-        .loc-input {
-            border: none; background: transparent; padding: 0 10px; box-shadow: none !important;
-        }
+        .loc-input { border: none; background: transparent; padding: 0 10px; box-shadow: none !important; }
 
-        /* === زر الإنشاء === */
         .btn-generate {
             width: 100%; padding: 16px;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
@@ -173,35 +173,32 @@
             <input type="text" id="title" placeholder="عنوان الدورة أو الاجتماع..." style="font-size: 1.1rem;">
         </div>
 
-        <div class="date-container">
-            <div class="date-input-wrapper">
-                <input type="datetime-local" id="start">
+        <div class="date-section">
+            <div class="date-container">
+                <div class="date-input-wrapper">
+                    <input type="datetime-local" id="start" onchange="updateHijri()">
+                </div>
+                <div class="duration-wrapper">
+                    <select id="duration" class="duration-select">
+                        <option value="60" selected>ساعة</option>
+                        <option value="90">ساعة ونصف</option>
+                        <option value="120">ساعتان</option>
+                        <option value="180">3 ساعات</option>
+                    </select>
+                </div>
             </div>
-            <div class="duration-wrapper">
-                <select id="duration" class="duration-select">
-                    <option value="30">30 دقيقة</option>
-                    <option value="60" selected>ساعة واحدة</option>
-                    <option value="90">ساعة ونصف</option>
-                    <option value="120">ساعتان</option>
-                    <option value="180">3 ساعات</option>
-                    <option value="300">5 ساعات</option>
-                    <option value="1440">يوم كامل</option>
-                </select>
-            </div>
+            <div id="hijriDisplay"></div>
         </div>
 
         <div class="options-bar">
             <div class="reminder-wrapper">
                 <i class="fa-regular fa-bell reminder-icon"></i>
                 <select id="reminder" class="reminder-select">
-                    <option value="0">بدون تذكير</option>
-                    <option value="10">قبل 10 دقائق</option>
                     <option value="30" selected>قبل 30 دقيقة</option>
                     <option value="60">قبل ساعة</option>
                     <option value="1440">قبل يوم</option>
                 </select>
             </div>
-
             <div class="meta-info">
                 <div class="meta-item"><i class="fa-solid fa-globe"></i> Riyadh</div>
                 <div class="meta-item" style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:0.75rem;">AM/PM</div>
@@ -230,15 +227,13 @@
     </div>
 
     <script>
-        // === 1. كود النجوم ===
+        // === كود النجوم ===
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
         function initStars() {
-            width = window.innerWidth; height = window.innerHeight;
-            canvas.width = width; canvas.height = height;
-            stars = [];
-            for(let i=0; i<60; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1});
+            width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height;
+            stars = []; for(let i=0; i<60; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1});
         }
         function drawStars() {
             ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)";
@@ -247,7 +242,41 @@
         }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // === 2. التحكم في الأزرار ===
+        // === دالة التحويل للهجري (المدمجة) ===
+        function updateHijri() {
+            const input = document.getElementById("start").value;
+            const display = document.getElementById("hijriDisplay");
+            
+            if (!input) {
+                display.style.opacity = "0";
+                return;
+            }
+
+            let g = new Date(input);
+            let day = g.getDate();
+            let month = g.getMonth() + 1;
+            let year = g.getFullYear();
+
+            // معادلة التحويل التقريبية
+            let jd = Math.floor((1461 * (year + 4800 + Math.floor((month - 14) / 12))) / 4)
+                   + Math.floor((367 * (month - 2 - 12 * Math.floor((month - 14) / 12))) / 12)
+                   - Math.floor((3 * Math.floor((year + 4900 + Math.floor((month - 14) / 12)) / 100)) / 4)
+                   + day - 32075;
+            let l = jd - 1948440 + 10632;
+            let n = Math.floor((l - 1) / 10631);
+            l = l - 10631 * n + 354;
+            let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719))
+                  + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+            let m = Math.floor((24 * l) / 709) - Math.floor((j * 24) / 709);
+            let d = l - Math.floor((709 * m) / 24);
+            let y = 30 * n + j - 30;
+
+            // عرض النتيجة
+            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق هجرياً: ${y}/${m}/${d}`;
+            display.style.opacity = "1";
+        }
+
+        // === باقي دوال النظام ===
         let locationType = 'online';
         function setType(type) {
             locationType = type;
@@ -263,7 +292,6 @@
             }
         }
 
-        // === 3. إنشاء الرابط (الذكاء هنا) ===
         function generateLink() {
             const title = document.getElementById('title').value;
             const startInput = document.getElementById('start').value;
@@ -271,36 +299,16 @@
             const desc = document.getElementById('desc').value;
             const loc = document.getElementById('locationInput').value;
 
-            if(!title || !startInput) {
-                alert('⚠️ يرجى تعبئة العنوان ووقت البداية!');
-                return;
-            }
+            if(!title || !startInput) { alert('⚠️ يرجى تعبئة العنوان والوقت!'); return; }
 
-            // حساب وقت النهاية تلقائياً
             const startDate = new Date(startInput);
             const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
-
-            // دالة تنسيق التاريخ للرابط (YYYYMMDDTHHMMSS)
-            const format = (d) => {
-                return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; // استخدام توقيت UTC
-                // أو نستخدم التوقيت المحلي إذا فضلت، لكن UTC أضمن
-            };
             
-            // بما أن datetime-local يعطينا الوقت المحلي، نحتاج نضبطه لصيغة الرابط
-            // الطريقة الأبسط للروابط بدون تعقيد التوقيت الدولي:
             const formatLocal = (d) => {
                 const pad = (n) => n < 10 ? '0'+n : n;
-                return d.getFullYear() +
-                       pad(d.getMonth() + 1) +
-                       pad(d.getDate()) + 'T' +
-                       pad(d.getHours()) +
-                       pad(d.getMinutes()) + '00';
+                return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00';
             };
 
-            const startStr = formatLocal(startDate);
-            const endStr = formatLocal(endDate);
-
-            // دمج الموقع
             let finalDesc = desc;
             if(loc) {
                 const prefix = locationType === 'online' ? "رابط الاجتماع: " : "الموقع: ";
@@ -308,7 +316,7 @@
             }
 
             const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html";
-            const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${startStr}&end=${endStr}&desc=${encodeURIComponent(finalDesc)}`;
+            const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${formatLocal(startDate)}&end=${formatLocal(endDate)}&desc=${encodeURIComponent(finalDesc)}`;
 
             navigator.clipboard.writeText(finalUrl).then(() => {
                 const btn = document.querySelector('.btn-generate');
