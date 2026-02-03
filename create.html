@@ -15,12 +15,13 @@
 
     <style>
         :root {
-            --glass-bg: rgba(25, 25, 25, 0.6); /* شفافية أكثر */
-            --glass-border: rgba(255, 255, 255, 0.12);
+            /* تعديل الشفافية لتكون زجاجية أكثر */
+            --glass-bg: rgba(30, 30, 30, 0.4); 
+            --glass-border: rgba(255, 255, 255, 0.1);
             --text-white: #ffffff;
-            --text-gray: #b0b0b0;
-            --accent: #3b82f6; /* أزرق حديث */
-            --input-bg: rgba(255, 255, 255, 0.05);
+            --text-gray: #a1a1aa;
+            --accent: #2563eb;
+            --input-bg: rgba(255, 255, 255, 0.03);
         }
 
         body {
@@ -33,23 +34,18 @@
             overflow: hidden; position: relative;
         }
 
-        /* طبقة التعتيم */
         body::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(5, 5, 5, 0.6); z-index: 0;
-            pointer-events: none; /* مهم جداً للكتابة */
+            background: rgba(0, 0, 0, 0.5); z-index: 0; pointer-events: none;
         }
 
-        canvas#stars { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 1; pointer-events: none; /* مهم جداً للكتابة */
-        }
+        canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
         /* === البطاقة الزجاجية === */
         .admin-card {
             position: relative; z-index: 10;
-            background: rgba(30, 30, 30, 0.5); /* زجاجي */
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            background: rgba(20, 20, 20, 0.5); /* زجاجي شفاف */
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
             border-radius: 30px;
             padding: 40px;
@@ -58,8 +54,7 @@
             text-align: right;
             max-height: 90vh; overflow-y: auto;
         }
-        
-        .admin-card::-webkit-scrollbar { width: 0px; } 
+        .admin-card::-webkit-scrollbar { width: 0px; }
 
         /* === الرأس === */
         .header-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
@@ -73,7 +68,7 @@
         h2 { margin: 0; color: var(--text-white); font-size: 1.4rem; font-weight: 600; }
         p.subtitle { margin: 5px 0 0; color: var(--text-gray); font-size: 0.85rem; }
 
-        /* === الحقول (Inputs) - إصلاح الكتابة === */
+        /* === الحقول (Inputs) === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; font-weight: 500; }
         
         input, textarea, select {
@@ -88,70 +83,95 @@
             box-sizing: border-box;
             outline: none;
             transition: 0.3s;
-            position: relative; 
-            z-index: 20; /* رفع الطبقة للكتابة */
+            position: relative; z-index: 20;
         }
 
         input:focus, textarea:focus, select:focus { 
             border-color: var(--accent); 
             background: rgba(59, 130, 246, 0.1);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
         }
 
-        /* === إصلاح مكان أيقونة التقويم (RTL) === */
+        /* === إصلاح مكان الأيقونة (RTL Fix) === */
         .date-input-wrapper { position: relative; flex: 2; }
         
-        /* الأيقونة يمين */
         .calendar-icon { 
-            position: absolute; right: 15px; top: 50%; transform: translateY(-50%); 
-            color: var(--accent); pointer-events: none; z-index: 25; font-size: 1.1rem;
+            position: absolute; 
+            right: 15px; /* تثبيت الأيقونة يمين */
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--accent); 
+            pointer-events: none; 
+            z-index: 25; 
+            font-size: 1.2rem;
         }
         
-        /* النص يبدأ بعد الأيقونة */
+        /* إزاحة النص لليسار حتى لا يكتب فوق الأيقونة */
         input.flatpickr-input { 
-            padding-right: 45px !important; padding-left: 10px !important;
-            font-family: 'Roboto', sans-serif !important; direction: ltr; text-align: right; 
+            padding-right: 50px !important; 
+            padding-left: 10px !important;
+            font-family: 'Roboto', sans-serif !important; 
+            direction: ltr; text-align: right; 
         }
 
-        /* === تخصيص القوائم المنسدلة (Glassy Dropdowns) === */
+        /* === القوائم المنسدلة الزجاجية === */
         select {
             appearance: none; cursor: pointer;
-            /* سهم يسار */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: left 15px center; background-size: 18px;
             padding-left: 40px;
         }
-        /* القائمة الداخلية */
-        select option { background-color: #1f1f1f; color: #fff; padding: 10px; }
+        /* ملاحظة: خلفية القائمة المنسدلة (Options) يتحكم بها المتصفح ولا يمكن جعلها شفافة تماماً
+           لكننا سنجعلها داكنة لتتناسب مع الثيم */
+        select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
 
-        /* === تخصيص التقويم (Flatpickr Glassy Theme) === */
+        /* === جعل التقويم زجاجي بالكامل (Flatpickr Glassy) === */
         .flatpickr-calendar {
-            background: rgba(30, 30, 30, 0.85) !important; /* خلفية زجاجية */
-            backdrop-filter: blur(20px) !important;
+            background: rgba(20, 20, 20, 0.6) !important; /* شفافية عالية */
+            backdrop-filter: blur(25px) !important; /* تمويه الخلفية */
             border: 1px solid rgba(255,255,255,0.1) !important;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
-            border-radius: 16px !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+            border-radius: 20px !important;
             font-family: 'IBM Plex Sans Arabic', sans-serif !important;
         }
-        .flatpickr-day { color: #ddd !important; }
-        .flatpickr-day.selected { 
-            background: var(--accent) !important; border-color: var(--accent) !important; 
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        
+        .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { display: none !important; } /* إخفاء السهم العلوي */
+
+        .flatpickr-months .flatpickr-month {
+            background: transparent !important;
+            color: #fff !important;
+            fill: #fff !important;
         }
-        .flatpickr-months .flatpickr-month { color: #fff !important; fill: #fff !important; }
-        .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
-        .flatpickr-current-month .flatpickr-monthDropdown-months { 
-            font-family: 'IBM Plex Sans Arabic', sans-serif !important; 
+        
+        /* جعل قوائم اختيار الشهر والسنة شفافة */
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            background: transparent !important;
+            font-family: 'IBM Plex Sans Arabic', sans-serif !important;
             font-weight: bold;
         }
+        .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+            background: rgba(255,255,255,0.1) !important;
+        }
 
-        /* المجموعات */
+        .flatpickr-day { color: #e0e0e0 !important; border-radius: 8px !important; }
+        .flatpickr-day:hover { background: rgba(255,255,255,0.1) !important; border-color: transparent !important; }
+        
+        .flatpickr-day.selected { 
+            background: var(--accent) !important; 
+            border-color: var(--accent) !important; 
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
+        .flatpickr-time .flatpickr-time-separator { color: #fff !important; }
+        .flatpickr-time .flatpickr-am-pm { color: #fff !important; }
+
+        /* === باقي التنسيق === */
         .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
         .flex-1 { flex: 1; }
+        #hijriDisplay { text-align: center; margin-top: 8px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
 
-        #hijriDisplay { text-align: center; margin-top: 5px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
-
-        /* === الأزرار التفاعلية === */
+        /* الأزرار */
         .btn-generate {
             width: 100%; padding: 16px; margin-top: 15px;
             background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
@@ -175,23 +195,19 @@
         }
         .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
 
-        /* === منطقة النتائج === */
-        #resultArea {
-            display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);
-            animation: fadeInUp 0.5s forwards;
-        }
+        /* منطقة النتائج */
+        #resultArea { display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border); animation: fadeInUp 0.5s forwards; }
         .result-actions { display: flex; gap: 10px; margin-top: 10px; }
         .action-btn {
-            flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05);
+            flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03);
             border: 1px solid var(--glass-border); color: #ccc; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-weight: 600;
         }
         .action-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
         .btn-shorten:hover { color: #f472b6; border-color: #f472b6; background: rgba(244, 114, 182, 0.1); }
-        
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
-        /* === النافذة المنبثقة (Modal) === */
+        /* النوافذ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 100;
@@ -199,7 +215,7 @@
             backdrop-filter: blur(10px);
         }
         .modal-box {
-            background: rgba(30, 30, 30, 0.9); width: 90%; max-width: 450px;
+            background: rgba(30, 30, 30, 0.85); width: 90%; max-width: 450px;
             padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
             text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
             animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -278,16 +294,10 @@
 
         <div id="resultArea">
             <input type="text" id="finalUrlBox" readonly style="font-size: 0.8rem; direction: ltr; text-align: left; color: #60a5fa;">
-            
             <div class="result-actions">
-                <button class="action-btn" onclick="copyFinalLink()" id="copyBtn">
-                    <i class="fa-regular fa-copy"></i> نسخ
-                </button>
-                <button class="action-btn btn-shorten" onclick="shortenUrl()" id="shortenBtn">
-                    <i class="fa-solid fa-scissors"></i> تقصير
-                </button>
+                <button class="action-btn" onclick="copyFinalLink()" id="copyBtn"><i class="fa-regular fa-copy"></i> نسخ</button>
+                <button class="action-btn btn-shorten" onclick="shortenUrl()" id="shortenBtn"><i class="fa-solid fa-scissors"></i> تقصير</button>
             </div>
-
             <div id="qrcode"></div>
         </div>
     </div>
@@ -306,22 +316,15 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> 
     
     <script>
-        // === 1. إعدادات النجوم ===
+        // إعدادات النجوم
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
-        function initStars() {
-            width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height;
-            stars = []; for(let i=0; i<80; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1});
-        }
-        function drawStars() {
-            ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)";
-            stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;});
-            requestAnimationFrame(drawStars);
-        }
+        function initStars() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; stars = []; for(let i=0; i<80; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1}); }
+        function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // === 2. التقويم المسطح (تم إصلاح الستايل) ===
+        // التقويم المسطح
         const fp = flatpickr("#start", {
             enableTime: true, dateFormat: "Y-m-d h:i K", time_24hr: false, locale: "ar", disableMobile: "true", 
             onChange: function(selectedDates) { updateHijri(selectedDates[0]); }
@@ -334,7 +337,7 @@
             display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`; display.style.opacity = "1";
         }
 
-        // === 3. النوافذ والذكاء ===
+        // الوظائف
         function openMagicModal() { document.getElementById('magicModal').style.display = 'flex'; document.getElementById('pasteArea').focus(); }
         function closeMagicModal() { document.getElementById('magicModal').style.display = 'none'; }
 
@@ -374,7 +377,6 @@
             closeMagicModal();
         }
 
-        // === 4. توليد الروابط ===
         function generateLink() {
             const title = document.getElementById('title').value;
             const selectedDates = fp.selectedDates;
