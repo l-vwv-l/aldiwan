@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>غرفة التحكم | الديوان</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
             --primary: #fff;
-            --accent: #58a6ff; /* لون مميز للإشارة */
+            --accent: #58a6ff; 
             --bg-dark: #050505;
-            --glass: rgba(20, 20, 20, 0.7); /* زجاج غامق */
+            --glass: rgba(20, 20, 20, 0.75); 
             --border: rgba(255, 255, 255, 0.1);
             --input-bg: rgba(255, 255, 255, 0.05);
         }
@@ -30,7 +30,6 @@
             position: relative;
         }
 
-        /* 1. خلفية النجوم (نفس صفحتك الشخصية) */
         canvas#stars {
             position: absolute;
             top: 0;
@@ -40,38 +39,46 @@
             z-index: 0;
         }
 
-        /* 2. البطاقة الزجاجية */
         .admin-card {
             position: relative;
             z-index: 10;
             background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border);
             border-radius: 30px;
             padding: 40px;
             width: 90%;
             max-width: 450px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            text-align: center;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
+        /* === تنسيق الشعار الجديد === */
+        .logo-container {
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%; /* دائري */
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 25px rgba(88, 166, 255, 0.4); /* توهج أزرق حول الشعار */
+            transition: transform 0.3s ease;
         }
         
-        .icon-crown {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #fff, #999);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .logo-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(88, 166, 255, 0.6);
         }
 
-        h2 { margin: 0; font-weight: 700; letter-spacing: 1px; }
+        h2 { margin: 0; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; }
 
-        /* 3. حقول الإدخال بتصميم خاص */
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; text-align: right; }
         
         label {
             display: block;
@@ -81,6 +88,7 @@
             font-weight: 500;
         }
 
+        /* تنسيق الحقول */
         input, textarea {
             width: 100%;
             background: var(--input-bg);
@@ -88,7 +96,8 @@
             border-radius: 12px;
             padding: 14px;
             color: #fff;
-            font-family: inherit;
+            /* استخدام خط روبوتو للأرقام الإنجليزية */
+            font-family: 'Roboto', 'Tajawal', sans-serif; 
             font-size: 1rem;
             box-sizing: border-box;
             transition: 0.3s;
@@ -97,24 +106,38 @@
 
         input:focus, textarea:focus {
             border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 15px rgba(88, 166, 255, 0.1);
+            background: rgba(88, 166, 255, 0.05);
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.15);
         }
 
-        /* تنسيق التواريخ ليكون مريحاً */
+        /* === تنسيق خاص ومميز للتاريخ (التعديل المطلوب) === */
+        input[type="datetime-local"] {
+            direction: ltr; /* يجبر الأرقام تكون من اليسار لليمين (تنسيق إنجليزي) */
+            text-align: right; /* المحاذاة لليمين */
+            color: #8ecae6; /* لون أزرق سماوي مميز للأرقام */
+            font-weight: 500;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        /* أيقونة التقويم داخل الحقل */
         input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
+            filter: invert(1) sepia(100%) saturate(1000%) hue-rotate(180deg); /* تلوين الأيقونة بالأزرق */
             cursor: pointer;
-            opacity: 0.6;
+            opacity: 0.8;
+            transition: 0.2s;
+        }
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+            transform: scale(1.1);
         }
 
-        /* 4. الزر (نفس ستايل أزرار صفحتك) */
         .btn-generate {
             width: 100%;
             padding: 16px;
             margin-top: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--border);
+            background: linear-gradient(45deg, rgba(35, 134, 54, 0.8), rgba(35, 134, 54, 0.4));
+            border: 1px solid #238636;
             border-radius: 15px;
             color: #fff;
             font-size: 1.1rem;
@@ -128,30 +151,29 @@
         }
 
         .btn-generate:hover {
-            background: #fff;
-            color: #000;
+            background: #2ea043;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(46, 160, 67, 0.4);
         }
 
-        /* منطقة النتيجة */
         .result-area {
             margin-top: 20px;
             padding: 15px;
-            background: rgba(35, 134, 54, 0.2);
-            border: 1px solid #238636;
+            background: rgba(31, 111, 235, 0.15);
+            border: 1px solid #1f6feb;
             border-radius: 12px;
-            color: #4ade80;
+            color: #58a6ff;
             text-align: center;
             font-size: 0.9rem;
+            font-family: 'Roboto', monospace; /* للأرقام الإنجليزية في الرابط */
             display: none;
+            word-break: break-all;
             animation: fadeIn 0.5s;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .footer-note {
-            text-align: center;
             margin-top: 25px;
             color: #444;
             font-size: 0.8rem;
@@ -163,10 +185,13 @@
     <canvas id="stars"></canvas>
 
     <div class="admin-card">
-        <div class="header">
-            <i class="fa-solid fa-crown icon-crown"></i>
+        <div class="logo-container">
+            <img src="logo.png" alt="الديوان الجامعي" class="logo-img">
+        </div>
+
+        <div style="margin-bottom: 30px;">
             <h2>صانع الروابط</h2>
-            <p style="color: #666; font-size: 0.9rem; margin-top: 5px;">لوحة تحكم الديوان الجامعي</p>
+            <p style="color: #888; font-size: 0.9rem; margin-top: 5px;">لوحة تحكم المشرف</p>
         </div>
 
         <div class="form-group">
@@ -196,15 +221,13 @@
             <i class="fa-solid fa-link"></i> إنشاء ونسخ الرابط
         </button>
 
-        <div class="result-area" id="successMsg">
-            <i class="fa-solid fa-check-circle"></i> تم نسخ الرابط بنجاح!
-        </div>
+        <div class="result-area" id="successMsg"></div>
 
-        <div class="footer-note">نظام الديوان الخاص v1.0</div>
+        <div class="footer-note">نظام الديوان الخاص v2.0</div>
     </div>
 
     <script>
-        // === 1. تأثير النجوم (نفس الكود لضمان التطابق) ===
+        // === كود النجوم (خلفية) ===
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
@@ -215,12 +238,12 @@
             canvas.width = width;
             canvas.height = height;
             stars = [];
-            for(let i=0; i<80; i++) { // عدد النجوم
+            for(let i=0; i<80; i++) {
                 stars.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
-                    r: Math.random() * 1.5, // حجم النجوم
-                    d: Math.random() * 0.5 + 0.1 // سرعة الحركة
+                    r: Math.random() * 1.5,
+                    d: Math.random() * 0.5 + 0.1
                 });
             }
         }
@@ -237,12 +260,11 @@
             });
             requestAnimationFrame(drawStars);
         }
-
         window.addEventListener('resize', initStars);
         initStars();
         drawStars();
 
-        // === 2. منطق إنشاء الرابط ===
+        // === منطق إنشاء الرابط ===
         function generateLink() {
             const title = document.getElementById('title').value;
             const start = document.getElementById('start').value;
@@ -251,29 +273,25 @@
             const btn = document.querySelector('.btn-generate');
 
             if(!title || !start || !end) {
-                // هزة بسيطة للزر للتنبيه
                 btn.style.transform = "translateX(5px)";
                 setTimeout(() => btn.style.transform = "translateX(0)", 100);
                 alert('⚠️ يرجى تعبئة العنوان والوقت!');
                 return;
             }
 
-            // تنسيق الوقت
+            // التنسيق للرابط
             const format = (d) => d.replace(/[-:]/g, '').replace('T', 'T') + '00';
             
-            // رابط الصفحة (تأكدنا أنه ثابت)
+            // تأكد من صحة المسار هنا
             const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html";
             
             const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${format(start)}&end=${format(end)}&desc=${encodeURIComponent(desc)}`;
 
-            // النسخ للحافظة
             navigator.clipboard.writeText(finalUrl).then(() => {
-                // إظهار رسالة النجاح
                 const msg = document.getElementById('successMsg');
                 msg.style.display = 'block';
-                msg.innerHTML = `<i class="fa-solid fa-check-circle"></i> تم نسخ الرابط: <br><span style="font-size:0.8em; color:#fff;">${finalUrl}</span>`;
+                msg.innerHTML = `<i class="fa-solid fa-check-circle"></i> تم نسخ الرابط!<br><span style="font-size:0.8em; opacity:0.8">${finalUrl}</span>`;
                 
-                // تغيير شكل الزر مؤقتاً
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ!';
                 btn.style.background = "#fff";
@@ -281,7 +299,7 @@
 
                 setTimeout(() => {
                     btn.innerHTML = originalText;
-                    btn.style.background = "rgba(255, 255, 255, 0.1)";
+                    btn.style.background = "linear-gradient(45deg, rgba(35, 134, 54, 0.8), rgba(35, 134, 54, 0.4))";
                     btn.style.color = "#fff";
                 }, 3000);
             });
