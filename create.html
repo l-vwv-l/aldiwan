@@ -15,13 +15,14 @@
 
     <style>
         :root {
-            /* تعديل الشفافية لتكون زجاجية أكثر */
+            /* زجاج شفاف ونقي */
             --glass-bg: rgba(30, 30, 30, 0.4); 
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-white: #ffffff;
             --text-gray: #a1a1aa;
             --accent: #2563eb;
-            --input-bg: rgba(255, 255, 255, 0.03);
+            /* خلفية الحقول موحدة وشفافة */
+            --input-bg: rgba(255, 255, 255, 0.05); 
         }
 
         body {
@@ -41,11 +42,10 @@
 
         canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* === البطاقة الزجاجية === */
         .admin-card {
             position: relative; z-index: 10;
-            background: rgba(20, 20, 20, 0.5); /* زجاجي شفاف */
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
             border: 1px solid var(--glass-border);
             border-radius: 30px;
             padding: 40px;
@@ -56,7 +56,6 @@
         }
         .admin-card::-webkit-scrollbar { width: 0px; }
 
-        /* === الرأس === */
         .header-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
         .logo-img {
             width: 85px; height: 85px; border-radius: 50%;
@@ -68,12 +67,12 @@
         h2 { margin: 0; color: var(--text-white); font-size: 1.4rem; font-weight: 600; }
         p.subtitle { margin: 5px 0 0; color: var(--text-gray); font-size: 0.85rem; }
 
-        /* === الحقول (Inputs) === */
+        /* === توحيد شكل الحقول والقوائم (الزجاجية) === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; font-weight: 500; }
         
         input, textarea, select {
             width: 100%;
-            background: var(--input-bg);
+            background-color: var(--input-bg) !important; /* إجبار الشفافية */
             border: 1px solid var(--glass-border);
             border-radius: 14px;
             padding: 14px;
@@ -84,101 +83,99 @@
             outline: none;
             transition: 0.3s;
             position: relative; z-index: 20;
+            
+            /* إزالة ستايل المتصفح الافتراضي للقوائم */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         input:focus, textarea:focus, select:focus { 
             border-color: var(--accent); 
-            background: rgba(59, 130, 246, 0.1);
+            background-color: rgba(59, 130, 246, 0.1) !important;
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
         }
 
-        /* === إصلاح مكان الأيقونة (RTL Fix) === */
-        .date-input-wrapper { position: relative; flex: 2; }
+        /* === ضبط أيقونة التقويم (Position Fix) === */
+        .date-input-wrapper { 
+            position: relative; 
+            flex: 2; 
+            display: flex; /* لضمان التناسق */
+            align-items: center;
+        }
         
         .calendar-icon { 
             position: absolute; 
-            right: 15px; /* تثبيت الأيقونة يمين */
-            top: 50%; 
-            transform: translateY(-50%); 
+            right: 15px; /* تثبيت الأيقونة يمين الحقل */
+            top: 50%;
+            transform: translateY(-50%); /* سنترتها عمودياً بالضبط */
             color: var(--accent); 
-            pointer-events: none; 
+            pointer-events: none; /* عشان الضغطة تروح للحقل مو للأيقونة */
             z-index: 25; 
             font-size: 1.2rem;
         }
         
-        /* إزاحة النص لليسار حتى لا يكتب فوق الأيقونة */
+        /* إزاحة النص عشان ما يغطي الأيقونة */
         input.flatpickr-input { 
-            padding-right: 50px !important; 
+            padding-right: 50px !important; /* مساحة للأيقونة يمين */
             padding-left: 10px !important;
             font-family: 'Roboto', sans-serif !important; 
             direction: ltr; text-align: right; 
         }
 
-        /* === القوائم المنسدلة الزجاجية === */
+        /* === القوائم المنسدلة الزجاجية (Select) === */
         select {
-            appearance: none; cursor: pointer;
+            cursor: pointer;
+            /* إضافة سهم مخصص يسار لأننا RTL */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: left 15px center; background-size: 18px;
-            padding-left: 40px;
+            background-repeat: no-repeat;
+            background-position: left 15px center; 
+            background-size: 18px;
+            padding-left: 45px; /* مساحة للسهم */
         }
-        /* ملاحظة: خلفية القائمة المنسدلة (Options) يتحكم بها المتصفح ولا يمكن جعلها شفافة تماماً
-           لكننا سنجعلها داكنة لتتناسب مع الثيم */
-        select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
+        
+        /* لون الخيارات داخل القائمة (لا يمكن جعله شفافاً في المتصفحات لأسباب أمنية، فنجعله غامقاً متناسقاً) */
+        select option { 
+            background-color: #1a1a1a; 
+            color: #fff; 
+            padding: 10px; 
+        }
 
-        /* === جعل التقويم زجاجي بالكامل (Flatpickr Glassy) === */
+        /* === التقويم الزجاجي (Flatpickr) === */
         .flatpickr-calendar {
-            background: rgba(20, 20, 20, 0.6) !important; /* شفافية عالية */
-            backdrop-filter: blur(25px) !important; /* تمويه الخلفية */
+            background: rgba(20, 20, 20, 0.8) !important;
+            backdrop-filter: blur(25px) !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6) !important;
             border-radius: 20px !important;
             font-family: 'IBM Plex Sans Arabic', sans-serif !important;
         }
+        .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { display: none !important; }
         
-        .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { display: none !important; } /* إخفاء السهم العلوي */
-
-        .flatpickr-months .flatpickr-month {
-            background: transparent !important;
-            color: #fff !important;
-            fill: #fff !important;
-        }
-        
-        /* جعل قوائم اختيار الشهر والسنة شفافة */
+        .flatpickr-months .flatpickr-month, 
         .flatpickr-current-month .flatpickr-monthDropdown-months {
-            background: transparent !important;
-            font-family: 'IBM Plex Sans Arabic', sans-serif !important;
-            font-weight: bold;
+            background: transparent !important; color: #fff !important; fill: #fff !important;
         }
-        .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
-            background: rgba(255,255,255,0.1) !important;
-        }
-
+        .flatpickr-current-month .flatpickr-monthDropdown-months:hover { background: rgba(255,255,255,0.1) !important; }
+        
         .flatpickr-day { color: #e0e0e0 !important; border-radius: 8px !important; }
         .flatpickr-day:hover { background: rgba(255,255,255,0.1) !important; border-color: transparent !important; }
-        
         .flatpickr-day.selected { 
-            background: var(--accent) !important; 
-            border-color: var(--accent) !important; 
+            background: var(--accent) !important; border-color: var(--accent) !important; 
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
         }
-
         .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
-        .flatpickr-time .flatpickr-time-separator { color: #fff !important; }
-        .flatpickr-time .flatpickr-am-pm { color: #fff !important; }
 
-        /* === باقي التنسيق === */
+        /* باقي التنسيقات */
         .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
         .flex-1 { flex: 1; }
         #hijriDisplay { text-align: center; margin-top: 8px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
 
-        /* الأزرار */
         .btn-generate {
             width: 100%; padding: 16px; margin-top: 15px;
             background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-            color: #fff; border: 1px solid var(--glass-border);
-            border-radius: 15px; font-size: 1.1rem; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: all 0.3s;
+            color: #fff; border: 1px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s;
         }
         .btn-generate:hover {
             background: var(--accent); border-color: var(--accent);
@@ -186,16 +183,13 @@
         }
 
         .magic-btn {
-            position: absolute; top: 25px; left: 25px;
-            width: 45px; height: 45px; border-radius: 50%;
-            background: linear-gradient(135deg, #8b5cf6, #d946ef);
-            border: none; color: white; cursor: pointer;
+            position: absolute; top: 25px; left: 25px; width: 45px; height: 45px; border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #d946ef); border: none; color: white; cursor: pointer;
             display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
             box-shadow: 0 0 20px rgba(217, 70, 239, 0.4); transition: 0.3s; z-index: 30;
         }
         .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
 
-        /* منطقة النتائج */
         #resultArea { display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border); animation: fadeInUp 0.5s forwards; }
         .result-actions { display: flex; gap: 10px; margin-top: 10px; }
         .action-btn {
@@ -207,19 +201,8 @@
         .btn-shorten:hover { color: #f472b6; border-color: #f472b6; background: rgba(244, 114, 182, 0.1); }
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
-        /* النوافذ */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 100;
-            display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px);
-        }
-        .modal-box {
-            background: rgba(30, 30, 30, 0.85); width: 90%; max-width: 450px;
-            padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
-            text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
-            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-box { background: rgba(30, 30, 30, 0.85); width: 90%; max-width: 450px; padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.9); animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .modal-textarea { height: 150px; margin-top: 15px; resize: none; background: rgba(0,0,0,0.5); }
         .modal-btn { width: 100%; padding: 14px; margin-top: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
         .btn-parse { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
@@ -227,7 +210,6 @@
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
     </style>
 </head>
 <body>
