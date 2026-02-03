@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة موعد الدورة | الديوان الجامعي</title>
+    <style>
+        body {
+            background-color: #0d1117; /* لون خلفية غامق */
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 15px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        h1 { color: #58a6ff; margin-bottom: 0.5rem; }
+        p { margin-bottom: 2rem; font-size: 1.1rem; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .google { background-color: #ea4335; color: white; }
+        .apple { background-color: #ffffff; color: black; }
+        .outlook { background-color: #0078d4; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1 id="eventTitle">عنوان الدورة</h1>
+        <p id="eventTime">جاري تحميل التوقيت...</p>
+
+        <a id="googleBtn" class="btn google" target="_blank">📅 تقويم Google</a>
+        <a id="appleBtn" class="btn apple">🍏 تقويم Apple (iOS)</a>
+        <a id="outlookBtn" class="btn outlook" target="_blank">📧 تقويم Outlook</a>
+    </div>
+
+    <script>
+        // دالة لجلب البيانات من الرابط
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // قراءة البيانات من الرابط
+        const title = getQueryParam('title') || 'لقاء الديوان الجامعي';
+        const start = getQueryParam('start'); // الصيغة: YYYYMMDDTHHMMSS
+        const end = getQueryParam('end');     // الصيغة: YYYYMMDDTHHMMSS
+        const details = getQueryParam('desc') || 'لا يوجد تفاصيل إضافية';
+        
+        // عرض البيانات في الصفحة
+        document.getElementById('eventTitle').innerText = title;
+        if(start) {
+            // تنسيق الوقت للعرض بشكل جميل
+            const year = start.substring(0,4);
+            const month = start.substring(4,6);
+            const day = start.substring(6,8);
+            const hour = start.substring(9,11);
+            const min = start.substring(11,13);
+            document.getElementById('eventTime').innerText = `${day}/${month}/${year} - الساعة ${hour}:${min}`;
+        }
+
+        // 1. رابط جوجل
+        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(details)}`;
+        document.getElementById('googleBtn').href = googleUrl;
+
+        // 2. رابط أوتلوك
+        const outlookUrl = `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(title)}&startdt=${start}&enddt=${end}&body=${encodeURIComponent(details)}`;
+        document.getElementById('outlookBtn').href = outlookUrl;
+
+        // 3. ملف ICS للآيفون (إنشاء ملف ديناميكي)
+        document.getElementById('appleBtn').onclick = function() {
+            const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Aldiwan Aljamei//NONSGML Event//EN
+BEGIN:VEVENT
+UID:${Date.now()}@aldiwan.dev
+DTSTAMP:${start}Z
+DTSTART:${start}Z
+DTEND:${end}Z
+SUMMARY:${title}
+DESCRIPTION:${details}
+END:VEVENT
+END:VCALENDAR`;
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'event.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+    </script>
+
+</body>
+</html>
