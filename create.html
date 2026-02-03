@@ -91,27 +91,17 @@
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
         }
 
-        /* === إصلاح مكان الأيقونة (تم التعديل للنزول للأسفل) === */
+        /* === القوائم والتاريخ === */
         .date-input-wrapper { position: relative; flex: 2; }
-        
         .calendar-icon { 
-            position: absolute; 
-            left: 15px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            margin-top: 3px; /* === هذا السطر ينزل الأيقونة قليلاً === */
-            color: var(--accent); 
-            pointer-events: none; 
-            z-index: 25; 
-            font-size: 1.2rem;
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%); 
+            color: var(--accent); pointer-events: none; z-index: 25; font-size: 1.2rem;
         }
-        
         input.flatpickr-input { 
             padding-left: 45px !important; padding-right: 15px !important; 
             font-family: 'Roboto', sans-serif !important; direction: ltr; text-align: right; 
         }
 
-        /* === القوائم المنسدلة === */
         select {
             appearance: none; cursor: pointer;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -177,7 +167,7 @@
         }
         .action-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
         .btn-shorten:hover { color: #f472b6; border-color: #f472b6; background: rgba(244, 114, 182, 0.1); }
-        .btn-download:hover { color: #4ade80; border-color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+        .btn-download:hover { color: #4ade80; border-color: #4ade80; background: rgba(74, 222, 128, 0.1); } /* زر التحميل */
 
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
@@ -394,7 +384,7 @@
             box.select(); navigator.clipboard.writeText(box.value);
             const btn = document.getElementById('copyBtn');
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ';
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> تم';
             btn.style.borderColor = "#10b981"; btn.style.color = "#10b981";
             setTimeout(() => { 
                 btn.innerHTML = originalHtml; 
@@ -435,6 +425,7 @@
                 link.click();
                 document.body.removeChild(link);
             } else {
+                // في حال كان canvas (يحدث أحياناً قبل تحويله لصورة)
                 const canvas = qrDiv.querySelector("canvas");
                 if (canvas) {
                     const link = document.createElement("a");
