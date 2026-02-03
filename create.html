@@ -15,7 +15,7 @@
 
     <style>
         :root {
-            --glass-bg: rgba(20, 20, 20, 0.65); /* خلفية زجاجية داكنة */
+            --glass-bg: rgba(20, 20, 20, 0.65);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-white: #ffffff;
             --text-gray: #a1a1aa;
@@ -91,88 +91,54 @@
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
         }
 
-        /* === إصلاح مكان الأيقونة (نقلتها لليسار) === */
+        /* === إصلاح مكان الأيقونة (تم التعديل للنزول للأسفل) === */
         .date-input-wrapper { position: relative; flex: 2; }
         
         .calendar-icon { 
             position: absolute; 
-            left: 15px; /* المكان الصحيح في العربية لتجنب التداخل */
+            left: 15px; 
             top: 50%; 
             transform: translateY(-50%); 
+            margin-top: 3px; /* === هذا السطر ينزل الأيقونة قليلاً === */
             color: var(--accent); 
             pointer-events: none; 
             z-index: 25; 
             font-size: 1.2rem;
         }
         
-        /* إزاحة النص */
         input.flatpickr-input { 
-            padding-left: 45px !important; /* مساحة للأيقونة يساراً */
-            padding-right: 15px !important; 
-            font-family: 'Roboto', sans-serif !important; 
-            direction: ltr; text-align: right; 
+            padding-left: 45px !important; padding-right: 15px !important; 
+            font-family: 'Roboto', sans-serif !important; direction: ltr; text-align: right; 
         }
 
-        /* === القوائم المنسدلة الزجاجية === */
+        /* === القوائم المنسدلة === */
         select {
             appearance: none; cursor: pointer;
-            /* سهم القائمة */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: left 15px center; background-size: 18px;
             padding-left: 40px;
         }
-        /* لون خلفية الخيارات (يجب أن يكون مصمتاً في أغلب المتصفحات) */
-        select option { background-color: #151515; color: #fff; padding: 12px; }
+        select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
 
-        /* === تقويم زجاجي بالكامل (Ultra Glassy) === */
+        /* === التقويم الزجاجي === */
         .flatpickr-calendar {
-            background: rgba(25, 25, 25, 0.75) !important; /* شفاف */
-            backdrop-filter: blur(30px) !important; /* تغبيش قوي */
-            -webkit-backdrop-filter: blur(30px) !important;
+            background: rgba(25, 25, 25, 0.75) !important; backdrop-filter: blur(30px) !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
             box-shadow: 0 25px 60px rgba(0,0,0,0.6) !important;
-            border-radius: 20px !important;
-            font-family: 'IBM Plex Sans Arabic', sans-serif !important;
+            border-radius: 20px !important; font-family: 'IBM Plex Sans Arabic', sans-serif !important;
             padding: 10px !important;
         }
-        
-        .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { display: none !important; }
-
-        /* رأس التقويم */
-        .flatpickr-months .flatpickr-month {
-            background: transparent !important; color: #fff !important; fill: #fff !important;
-            margin-bottom: 10px;
-        }
-        
-        /* القوائم داخل التقويم */
-        .flatpickr-current-month .flatpickr-monthDropdown-months {
-            background: transparent !important; font-weight: bold;
-        }
-        .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
-            background: rgba(255,255,255,0.1) !important;
-        }
-
-        /* الأيام */
-        .flatpickr-day { 
-            color: #e0e0e0 !important; border-radius: 10px !important; 
-            border: 1px solid transparent !important;
-        }
-        .flatpickr-day:hover { 
-            background: rgba(255,255,255,0.1) !important; 
-        }
+        .flatpickr-day { color: #e0e0e0 !important; border-radius: 10px !important; }
+        .flatpickr-day:hover { background: rgba(255,255,255,0.1) !important; border-color: transparent !important; }
         .flatpickr-day.selected { 
-            background: var(--accent) !important; 
-            border-color: var(--accent) !important; 
+            background: var(--accent) !important; border-color: var(--accent) !important; 
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-            font-weight: bold;
         }
-
-        /* الوقت */
-        .flatpickr-time { border-top: 1px solid rgba(255,255,255,0.1) !important; margin-top: 10px; }
+        .flatpickr-months .flatpickr-month { color: #fff !important; fill: #fff !important; margin-bottom: 10px; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months { background: transparent !important; }
         .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
-        .flatpickr-time .flatpickr-am-pm { color: #fff !important; }
 
-        /* === باقي التنسيق === */
+        /* === الأزرار === */
         .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
         .flex-1 { flex: 1; }
         #hijriDisplay { text-align: center; margin-top: 8px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
@@ -200,8 +166,10 @@
         }
         .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
 
+        /* === منطقة النتائج === */
         #resultArea { display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border); animation: fadeInUp 0.5s forwards; }
         .result-actions { display: flex; gap: 10px; margin-top: 10px; }
+        
         .action-btn {
             flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03);
             border: 1px solid var(--glass-border); color: #ccc; cursor: pointer;
@@ -209,6 +177,8 @@
         }
         .action-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
         .btn-shorten:hover { color: #f472b6; border-color: #f472b6; background: rgba(244, 114, 182, 0.1); }
+        .btn-download:hover { color: #4ade80; border-color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
         /* النوافذ */
@@ -301,6 +271,7 @@
             <div class="result-actions">
                 <button class="action-btn" onclick="copyFinalLink()" id="copyBtn"><i class="fa-regular fa-copy"></i> نسخ</button>
                 <button class="action-btn btn-shorten" onclick="shortenUrl()" id="shortenBtn"><i class="fa-solid fa-scissors"></i> تقصير</button>
+                <button class="action-btn btn-download" onclick="downloadQR()" id="dlBtn"><i class="fa-solid fa-download"></i> تحميل QR</button>
             </div>
             <div id="qrcode"></div>
         </div>
@@ -341,7 +312,6 @@
             display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`; display.style.opacity = "1";
         }
 
-        // الوظائف
         function openMagicModal() { document.getElementById('magicModal').style.display = 'flex'; document.getElementById('pasteArea').focus(); }
         function closeMagicModal() { document.getElementById('magicModal').style.display = 'none'; }
 
@@ -449,6 +419,33 @@
                 } else { throw new Error(); }
             } catch (e) {
                 alert('فشل التقصير التلقائي'); btn.innerHTML = '<i class="fa-solid fa-scissors"></i> تقصير';
+            }
+        }
+
+        // === دالة تحميل QR Code الجديدة ===
+        function downloadQR() {
+            const qrDiv = document.getElementById("qrcode");
+            const img = qrDiv.querySelector("img");
+            
+            if (img && img.src) {
+                const link = document.createElement("a");
+                link.href = img.src;
+                link.download = "aldiwan-qr.png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                const canvas = qrDiv.querySelector("canvas");
+                if (canvas) {
+                    const link = document.createElement("a");
+                    link.href = canvas.toDataURL("image/png");
+                    link.download = "aldiwan-qr.png";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert("⚠️ لم يتم إنشاء الباركود بعد!");
+                }
             }
         }
     </script>
