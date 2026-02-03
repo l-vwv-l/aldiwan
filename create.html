@@ -14,10 +14,9 @@
         :root {
             --primary: #fff;
             --accent: #2563eb; 
-            --bg-dark: #050505;
-            --glass: rgba(22, 22, 22, 0.9); 
-            --border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(255, 255, 255, 0.05);
+            --bg-dark: #121212; /* خلفية داكنة تتناسب مع النيومورفيزم */
+            --glass: rgba(30, 30, 30, 0.6); 
+            --border: rgba(255, 255, 255, 0.08);
             --text-muted: #9ca3af;
         }
 
@@ -39,167 +38,140 @@
         .admin-card {
             position: relative;
             z-index: 10;
-            background: var(--glass);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 35px;
+            background: #1e1e1e; /* لون ثابت لظهور تأثير الأزرار */
+            border: 1px solid #333;
+            border-radius: 30px;
+            padding: 40px;
             width: 90%;
             max-width: 550px;
-            box-shadow: 0 0 80px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             text-align: right;
         }
 
-        /* === الشعار === */
         .logo-header { text-align: center; margin-bottom: 30px; }
         .logo-img {
-            width: 80px; height: 80px; border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+            width: 85px; height: 85px; border-radius: 50%;
+            border: 3px solid #252525;
+            box-shadow: 5px 5px 10px #151515, -5px -5px 10px #272727; /* تأثير 3D */
             transition: 0.3s;
         }
-        .logo-img:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(37, 99, 235, 0.6); }
+        .logo-img:hover { transform: scale(1.05); }
 
-        /* === الحقول === */
+        /* === الحقول (Inputs) بتصميم غائر === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
         
         input, textarea, select {
             width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px;
+            background: #1e1e1e;
+            border: none;
+            border-radius: 15px;
+            padding: 16px;
             color: #fff;
             font-family: 'Tajawal', sans-serif;
             font-size: 0.95rem;
             box-sizing: border-box;
             outline: none;
+            /* تأثير الظل الغائر (Inner Shadow) مثل الزر الذي طلبته */
+            box-shadow: inset 5px 5px 10px #151515, 
+                        inset -5px -5px 10px #272727;
             transition: 0.2s;
         }
         input:focus, textarea:focus, select:focus { 
-            border-color: var(--accent); 
-            background: rgba(37, 99, 235, 0.05); 
+            box-shadow: inset 2px 2px 5px #151515, 
+                        inset -2px -2px 5px #272727,
+                        0 0 5px var(--accent);
         }
 
-        /* === تخصيص حقل التاريخ === */
-        .date-section { margin-bottom: 20px; }
-        .date-container { display: flex; gap: 15px; }
+        /* === تصميم حقل التقويم الخاص === */
         .date-input-wrapper { flex: 2; position: relative; }
-        
-        /* هذا الكلاس يخص مكتبة Flatpickr */
         input.flatpickr-input {
-            font-family: 'Roboto', sans-serif !important; /* أرقام إنجليزية */
+            font-family: 'Roboto', sans-serif !important;
             font-size: 1.1rem;
             color: #60a5fa;
-            direction: ltr; 
-            text-align: left; /* المحاذاة لليسار عشان التاريخ والوقت يكونون مرتبين */
-            padding-left: 40px; /* مسافة للأيقونة */
+            direction: ltr; text-align: left; padding-left: 45px;
             cursor: pointer;
         }
-        
-        /* أيقونة التقويم داخل الحقل */
         .calendar-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #60a5fa;
-            font-size: 1.1rem;
-            pointer-events: none;
-            z-index: 5;
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            color: #60a5fa; font-size: 1.2rem; pointer-events: none; z-index: 5;
         }
 
-        .duration-wrapper { flex: 1; }
+        .duration-wrapper { flex: 1; margin-right: 15px; }
         select.duration-select { text-align: center; cursor: pointer; color: #ddd; }
 
-        /* شارة التاريخ الهجري */
+        /* === التاريخ الهجري === */
         #hijriDisplay {
-            margin-top: 8px;
-            font-size: 0.85rem;
+            margin-top: 10px;
+            font-size: 0.9rem;
             color: #fbbf24; 
-            background: rgba(251, 191, 36, 0.1);
-            padding: 5px 10px;
-            border-radius: 6px;
-            display: inline-block;
-            border: 1px solid rgba(251, 191, 36, 0.2);
             font-family: 'Tajawal';
-            opacity: 0; 
-            transition: opacity 0.3s;
+            text-align: center;
+            opacity: 0; transition: opacity 0.3s;
         }
 
-        /* === تخصيص شكل التقويم المنبثق (Flatpickr Theme) === */
-        .flatpickr-calendar {
-            background: #1a1a1a !important;
-            border: 1px solid #333 !important;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
-            font-family: 'Roboto', sans-serif !important;
-            border-radius: 12px !important;
+        /* === أزرار التبديل (التصميم الذي طلبته) === */
+        .toggles-row {
+            display: flex; gap: 30px; margin-bottom: 25px; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid #2a2a2a;
         }
-        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-            background: var(--accent) !important;
-            border-color: var(--accent) !important;
+        .switch-label-text { font-size: 0.9rem; color: #ddd; margin-left: 10px; }
+        
+        /* -- كود الزر المنسوخ (مع تعديلات بسيطة للتحجيم) -- */
+        .switch-button {
+            display: flex; align-items: center; justify-content: center;
+            height: 30px; margin: 0; cursor: pointer;
         }
-        .flatpickr-day:hover {
-            background: #333 !important;
+        .switch-outer {
+            height: 100%; background: #252525; width: 60px;
+            border-radius: 165px; 
+            box-shadow: inset 5px 5px 5px rgba(0,0,0,0.2), inset -5px -5px 15px rgba(255,255,255,0.1);
+            padding: 3px; -webkit-box-sizing: border-box; box-sizing: border-box;
         }
-        .flatpickr-months .flatpickr-month {
-            background: #1a1a1a !important;
-            color: #fff !important;
-            fill: #fff !important;
+        .switch-outer input[type="checkbox"] { opacity: 0; -webkit-appearance: none; -moz-appearance: none; appearance: none; position: absolute; }
+        .switch-outer .button {
+            height: 100%; width: 26px; background: -webkit-linear-gradient(bottom, #2b2b2b 0%, #414141 100%);
+            border-radius: 100%; box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.4);
+            -webkit-transition: all 0.2s ease-out; transition: all 0.2s ease-out; position: relative;
         }
-        .flatpickr-current-month .flatpickr-monthDropdown-months {
-            font-family: 'Tajawal', sans-serif !important; /* أسماء الأشهر بالعربي */
+        .switch-outer .button .button-toggle {
+            height: 8px; width: 8px; background: #252525; border-radius: 100%;
+            position: absolute; top: 50%; left: 50%; margin-top: -4px; margin-left: -4px;
+            -webkit-box-shadow: inset 0px 2px 2px 0px rgba(0,0,0,0.3); box-shadow: inset 0px 2px 2px 0px rgba(0,0,0,0.3);
         }
-        .flatpickr-time input {
-            color: #fff !important;
-            font-family: 'Roboto', sans-serif !important;
+        .switch-outer input[type="checkbox"]:checked + .button {
+            -webkit-transform: translateX(30px); transform: translateX(30px);
+            /* تغيير لون الزر عند التفعيل للأزرق */
+            background: -webkit-linear-gradient(bottom, #2563eb 0%, #3b82f6 100%);
+        }
+        .switch-outer input[type="checkbox"]:checked + .button .button-toggle {
+            background: #1e40af; box-shadow: inset 0px 2px 2px 0px rgba(0,0,0,0.3);
         }
 
-        /* === باقي التنسيقات === */
-        .options-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding: 0 5px;
-        }
-        .reminder-wrapper { position: relative; width: 140px; }
-        .reminder-select {
-            appearance: none; background: transparent; border: none;
-            color: var(--text-muted); font-size: 0.9rem; padding-right: 25px; cursor: pointer;
-            text-align: right; width: 100%;
-        }
-        .reminder-icon {
-            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-            color: var(--text-muted); pointer-events: none;
-        }
-        .meta-info { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-family: 'Roboto'; }
-        .meta-item { display: flex; align-items: center; gap: 6px; }
-
-        .location-section {
-            background: rgba(255,255,255,0.02);
-            padding: 6px; border-radius: 14px;
-            display: flex; gap: 10px; align-items: center;
-            margin-bottom: 20px; border: 1px solid var(--border);
-        }
-        .loc-type-btn {
-            background: transparent; border: none; color: var(--text-muted);
-            padding: 10px 20px; border-radius: 10px; cursor: pointer;
-            font-family: 'Tajawal'; font-size: 0.9rem; font-weight: 600;
-            display: flex; align-items: center; gap: 8px; transition: 0.3s;
-        }
-        .loc-type-btn.active {
-            background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
-        .loc-input { border: none; background: transparent; padding: 0 10px; box-shadow: none !important; }
-
+        /* === زر الإنشاء === */
         .btn-generate {
-            width: 100%; padding: 16px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border: none; border-radius: 14px;
-            color: #fff; font-size: 1.1rem; font-weight: 700;
+            width: 100%; padding: 18px;
+            background: linear-gradient(145deg, #1e1e1e, #232323);
+            border: none; border-radius: 15px;
+            color: #58a6ff; font-size: 1.1rem; font-weight: 700;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.3s; margin-top: 10px;
+            box-shadow: 6px 6px 12px #151515, -6px -6px 12px #272727;
+            transition: 0.3s; margin-top: 15px;
         }
-        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); }
+        .btn-generate:hover {
+            color: #fff; background: #2563eb;
+            box-shadow: inset 4px 4px 8px #1d4ed8, inset -4px -4px 8px #3b82f6;
+        }
+
+        /* تنسيق باقي العناصر (مخفية للتركيز على المطلوب) */
+        .options-bar { display: none; } /* أخفيت الشريط القديم للتبسيط */
+        .location-section { margin-top: 20px; display: flex; gap: 10px; }
+        .loc-input { flex: 1; }
+        .loc-btn {
+            width: 50px; height: 50px; border-radius: 12px; border: none; background: #1e1e1e; color: #777;
+            box-shadow: 5px 5px 10px #151515, -5px -5px 10px #272727; cursor: pointer; transition: 0.2s;
+        }
+        .loc-btn.active { color: #2563eb; box-shadow: inset 3px 3px 6px #151515, inset -3px -3px 6px #272727; }
+
     </style>
 </head>
 <body>
@@ -212,52 +184,56 @@
             <h2 style="margin: 15px 0 0; font-size: 1.4rem;">إضافة حدث جديد</h2>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 25px;">
             <input type="text" id="title" placeholder="عنوان الدورة أو الاجتماع..." style="font-size: 1.1rem;">
         </div>
 
-        <div class="date-section">
-            <div class="date-container">
-                <div class="date-input-wrapper">
-                    <i class="fa-regular fa-calendar-days calendar-icon"></i>
-                    <input type="text" id="start" placeholder="اختر التاريخ والوقت">
-                </div>
-                <div class="duration-wrapper">
-                    <select id="duration" class="duration-select">
-                        <option value="60" selected>ساعة</option>
-                        <option value="90">ساعة ونصف</option>
-                        <option value="120">ساعتان</option>
-                        <option value="180">3 ساعات</option>
-                    </select>
-                </div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <div class="date-input-wrapper">
+                <i class="fa-regular fa-calendar-days calendar-icon"></i>
+                <input type="text" id="start" placeholder="اختر الموعد">
             </div>
-            <div id="hijriDisplay"></div>
-        </div>
-
-        <div class="options-bar">
-            <div class="reminder-wrapper">
-                <i class="fa-regular fa-bell reminder-icon"></i>
-                <select id="reminder" class="reminder-select">
-                    <option value="30" selected>قبل 30 دقيقة</option>
-                    <option value="60">قبل ساعة</option>
-                    <option value="1440">قبل يوم</option>
+            <div class="duration-wrapper">
+                <select id="duration" class="duration-select">
+                    <option value="60">1 ساعة</option>
+                    <option value="90">1.5 ساعة</option>
+                    <option value="120">2 ساعة</option>
+                    <option value="180">3 ساعات</option>
                 </select>
             </div>
-            <div class="meta-info">
-                <div class="meta-item"><i class="fa-solid fa-globe"></i> Riyadh</div>
-                <div class="meta-item" style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:0.75rem;">AM/PM</div>
+        </div>
+        
+        <div id="hijriDisplay"></div>
+
+        <div class="toggles-row">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label class="switch-button" for="allDay">
+                    <div class="switch-outer">
+                        <input id="allDay" type="checkbox">
+                        <div class="button">
+                            <span class="button-toggle"></span>
+                        </div>
+                    </div>
+                </label>
+                <span class="switch-label-text">طوال اليوم</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label class="switch-button" for="recurring">
+                    <div class="switch-outer">
+                        <input id="recurring" type="checkbox">
+                        <div class="button">
+                            <span class="button-toggle"></span>
+                        </div>
+                    </div>
+                </label>
+                <span class="switch-label-text">تكرار</span>
             </div>
         </div>
 
         <div class="location-section">
-            <div style="display:flex; gap:5px;">
-                <button class="loc-type-btn active" id="btnOnline" onclick="setType('online')">
-                    <i class="fa-solid fa-video"></i> أونلاين
-                </button>
-                <button class="loc-type-btn" id="btnLoc" onclick="setType('location')">
-                    <i class="fa-solid fa-location-dot"></i> موقع
-                </button>
-            </div>
+            <button class="loc-btn active" id="btnOnline" onclick="setType('online')"><i class="fa-solid fa-video"></i></button>
+            <button class="loc-btn" id="btnLoc" onclick="setType('location')"><i class="fa-solid fa-location-dot"></i></button>
             <input type="text" id="locationInput" class="loc-input" placeholder="رابط الاجتماع (Zoom)...">
         </div>
 
@@ -271,20 +247,37 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> <script>
-        // === 1. تفعيل التقويم الاحترافي (Flatpickr) ===
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+
+    <script>
+        // 1. تقويم Flatpickr
         const fp = flatpickr("#start", {
             enableTime: true,
-            dateFormat: "Y-m-d h:i K", // التنسيق: 2026-02-03 09:00 PM
-            time_24hr: false,
-            locale: "ar", // أسماء الأشهر بالعربي
-            disableMobile: "true", // إجبار الموبايل على استخدام هذا الشكل الجميل بدلاً من الافتراضي
+            dateFormat: "Y-m-d h:i K",
+            locale: "ar",
+            disableMobile: "true",
             onChange: function(selectedDates, dateStr, instance) {
                 updateHijri(selectedDates[0]);
             }
         });
 
-        // === 2. كود النجوم ===
+        // 2. دالة الهجري (الدقيقة جداً - تقويم أم القرى)
+        function updateHijri(dateObj) {
+            const display = document.getElementById("hijriDisplay");
+            if (!dateObj) { display.style.opacity = "0"; return; }
+
+            // استخدام Intl للحصول على التاريخ الهجري الصحيح (أم القرى)
+            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(dateObj);
+
+            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`;
+            display.style.opacity = "1";
+        }
+
+        // 3. النجوم
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
@@ -299,33 +292,7 @@
         }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // === 3. التحويل للهجري (تلقائي) ===
-        function updateHijri(dateObj) {
-            const display = document.getElementById("hijriDisplay");
-            if (!dateObj) { display.style.opacity = "0"; return; }
-
-            let day = dateObj.getDate();
-            let month = dateObj.getMonth() + 1;
-            let year = dateObj.getFullYear();
-
-            let jd = Math.floor((1461 * (year + 4800 + Math.floor((month - 14) / 12))) / 4)
-                   + Math.floor((367 * (month - 2 - 12 * Math.floor((month - 14) / 12))) / 12)
-                   - Math.floor((3 * Math.floor((year + 4900 + Math.floor((month - 14) / 12)) / 100)) / 4)
-                   + day - 32075;
-            let l = jd - 1948440 + 10632;
-            let n = Math.floor((l - 1) / 10631);
-            l = l - 10631 * n + 354;
-            let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719))
-                  + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
-            let m = Math.floor((24 * l) / 709) - Math.floor((j * 24) / 709);
-            let d = l - Math.floor((709 * m) / 24);
-            let y = 30 * n + j - 30;
-
-            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق هجرياً: ${y}/${m}/${d}`;
-            display.style.opacity = "1";
-        }
-
-        // === 4. باقي الوظائف (موقع، إنشاء الرابط) ===
+        // 4. التحكم بالموقع والرابط
         let locationType = 'online';
         function setType(type) {
             locationType = type;
@@ -343,7 +310,6 @@
 
         function generateLink() {
             const title = document.getElementById('title').value;
-            // نأخذ التاريخ من كائن Flatpickr مباشرة لضمان الدقة
             const selectedDates = fp.selectedDates;
             const durationMinutes = parseInt(document.getElementById('duration').value);
             const desc = document.getElementById('desc').value;
@@ -372,10 +338,11 @@
                 const btn = document.querySelector('.btn-generate');
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ!';
-                btn.style.background = "#10b981"; 
+                btn.style.color = "#fff"; btn.style.background = "#2563eb";
                 setTimeout(() => {
                     btn.innerHTML = originalText;
-                    btn.style.background = "linear-gradient(135deg, #2563eb, #1d4ed8)";
+                    btn.style.background = "linear-gradient(145deg, #1e1e1e, #232323)";
+                    btn.style.color = "#58a6ff";
                 }, 2000);
             });
         }
