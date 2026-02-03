@@ -4,33 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>غرفة التحكم | الديوان</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
 
     <style>
         :root {
-            --primary: #fff;
-            --accent: #2563eb; 
-            --bg-dark: #121212; /* خلفية داكنة تتناسب مع النيومورفيزم */
-            --glass: rgba(30, 30, 30, 0.6); 
-            --border: rgba(255, 255, 255, 0.08);
-            --text-muted: #9ca3af;
+            --bg-dark: #121212;
+            --surface: #252525; /* نفس لون الزر اللي أرسلته */
+            --accent: #2563eb;
+            --text: #e0e0e0;
         }
 
         body {
             margin: 0;
             background-color: var(--bg-dark);
-            color: #fff;
+            color: var(--text);
             font-family: 'Tajawal', sans-serif;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
         }
 
         canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
@@ -38,139 +35,177 @@
         .admin-card {
             position: relative;
             z-index: 10;
-            background: #1e1e1e; /* لون ثابت لظهور تأثير الأزرار */
-            border: 1px solid #333;
+            background: #1e1e1e;
             border-radius: 30px;
             padding: 40px;
             width: 90%;
-            max-width: 550px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            max-width: 500px;
+            box-shadow: 20px 20px 60px #0f0f0f, -20px -20px 60px #2d2d2d; /* Neumorphism Outer Shadow */
             text-align: right;
         }
 
         .logo-header { text-align: center; margin-bottom: 30px; }
         .logo-img {
-            width: 85px; height: 85px; border-radius: 50%;
-            border: 3px solid #252525;
-            box-shadow: 5px 5px 10px #151515, -5px -5px 10px #272727; /* تأثير 3D */
-            transition: 0.3s;
+            width: 80px; height: 80px; border-radius: 50%;
+            box-shadow: 5px 5px 10px #151515, -5px -5px 10px #2d2d2d;
+            border: 2px solid #252525;
         }
-        .logo-img:hover { transform: scale(1.05); }
 
-        /* === الحقول (Inputs) بتصميم غائر === */
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
-        
-        input, textarea, select {
+        /* === 1. تطبيق ستايل "الزر الغائر" على جميع الحقول === */
+        /* هذا هو الستايل اللي طلبته بالضبط */
+        input, textarea, select, .neumorph-input {
             width: 100%;
-            background: #1e1e1e;
+            background: var(--surface);
             border: none;
-            border-radius: 15px;
-            padding: 16px;
+            border-radius: 15px; /* حواف دائرية */
+            padding: 15px 20px;
             color: #fff;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            box-sizing: border-box;
+            font-size: 1rem;
             outline: none;
-            /* تأثير الظل الغائر (Inner Shadow) مثل الزر الذي طلبته */
-            box-shadow: inset 5px 5px 10px #151515, 
-                        inset -5px -5px 10px #272727;
-            transition: 0.2s;
-        }
-        input:focus, textarea:focus, select:focus { 
-            box-shadow: inset 2px 2px 5px #151515, 
-                        inset -2px -2px 5px #272727,
-                        0 0 5px var(--accent);
+            box-sizing: border-box;
+            /* الظلال الداخلية (Inset) نفس كود الزر حقك */
+            box-shadow: inset 5px 5px 5px rgba(0,0,0,0.2), 
+                        inset -5px -5px 15px rgba(255,255,255,0.05);
+            transition: 0.3s;
         }
 
-        /* === تصميم حقل التقويم الخاص === */
-        .date-input-wrapper { flex: 2; position: relative; }
+        input:focus, textarea:focus, select:focus {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5), 
+                        inset -2px -2px 5px rgba(255,255,255,0.05),
+                        0 0 5px var(--accent); /* توهج بسيط عند الكتابة */
+        }
+
+        /* === 2. تخصيص حقل التاريخ ليطابق الشكل === */
+        .date-container { display: flex; gap: 15px; align-items: center; }
+        
+        /* تغليف حقل التاريخ بنفس الستايل */
+        .date-input-wrapper {
+            flex: 2; position: relative;
+        }
+        
+        /* تعديل حقل Flatpickr ليكون غائراً */
         input.flatpickr-input {
-            font-family: 'Roboto', sans-serif !important;
-            font-size: 1.1rem;
-            color: #60a5fa;
-            direction: ltr; text-align: left; padding-left: 45px;
+            background: var(--surface);
+            box-shadow: inset 5px 5px 5px rgba(0,0,0,0.3), 
+                        inset -5px -5px 15px rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding-left: 50px; /* مكان للأيقونة */
+            font-family: 'Roboto', sans-serif; /* أرقام إنجليزية */
+            color: #60a5fa; /* لون أزرق */
             cursor: pointer;
         }
+        
         .calendar-icon {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            color: #60a5fa; font-size: 1.2rem; pointer-events: none; z-index: 5;
+            position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+            color: #666; font-size: 1.2rem; pointer-events: none; z-index: 5;
         }
 
-        .duration-wrapper { flex: 1; margin-right: 15px; }
-        select.duration-select { text-align: center; cursor: pointer; color: #ddd; }
+        .duration-wrapper { flex: 1; }
+        select.duration-select { text-align: center; cursor: pointer; color: #bbb; }
 
-        /* === التاريخ الهجري === */
+        /* === 3. تخصيص نافذة التقويم المنبثقة (لتكون متناسقة) === */
+        .flatpickr-calendar {
+            background: #252525 !important; /* نفس لون الخلفية */
+            box-shadow: 10px 10px 30px #151515, -10px -10px 30px #353535 !important; /* ظلال خارجية */
+            border: none !important;
+            border-radius: 20px !important;
+            font-family: 'Roboto', sans-serif !important;
+            padding: 10px !important;
+        }
+        .flatpickr-months .flatpickr-month {
+            background: transparent !important;
+            color: #fff !important;
+            fill: #fff !important;
+        }
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            font-family: 'Tajawal', sans-serif !important;
+        }
+        .flatpickr-day {
+            border-radius: 10px !important;
+            color: #ddd !important;
+        }
+        .flatpickr-day:hover {
+            background: #333 !important;
+        }
+        .flatpickr-day.selected {
+            background: var(--accent) !important;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2) !important;
+            border-color: var(--accent) !important;
+        }
+        .flatpickr-time input {
+            color: #fff !important;
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        /* === الهجري === */
         #hijriDisplay {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #fbbf24; 
-            font-family: 'Tajawal';
-            text-align: center;
+            margin-top: 15px; font-size: 0.9rem; color: #fbbf24; text-align: center;
             opacity: 0; transition: opacity 0.3s;
         }
 
-        /* === أزرار التبديل (التصميم الذي طلبته) === */
+        /* === أزرار التبديل (سويتش) === */
         .toggles-row {
-            display: flex; gap: 30px; margin-bottom: 25px; align-items: center;
-            padding: 15px 0; border-bottom: 1px solid #2a2a2a;
+            display: flex; gap: 30px; margin: 25px 0; padding: 0 10px;
         }
-        .switch-label-text { font-size: 0.9rem; color: #ddd; margin-left: 10px; }
+        .switch-label-text { font-size: 0.9rem; color: #bbb; margin-left: 10px; }
         
-        /* -- كود الزر المنسوخ (مع تعديلات بسيطة للتحجيم) -- */
-        .switch-button {
-            display: flex; align-items: center; justify-content: center;
-            height: 30px; margin: 0; cursor: pointer;
-        }
+        /* كود السويتش اللي أرسلته (كما هو) */
+        .switch-button { display: flex; align-items: center; justify-content: center; height: 30px; cursor: pointer; }
         .switch-outer {
             height: 100%; background: #252525; width: 60px;
             border-radius: 165px; 
             box-shadow: inset 5px 5px 5px rgba(0,0,0,0.2), inset -5px -5px 15px rgba(255,255,255,0.1);
-            padding: 3px; -webkit-box-sizing: border-box; box-sizing: border-box;
+            padding: 3px; box-sizing: border-box; position: relative;
         }
-        .switch-outer input[type="checkbox"] { opacity: 0; -webkit-appearance: none; -moz-appearance: none; appearance: none; position: absolute; }
+        .switch-outer input[type="checkbox"] { opacity: 0; position: absolute; width:0; height:0; }
         .switch-outer .button {
-            height: 100%; width: 26px; background: -webkit-linear-gradient(bottom, #2b2b2b 0%, #414141 100%);
-            border-radius: 100%; box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.4);
-            -webkit-transition: all 0.2s ease-out; transition: all 0.2s ease-out; position: relative;
+            height: 100%; width: 26px; 
+            background: linear-gradient(to bottom, #2b2b2b 0%, #414141 100%);
+            border-radius: 100%; 
+            box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.4);
+            transition: all 0.2s ease-out; position: relative;
         }
         .switch-outer .button .button-toggle {
             height: 8px; width: 8px; background: #252525; border-radius: 100%;
-            position: absolute; top: 50%; left: 50%; margin-top: -4px; margin-left: -4px;
-            -webkit-box-shadow: inset 0px 2px 2px 0px rgba(0,0,0,0.3); box-shadow: inset 0px 2px 2px 0px rgba(0,0,0,0.3);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            box-shadow: inset 0px 2px 2px 0px rgba(0,0,0,0.3);
         }
         .switch-outer input[type="checkbox"]:checked + .button {
-            -webkit-transform: translateX(30px); transform: translateX(30px);
-            /* تغيير لون الزر عند التفعيل للأزرق */
-            background: -webkit-linear-gradient(bottom, #2563eb 0%, #3b82f6 100%);
-        }
-        .switch-outer input[type="checkbox"]:checked + .button .button-toggle {
-            background: #1e40af; box-shadow: inset 0px 2px 2px 0px rgba(0,0,0,0.3);
+            transform: translateX(28px);
+            background: linear-gradient(to bottom, #2563eb 0%, #3b82f6 100%);
         }
 
         /* === زر الإنشاء === */
         .btn-generate {
-            width: 100%; padding: 18px;
+            width: 100%; padding: 18px; margin-top: 20px;
+            border-radius: 15px; border: none;
             background: linear-gradient(145deg, #1e1e1e, #232323);
-            border: none; border-radius: 15px;
-            color: #58a6ff; font-size: 1.1rem; font-weight: 700;
+            color: var(--accent); font-weight: 700; font-size: 1.1rem;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 6px 6px 12px #151515, -6px -6px 12px #272727;
-            transition: 0.3s; margin-top: 15px;
+            /* Neumorphism Outer Shadow للزر */
+            box-shadow: 8px 8px 16px #151515, -8px -8px 16px #2d2d2d;
+            transition: 0.2s;
         }
         .btn-generate:hover {
-            color: #fff; background: #2563eb;
-            box-shadow: inset 4px 4px 8px #1d4ed8, inset -4px -4px 8px #3b82f6;
+            color: #fff; background: var(--accent);
+            box-shadow: inset 4px 4px 8px #184096, inset -4px -4px 8px #3286ff;
         }
-
-        /* تنسيق باقي العناصر (مخفية للتركيز على المطلوب) */
-        .options-bar { display: none; } /* أخفيت الشريط القديم للتبسيط */
-        .location-section { margin-top: 20px; display: flex; gap: 10px; }
-        .loc-input { flex: 1; }
+        
+        /* حقل الموقع */
+        .location-section {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
         .loc-btn {
-            width: 50px; height: 50px; border-radius: 12px; border: none; background: #1e1e1e; color: #777;
-            box-shadow: 5px 5px 10px #151515, -5px -5px 10px #272727; cursor: pointer; transition: 0.2s;
+            width: 55px; height: 55px; border-radius: 15px; border: none;
+            background: #252525; color: #666; cursor: pointer;
+            box-shadow: 5px 5px 10px #151515, -5px -5px 10px #2d2d2d;
+            transition: 0.2s; display: flex; align-items: center; justify-content: center;
         }
-        .loc-btn.active { color: #2563eb; box-shadow: inset 3px 3px 6px #151515, inset -3px -3px 6px #272727; }
+        .loc-btn.active {
+            color: var(--accent);
+            box-shadow: inset 3px 3px 6px #151515, inset -3px -3px 6px #353535;
+        }
 
     </style>
 </head>
@@ -181,24 +216,24 @@
     <div class="admin-card">
         <div class="logo-header">
             <img src="logo.png" alt="Logo" class="logo-img">
-            <h2 style="margin: 15px 0 0; font-size: 1.4rem;">إضافة حدث جديد</h2>
+            <h2 style="margin: 15px 0 0; font-size: 1.4rem;">إضافة حدث</h2>
         </div>
 
         <div style="margin-bottom: 25px;">
-            <input type="text" id="title" placeholder="عنوان الدورة أو الاجتماع..." style="font-size: 1.1rem;">
+            <input type="text" id="title" placeholder="عنوان الدورة أو الاجتماع...">
         </div>
 
-        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+        <div class="date-container" style="margin-bottom: 5px;">
             <div class="date-input-wrapper">
                 <i class="fa-regular fa-calendar-days calendar-icon"></i>
                 <input type="text" id="start" placeholder="اختر الموعد">
             </div>
             <div class="duration-wrapper">
                 <select id="duration" class="duration-select">
-                    <option value="60">1 ساعة</option>
-                    <option value="90">1.5 ساعة</option>
-                    <option value="120">2 ساعة</option>
-                    <option value="180">3 ساعات</option>
+                    <option value="60">1 س</option>
+                    <option value="90">1.5 س</option>
+                    <option value="120">2 س</option>
+                    <option value="180">3 س</option>
                 </select>
             </div>
         </div>
@@ -206,25 +241,21 @@
         <div id="hijriDisplay"></div>
 
         <div class="toggles-row">
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
                 <label class="switch-button" for="allDay">
                     <div class="switch-outer">
                         <input id="allDay" type="checkbox">
-                        <div class="button">
-                            <span class="button-toggle"></span>
-                        </div>
+                        <div class="button"><span class="button-toggle"></span></div>
                     </div>
                 </label>
                 <span class="switch-label-text">طوال اليوم</span>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
                 <label class="switch-button" for="recurring">
                     <div class="switch-outer">
                         <input id="recurring" type="checkbox">
-                        <div class="button">
-                            <span class="button-toggle"></span>
-                        </div>
+                        <div class="button"><span class="button-toggle"></span></div>
                     </div>
                 </label>
                 <span class="switch-label-text">تكرار</span>
@@ -234,7 +265,7 @@
         <div class="location-section">
             <button class="loc-btn active" id="btnOnline" onclick="setType('online')"><i class="fa-solid fa-video"></i></button>
             <button class="loc-btn" id="btnLoc" onclick="setType('location')"><i class="fa-solid fa-location-dot"></i></button>
-            <input type="text" id="locationInput" class="loc-input" placeholder="رابط الاجتماع (Zoom)...">
+            <input type="text" id="locationInput" placeholder="رابط الاجتماع (Zoom)...">
         </div>
 
         <div style="margin-bottom: 10px;">
@@ -250,7 +281,7 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
 
     <script>
-        // 1. تقويم Flatpickr
+        // 1. تشغيل التقويم
         const fp = flatpickr("#start", {
             enableTime: true,
             dateFormat: "Y-m-d h:i K",
@@ -261,18 +292,13 @@
             }
         });
 
-        // 2. دالة الهجري (الدقيقة جداً - تقويم أم القرى)
+        // 2. الهجري
         function updateHijri(dateObj) {
             const display = document.getElementById("hijriDisplay");
             if (!dateObj) { display.style.opacity = "0"; return; }
-
-            // استخدام Intl للحصول على التاريخ الهجري الصحيح (أم القرى)
             const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
+                day: 'numeric', month: 'long', year: 'numeric'
             }).format(dateObj);
-
             display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`;
             display.style.opacity = "1";
         }
@@ -281,18 +307,11 @@
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
-        function initStars() {
-            width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height;
-            stars = []; for(let i=0; i<60; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1});
-        }
-        function drawStars() {
-            ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)";
-            stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;});
-            requestAnimationFrame(drawStars);
-        }
+        function initStars() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<60;i++)stars.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5,d:Math.random()*0.5+0.1}); }
+        function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();s.y-=s.d;if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // 4. التحكم بالموقع والرابط
+        // 4. التحكم
         let locationType = 'online';
         function setType(type) {
             locationType = type;
@@ -338,11 +357,11 @@
                 const btn = document.querySelector('.btn-generate');
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ!';
-                btn.style.color = "#fff"; btn.style.background = "#2563eb";
+                btn.style.background = "#2563eb"; btn.style.color = "#fff";
                 setTimeout(() => {
                     btn.innerHTML = originalText;
                     btn.style.background = "linear-gradient(145deg, #1e1e1e, #232323)";
-                    btn.style.color = "#58a6ff";
+                    btn.style.color = "#2563eb";
                 }, 2000);
             });
         }
