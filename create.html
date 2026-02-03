@@ -8,6 +8,7 @@
     <link rel="shortcut icon" href="logo.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
@@ -91,17 +92,33 @@
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
         }
 
-        /* === القوائم والتاريخ === */
+        /* === منطقة التاريخ (العودة للتصميم الأصلي) === */
         .date-input-wrapper { position: relative; flex: 2; }
+        
+        /* الأيقونة على اليسار كما طلبت */
         .calendar-icon { 
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%); 
-            color: var(--accent); pointer-events: none; z-index: 25; font-size: 1.2rem;
+            position: absolute; 
+            left: 15px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--accent); 
+            pointer-events: none; 
+            z-index: 25; 
+            font-size: 1.1rem;
         }
+        
+        /* النص يبدأ من اليسار (English Style for Date) */
         input.flatpickr-input { 
-            padding-left: 45px !important; padding-right: 15px !important; 
-            font-family: 'Roboto', sans-serif !important; direction: ltr; text-align: right; 
+            font-family: 'Roboto', sans-serif !important; 
+            font-size: 1.1rem;
+            color: #60a5fa;
+            direction: ltr; 
+            text-align: left; /* محاذاة لليسار بجانب الأيقونة */
+            padding-left: 45px !important; /* مساحة للأيقونة */
+            cursor: pointer;
         }
 
+        /* === القوائم المنسدلة === */
         select {
             appearance: none; cursor: pointer;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -167,7 +184,7 @@
         }
         .action-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
         .btn-shorten:hover { color: #f472b6; border-color: #f472b6; background: rgba(244, 114, 182, 0.1); }
-        .btn-download:hover { color: #4ade80; border-color: #4ade80; background: rgba(74, 222, 128, 0.1); } 
+        .btn-download:hover { color: #4ade80; border-color: #4ade80; background: rgba(74, 222, 128, 0.1); }
 
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
@@ -417,7 +434,7 @@
             }
         }
 
-        // === دالة تحميل QR Code الجديدة ===
+        // === دالة تحميل QR Code ===
         function downloadQR() {
             const qrDiv = document.getElementById("qrcode");
             const img = qrDiv.querySelector("img");
