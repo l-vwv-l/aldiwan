@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منشئ روابط الديوان</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #161b22;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid #30363d;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        h2 { text-align: center; color: #58a6ff; margin-top: 0; }
+        label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: bold; }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box; /* مهم عشان الحواف */
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        button:hover { background-color: #2ea043; }
+        
+        .result-box {
+            margin-top: 20px;
+            display: none; /* مخفي لين تضغط الزر */
+            background-color: #21262d;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+        }
+        .link-text {
+            word-break: break-all;
+            color: #58a6ff;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+        .copy-btn {
+            background-color: #1f6feb;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🎛️ لوحة تحكم المناسبات</h2>
+        
+        <label>عنوان الدورة:</label>
+        <input type="text" id="title" placeholder="مثال: مراجعة الكيمياء العضوية">
+
+        <label>التاريخ والوقت (بداية):</label>
+        <input type="datetime-local" id="start">
+
+        <label>التاريخ والوقت (نهاية):</label>
+        <input type="datetime-local" id="end">
+
+        <label>وصف / تفاصيل:</label>
+        <textarea id="desc" rows="3" placeholder="رابط الزوم، القاعة، أو ملاحظات..."></textarea>
+
+        <button onclick="generateLink()">🔗 إنشاء الرابط السحري</button>
+
+        <div class="result-box" id="resultArea">
+            <label>انسخ هذا الرابط وأرسله في القناة:</label>
+            <div class="link-text" id="generatedLink"></div>
+            <button class="copy-btn" onclick="copyToClipboard()">نسخ الرابط</button>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const title = document.getElementById('title').value;
+            const startInput = document.getElementById('start').value;
+            const endInput = document.getElementById('end').value;
+            const desc = document.getElementById('desc').value;
+
+            if(!title || !startInput || !endInput) {
+                alert("يرجى تعبئة العنوان والتواريخ!");
+                return;
+            }
+
+            // دالة لتحويل وقت المتصفح لصيغة التقويم (YYYYMMDDTHHMMSS)
+            function formatTime(isoString) {
+                return isoString.replace(/[-:]/g, '').replace('T', 'T') + '00';
+            }
+
+            const startFormatted = formatTime(startInput);
+            const endFormatted = formatTime(endInput);
+
+            // بناء الرابط (تأكد أن اسم الصفحة event.html صحيح)
+            const baseUrl = window.location.origin + "/event.html"; // يحدد الرابط تلقائيا
+            
+            const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${startFormatted}&end=${endFormatted}&desc=${encodeURIComponent(desc)}`;
+
+            document.getElementById('generatedLink').innerText = finalUrl;
+            document.getElementById('resultArea').style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            const linkText = document.getElementById('generatedLink').innerText;
+            navigator.clipboard.writeText(linkText).then(() => {
+                alert("تم نسخ الرابط! جاهز للنشر 🚀");
+            });
+        }
+    </script>
+</body>
+</html>
