@@ -91,29 +91,17 @@
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
         }
 
-        /* === حاوية التاريخ (تعديل جوهري) === */
-        .date-input-group { position: relative; width: 100%; }
-        
-        /* مكان الأيقونة (يسار - منتصف الصندوق) */
+        /* === القوائم والتاريخ === */
+        .date-input-wrapper { position: relative; flex: 2; }
         .calendar-icon { 
-            position: absolute; 
-            left: 15px; /* المسافة من اليسار */
-            top: 50%; 
-            transform: translateY(-50%); /* توسيط عمودي مثالي */
-            color: var(--accent); 
-            pointer-events: none; 
-            z-index: 25; 
-            font-size: 1.2rem;
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%); 
+            color: var(--accent); pointer-events: none; z-index: 25; font-size: 1.2rem;
         }
-        
         input.flatpickr-input { 
-            padding-left: 45px !important; /* مساحة للأيقونة */
-            padding-right: 15px !important; 
-            font-family: 'Roboto', sans-serif !important; 
-            direction: ltr; text-align: right; 
+            padding-left: 45px !important; padding-right: 15px !important; 
+            font-family: 'Roboto', sans-serif !important; direction: ltr; text-align: right; 
         }
 
-        /* === القوائم المنسدلة === */
         select {
             appearance: none; cursor: pointer;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -140,11 +128,9 @@
         .flatpickr-current-month .flatpickr-monthDropdown-months { background: transparent !important; }
         .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
 
-        /* === الأزرار والترتيب === */
+        /* === الأزرار === */
         .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
-        .flex-2 { flex: 2; } /* للتاريخ */
-        .flex-1 { flex: 1; } /* للمدة */
-        
+        .flex-1 { flex: 1; }
         #hijriDisplay { text-align: center; margin-top: 8px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
 
         .btn-generate {
@@ -229,12 +215,10 @@
         </div>
 
         <div class="row-group">
-            <div class="flex-2">
+            <div class="date-input-wrapper">
                 <label>بداية اللقاء</label>
-                <div class="date-input-group">
-                    <i class="fa-regular fa-calendar-days calendar-icon"></i>
-                    <input type="text" id="start" placeholder="اختر الموعد">
-                </div>
+                <i class="fa-regular fa-calendar-days calendar-icon"></i>
+                <input type="text" id="start" placeholder="اختر الموعد">
             </div>
             <div class="flex-1">
                 <label>المدة</label>
@@ -243,6 +227,10 @@
                     <option value="90">ساعة ونصف</option>
                     <option value="120">ساعتان</option>
                     <option value="180">3 ساعات</option>
+                    <option value="300">5 ساعات</option>
+                    <option value="1440">يوم كامل (24 ساعة)</option>
+                    <option value="2880">يومين (48 ساعة)</option>
+                    <option value="10080">أسبوع كامل</option>
                 </select>
             </div>
         </div>
@@ -442,7 +430,6 @@
                 link.click();
                 document.body.removeChild(link);
             } else {
-                // في حال كان canvas (يحدث أحياناً قبل تحويله لصورة)
                 const canvas = qrDiv.querySelector("canvas");
                 if (canvas) {
                     const link = document.createElement("a");
