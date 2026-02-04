@@ -283,27 +283,24 @@
         const start = getQueryParam('start');
         const end = getQueryParam('end');
         let desc = getQueryParam('desc') || '';
+        // 3. جلب التذكير من الرابط
+        const rem = getQueryParam('rem') || '30'; 
 
         document.getElementById('eventTitle').innerText = title;
 
-        // === الذكاء: استخراج الرابط وتنظيف النص بالكامل ===
+        // === الذكاء: استخراج الرابط وتنظيف النص ===
         const urlRegex = /(https?:\/\/[^\s]+)/;
         const linkMatch = desc.match(urlRegex);
 
         if(linkMatch) {
             const link = linkMatch[0];
-            
-            // 1. عرض صندوق الرابط
             document.getElementById('linkContainer').style.display = 'block';
             document.getElementById('meetingLink').value = link;
-            
-            // 2. حذف السطر الذي يحتوي على الرابط
             const lines = desc.split('\n');
             const cleanLines = lines.filter(line => !line.includes(link));
             desc = cleanLines.join('\n').trim();
         }
 
-        // ج. هل بقي كلام في الوصف؟
         if(desc && desc.length > 0) {
             document.getElementById('notesContainer').style.display = 'block';
             document.getElementById('eventDesc').innerText = desc;
@@ -330,21 +327,30 @@
 
         // روابط التقويم
         const fullDescForCalendar = desc + (linkMatch ? "\n\nرابط اللقاء: " + linkMatch[0] : "");
-        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(fullDescForCalendar)}`;
+        
+        // 4. إصلاح جوجل: إضافة المنطقة الزمنية
+        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(fullDescForCalendar)}&ctz=Asia/Riyadh`;
         document.getElementById('googleBtn').href = googleUrl;
 
+        // 5. إصلاح آبل: إزالة Z وإضافة التنبيه (VALARM)
         document.getElementById('appleBtn').onclick = function() {
             const cleanDesc = fullDescForCalendar.replace(/\n/g, '\\n');
+            
             const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Aldiwan//NONSGML Event//EN
 BEGIN:VEVENT
 UID:${Date.now()}@aldiwan.dev
-DTSTAMP:${start}Z
-DTSTART:${start}Z
-DTEND:${end}Z
+DTSTAMP:${start}
+DTSTART:${start}
+DTEND:${end}
 SUMMARY:${title}
 DESCRIPTION:${cleanDesc}
+BEGIN:VALARM
+TRIGGER:-PT${rem}M
+DESCRIPTION:Reminder
+ACTION:DISPLAY
+END:VALARM
 END:VEVENT
 END:VCALENDAR`;
 
@@ -357,7 +363,6 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         };
 
-        // دالة نسخ الرابط (المحدثة)
         function copyLink() {
             const copyText = document.getElementById("meetingLink");
             copyText.select();
@@ -370,7 +375,6 @@ END:VCALENDAR`;
             btn.innerHTML = '<i class="fa-solid fa-check"></i>';
             btn.classList.add('copy-success');
             
-            // إرجاع الزر لحالته الطبيعية بعد ثانيتين
             setTimeout(() => {
                 btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
                 btn.classList.remove('copy-success');
