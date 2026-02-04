@@ -21,243 +21,139 @@
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
             background-size: cover;
-            overflow: hidden;
-            position: relative;
+            overflow: hidden; position: relative;
         }
 
         body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 0;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4); z-index: 0;
         }
 
-        .star-field {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
+        .star-field { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
         /* --- كود النجوم --- */
-        .stars1 {
-            width: 2px; height: 2px;
-            background: transparent;
-            box-shadow: 1746px 1643px #FFF , 543px 1482px #FFF , 1471px 1166px #FFF , 1154px 398px #FFF , 1887px 1347px #FFF , 255px 799px #FFF , 843px 413px #FFF , 1627px 1567px #FFF , 1503px 25px #FFF , 433px 1236px #FFF , 290px 1440px #FFF , 744px 737px #FFF , 72px 267px #FFF , 1099px 1602px #FFF , 1713px 833px #FFF , 872px 1777px #FFF , 1637px 735px #FFF , 1919px 1515px #FFF , 1634px 820px #FFF , 1276px 1491px #FFF , 252px 29px #FFF , 1717px 439px #FFF , 606px 1763px #FFF , 1326px 1101px #FFF , 701px 1067px #FFF , 1849px 1526px #FFF , 1331px 1742px #FFF , 1718px 1511px #FFF , 1074px 1738px #FFF , 1018px 935px #FFF , 1818px 327px #FFF , 57px 363px #FFF , 545px 685px #FFF , 1148px 1016px #FFF , 655px 1250px #FFF , 1604px 1797px #FFF , 551px 1739px #FFF , 990px 369px #FFF , 910px 1362px #FFF , 1480px 159px #FFF , 180px 525px #FFF , 1940px 695px #FFF , 1847px 751px #FFF , 1665px 664px #FFF , 746px 542px #FFF , 1611px 71px #FFF , 510px 522px #FFF , 462px 1275px #FFF , 1707px 1572px #FFF , 1336px 1548px #FFF , 1801px 1064px #FFF , 1899px 347px #FFF , 1002px 97px #FFF , 602px 1662px #FFF , 1888px 33px #FFF , 1567px 857px #FFF , 1192px 27px #FFF , 1739px 73px #FFF , 755px 1653px #FFF , 97px 121px #FFF , 128px 1722px #FFF , 27px 739px #FFF , 1220px 326px #FFF , 661px 1027px #FFF , 627px 272px #FFF , 1325px 1747px #FFF , 1358px 349px #FFF , 621px 1470px #FFF , 528px 901px #FFF , 1573px 378px #FFF , 789px 1692px #FFF , 818px 1426px #FFF , 1345px 1133px #FFF , 1344px 1670px #FFF , 1716px 631px #FFF , 975px 454px #FFF , 175px 1130px #FFF , 722px 757px #FFF , 504px 1176px #FFF , 154px 342px #FFF , 1628px 1390px #FFF , 1139px 309px #FFF , 201px 362px #FFF , 421px 134px #FFF , 830px 528px #FFF , 141px 249px #FFF , 1412px 1717px #FFF , 1873px 1205px #FFF , 1231px 263px #FFF , 517px 1150px #FFF , 1562px 937px #FFF , 929px 938px #FFF , 194px 1171px #FFF , 1790px 1140px #FFF , 1065px 807px #FFF , 917px 1675px #FFF , 163px 241px #FFF , 826px 232px #FFF , 788px 624px #FFF;
-            animation: animStar 25s linear infinite;
-        }
-        .stars1:after {
-            content: " "; position: absolute; top: 2000px; width: 2px; height: 2px; background: transparent;
-            box-shadow: 1746px 1643px #FFF , 543px 1482px #FFF , 1471px 1166px #FFF , 1154px 398px #FFF , 1887px 1347px #FFF , 255px 799px #FFF , 843px 413px #FFF , 1627px 1567px #FFF , 1503px 25px #FFF , 433px 1236px #FFF , 290px 1440px #FFF , 744px 737px #FFF , 72px 267px #FFF , 1099px 1602px #FFF , 1713px 833px #FFF , 872px 1777px #FFF , 1637px 735px #FFF , 1919px 1515px #FFF , 1634px 820px #FFF , 1276px 1491px #FFF , 252px 29px #FFF , 1717px 439px #FFF , 606px 1763px #FFF , 1326px 1101px #FFF , 701px 1067px #FFF , 1849px 1526px #FFF , 1331px 1742px #FFF , 1718px 1511px #FFF , 1074px 1738px #FFF , 1018px 935px #FFF , 1818px 327px #FFF , 57px 363px #FFF , 545px 685px #FFF , 1148px 1016px #FFF , 655px 1250px #FFF , 1604px 1797px #FFF , 551px 1739px #FFF , 990px 369px #FFF , 910px 1362px #FFF , 1480px 159px #FFF , 180px 525px #FFF , 1940px 695px #FFF , 1847px 751px #FFF , 1665px 664px #FFF , 746px 542px #FFF , 1611px 71px #FFF , 510px 522px #FFF , 462px 1275px #FFF , 1707px 1572px #FFF , 1336px 1548px #FFF , 1801px 1064px #FFF , 1899px 347px #FFF , 1002px 97px #FFF , 602px 1662px #FFF , 1888px 33px #FFF , 1567px 857px #FFF , 1192px 27px #FFF , 1739px 73px #FFF , 755px 1653px #FFF , 97px 121px #FFF , 128px 1722px #FFF , 27px 739px #FFF , 1220px 326px #FFF , 661px 1027px #FFF , 627px 272px #FFF , 1325px 1747px #FFF , 1358px 349px #FFF , 621px 1470px #FFF , 528px 901px #FFF , 1573px 378px #FFF , 789px 1692px #FFF , 818px 1426px #FFF , 1345px 1133px #FFF , 1344px 1670px #FFF , 1716px 631px #FFF , 975px 454px #FFF , 175px 1130px #FFF , 722px 757px #FFF , 504px 1176px #FFF , 154px 342px #FFF , 1628px 1390px #FFF , 1139px 309px #FFF , 201px 362px #FFF , 421px 134px #FFF , 830px 528px #FFF , 141px 249px #FFF , 1412px 1717px #FFF , 1873px 1205px #FFF , 1231px 263px #FFF , 517px 1150px #FFF , 1562px 937px #FFF , 929px 938px #FFF , 194px 1171px #FFF , 1790px 1140px #FFF , 1065px 807px #FFF , 917px 1675px #FFF , 163px 241px #FFF , 826px 232px #FFF , 788px 624px #FFF;
-        }
-
-        .stars2 {
-            width: 3px; height: 3px;
-            background: transparent;
-            box-shadow: 1605px 1452px #FFF , 305px 1658px #FFF , 577px 1272px #FFF , 83px 59px #FFF , 647px 1183px #FFF , 706px 536px #FFF , 1321px 1773px #FFF , 336px 1789px #FFF , 1742px 205px #FFF , 1297px 658px #FFF , 104px 1212px #FFF , 1859px 1461px #FFF , 579px 48px #FFF , 175px 1207px #FFF , 431px 268px #FFF , 277px 631px #FFF , 1715px 1578px #FFF , 1104px 1734px #FFF , 940px 1438px #FFF , 1082px 736px #FFF , 1177px 1752px #FFF , 278px 300px #FFF , 878px 1262px #FFF , 1287px 1198px #FFF , 85px 1729px #FFF , 987px 1169px #FFF , 1375px 403px #FFF , 1863px 371px #FFF , 1940px 1143px #FFF , 214px 1079px #FFF , 195px 659px #FFF , 1821px 1051px #FFF , 1327px 976px #FFF , 1074px 331px #FFF , 115px 1015px #FFF , 765px 604px #FFF , 661px 1692px #FFF , 185px 1408px #FFF , 1318px 1081px #FFF , 102px 960px #FFF , 1370px 866px #FFF , 1337px 961px #FFF , 1204px 521px #FFF , 366px 532px #FFF , 575px 152px #FFF , 602px 695px #FFF , 1525px 364px #FFF , 736px 111px #FFF , 1768px 454px #FFF , 1904px 396px #FFF;
-            animation: animStar 18s linear infinite;
-        }
-        .stars2:after {
-            content: " "; position: absolute; top: 2000px; width: 3px; height: 3px; background: transparent;
-            box-shadow: 1605px 1452px #FFF , 305px 1658px #FFF , 577px 1272px #FFF , 83px 59px #FFF , 647px 1183px #FFF , 706px 536px #FFF , 1321px 1773px #FFF , 336px 1789px #FFF , 1742px 205px #FFF , 1297px 658px #FFF , 104px 1212px #FFF , 1859px 1461px #FFF , 579px 48px #FFF , 175px 1207px #FFF , 431px 268px #FFF , 277px 631px #FFF , 1715px 1578px #FFF , 1104px 1734px #FFF , 940px 1438px #FFF , 1082px 736px #FFF , 1177px 1752px #FFF , 278px 300px #FFF , 878px 1262px #FFF , 1287px 1198px #FFF , 85px 1729px #FFF , 987px 1169px #FFF , 1375px 403px #FFF , 1863px 371px #FFF , 1940px 1143px #FFF , 214px 1079px #FFF , 195px 659px #FFF , 1821px 1051px #FFF , 1327px 976px #FFF , 1074px 331px #FFF , 115px 1015px #FFF , 765px 604px #FFF , 661px 1692px #FFF , 185px 1408px #FFF , 1318px 1081px #FFF , 102px 960px #FFF , 1370px 866px #FFF , 1337px 961px #FFF , 1204px 521px #FFF , 366px 532px #FFF , 575px 152px #FFF , 602px 695px #FFF , 1525px 364px #FFF , 736px 111px #FFF , 1768px 454px #FFF , 1904px 396px #FFF;
-        }
-
-        .stars3 {
-            width: 4px; height: 4px;
-            background: transparent;
-            box-shadow: 174px 505px #FFF , 1075px 1621px #FFF , 541px 1211px #FFF , 1526px 1190px #FFF , 1104px 640px #FFF , 961px 1643px #FFF , 1337px 1459px #FFF , 595px 386px #FFF , 1933px 1414px #FFF , 30px 218px #FFF , 328px 908px #FFF , 1582px 277px #FFF , 1099px 164px #FFF , 571px 964px #FFF , 1458px 1415px #FFF , 807px 547px #FFF , 1077px 418px #FFF , 1232px 177px #FFF , 1735px 1318px #FFF , 1307px 881px #FFF , 1922px 274px #FFF , 631px 948px #FFF , 845px 1600px #FFF , 39px 46px #FFF , 1206px 830px #FFF;
-            animation: animStar 10s linear infinite;
-        }
-        .stars3:after {
-            content: " "; position: absolute; top: 2000px; width: 4px; height: 4px; background: transparent;
-            box-shadow: 174px 505px #FFF , 1075px 1621px #FFF , 541px 1211px #FFF , 1526px 1190px #FFF , 1104px 640px #FFF , 961px 1643px #FFF , 1337px 1459px #FFF , 595px 386px #FFF , 1933px 1414px #FFF , 30px 218px #FFF , 328px 908px #FFF , 1582px 277px #FFF , 1099px 164px #FFF , 571px 964px #FFF , 1458px 1415px #FFF , 807px 547px #FFF , 1077px 418px #FFF , 1232px 177px #FFF , 1735px 1318px #FFF , 1307px 881px #FFF , 1922px 274px #FFF , 631px 948px #FFF , 845px 1600px #FFF , 39px 46px #FFF , 1206px 830px #FFF;
-        }
-
-        @keyframes animStar {
-            from { transform: translateY(0px); }
-            to { transform: translateY(-2000px); }
-        }
+        .stars1 { width: 2px; height: 2px; background: transparent; box-shadow: 1746px 1643px #FFF , 543px 1482px #FFF , 1471px 1166px #FFF , 1154px 398px #FFF , 1887px 1347px #FFF , 255px 799px #FFF , 843px 413px #FFF , 1627px 1567px #FFF , 1503px 25px #FFF , 433px 1236px #FFF , 290px 1440px #FFF , 744px 737px #FFF , 72px 267px #FFF , 1099px 1602px #FFF , 1713px 833px #FFF , 872px 1777px #FFF , 1637px 735px #FFF , 1919px 1515px #FFF , 1634px 820px #FFF , 1276px 1491px #FFF , 252px 29px #FFF , 1717px 439px #FFF , 606px 1763px #FFF , 1326px 1101px #FFF , 701px 1067px #FFF , 1849px 1526px #FFF , 1331px 1742px #FFF , 1718px 1511px #FFF , 1074px 1738px #FFF , 1018px 935px #FFF , 1818px 327px #FFF , 57px 363px #FFF , 545px 685px #FFF , 1148px 1016px #FFF , 655px 1250px #FFF , 1604px 1797px #FFF , 551px 1739px #FFF , 990px 369px #FFF , 910px 1362px #FFF , 1480px 159px #FFF , 180px 525px #FFF , 1940px 695px #FFF , 1847px 751px #FFF , 1665px 664px #FFF , 746px 542px #FFF , 1611px 71px #FFF , 510px 522px #FFF , 462px 1275px #FFF , 1707px 1572px #FFF , 1336px 1548px #FFF , 1801px 1064px #FFF , 1899px 347px #FFF , 1002px 97px #FFF , 602px 1662px #FFF , 1888px 33px #FFF , 1567px 857px #FFF , 1192px 27px #FFF , 1739px 73px #FFF , 755px 1653px #FFF , 97px 121px #FFF , 128px 1722px #FFF , 27px 739px #FFF , 1220px 326px #FFF , 661px 1027px #FFF , 627px 272px #FFF , 1325px 1747px #FFF , 1358px 349px #FFF , 621px 1470px #FFF , 528px 901px #FFF , 1573px 378px #FFF , 789px 1692px #FFF , 818px 1426px #FFF , 1345px 1133px #FFF , 1344px 1670px #FFF , 1716px 631px #FFF , 975px 454px #FFF , 175px 1130px #FFF , 722px 757px #FFF , 504px 1176px #FFF , 154px 342px #FFF , 1628px 1390px #FFF , 1139px 309px #FFF , 201px 362px #FFF , 421px 134px #FFF , 830px 528px #FFF , 141px 249px #FFF , 1412px 1717px #FFF , 1873px 1205px #FFF , 1231px 263px #FFF , 517px 1150px #FFF , 1562px 937px #FFF , 929px 938px #FFF , 194px 1171px #FFF , 1790px 1140px #FFF , 1065px 807px #FFF , 917px 1675px #FFF , 163px 241px #FFF , 826px 232px #FFF , 788px 624px #FFF; animation: animStar 25s linear infinite; }
+        .stars2 { width: 3px; height: 3px; background: transparent; box-shadow: 1605px 1452px #FFF , 305px 1658px #FFF , 577px 1272px #FFF , 83px 59px #FFF , 647px 1183px #FFF , 706px 536px #FFF , 1321px 1773px #FFF , 336px 1789px #FFF , 1742px 205px #FFF , 1297px 658px #FFF , 104px 1212px #FFF , 1859px 1461px #FFF , 579px 48px #FFF , 175px 1207px #FFF , 431px 268px #FFF , 277px 631px #FFF , 1715px 1578px #FFF , 1104px 1734px #FFF , 940px 1438px #FFF , 1082px 736px #FFF , 1177px 1752px #FFF , 278px 300px #FFF , 878px 1262px #FFF , 1287px 1198px #FFF , 85px 1729px #FFF , 987px 1169px #FFF , 1375px 403px #FFF , 1863px 371px #FFF , 1940px 1143px #FFF , 214px 1079px #FFF , 195px 659px #FFF , 1821px 1051px #FFF , 1327px 976px #FFF , 1074px 331px #FFF , 115px 1015px #FFF , 765px 604px #FFF , 661px 1692px #FFF , 185px 1408px #FFF , 1318px 1081px #FFF , 102px 960px #FFF , 1370px 866px #FFF , 1337px 961px #FFF , 1204px 521px #FFF , 366px 532px #FFF , 575px 152px #FFF , 602px 695px #FFF , 1525px 364px #FFF , 736px 111px #FFF , 1768px 454px #FFF , 1904px 396px #FFF; animation: animStar 18s linear infinite; }
+        .stars3 { width: 4px; height: 4px; background: transparent; box-shadow: 174px 505px #FFF , 1075px 1621px #FFF , 541px 1211px #FFF , 1526px 1190px #FFF , 1104px 640px #FFF , 961px 1643px #FFF , 1337px 1459px #FFF , 595px 386px #FFF , 1933px 1414px #FFF , 30px 218px #FFF , 328px 908px #FFF , 1582px 277px #FFF , 1099px 164px #FFF , 571px 964px #FFF , 1458px 1415px #FFF , 807px 547px #FFF , 1077px 418px #FFF , 1232px 177px #FFF , 1735px 1318px #FFF , 1307px 881px #FFF , 1922px 274px #FFF , 631px 948px #FFF , 845px 1600px #FFF , 39px 46px #FFF , 1206px 830px #FFF; animation: animStar 10s linear infinite; }
+        
+        @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
 
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 30px;
-            width: 90%;
-            max-width: 900px;
-            display: flex;
-            overflow: hidden;
+            width: 90%; max-width: 900px;
+            display: flex; overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transform: translateY(30px);
+            opacity: 0; transform: translateY(30px);
             animation: cardEntrance 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.5s;
             z-index: 10;
         }
 
         .profile-section {
-            flex: 1;
-            padding: 50px;
+            flex: 1; padding: 50px;
             border-left: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
 
         .profile-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 20px;
-            border: 2px solid rgba(255,255,255,0.2);
-            background-color: #000;
-            opacity: 0;
+            width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+            margin-bottom: 20px; border: 2px solid rgba(255,255,255,0.2);
+            background-color: #000; opacity: 0;
             animation: fadeIn 0.8s ease-out 0.8s forwards;
         }
 
-        h1 {
-            color: var(--text-white);
-            margin: 0 0 10px 0;
-            font-size: 1.8rem;
-            font-weight: 600;
-            opacity: 0;
-            animation: slideInRight 0.8s ease-out 1s forwards;
-        }
-
-        .bio {
-            color: var(--text-gray);
-            font-size: 0.85rem;
-            line-height: 1.8;
-            margin-bottom: 30px;
-            opacity: 0;
-            animation: slideInRight 0.8s ease-out 1.2s forwards;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            opacity: 0;
-            animation: slideInRight 0.8s ease-out 1.4s forwards;
-        }
-
+        h1 { color: var(--text-white); margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 600; opacity: 0; animation: slideInRight 0.8s ease-out 1s forwards; }
+        .bio { color: var(--text-gray); font-size: 0.85rem; line-height: 1.8; margin-bottom: 30px; opacity: 0; animation: slideInRight 0.8s ease-out 1.2s forwards; }
+        
+        .social-icons { display: flex; gap: 15px; opacity: 0; animation: slideInRight 0.8s ease-out 1.4s forwards; }
         .icon-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 40px; height: 40px; border-radius: 50%;
             border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-white);
-            text-decoration: none;
-            transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-white); text-decoration: none; transition: all 0.3s;
         }
-
-        /* 🟢 الجزء الخاص بحل مشكلة اللون في الجوال */
-        /* 1. تأثير الكمبيوتر (يشتغل فقط عند مرور الماوس) */
-        @media (hover: hover) {
-            .icon-btn:hover {
-                background: white;
-                color: black;
-                transform: scale(1.1);
-            }
-        }
-
-        /* 2. تأثير الجوال (يشتغل لحظة الضغط فقط) */
-        .icon-btn:active {
-            background: white;
-            color: black;
-            transform: scale(0.95);
-        }
-
-        /* 3. ضمان عدم تعليق اللون عند الرجوع للصفحة */
-        .icon-btn:focus {
-            background: transparent;
-            color: var(--text-white);
-        }
-        /* ------------------------------------- */
+        @media (hover: hover) { .icon-btn:hover { background: white; color: black; transform: scale(1.1); } }
+        .icon-btn:active { background: white; color: black; transform: scale(0.95); }
+        .icon-btn:focus { background: transparent; color: var(--text-white); }
 
         .links-section {
-            flex: 1.2;
-            padding: 50px;
-            background: rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
+            flex: 1.2; padding: 50px; background: rgba(0,0,0,0.2);
+            display: flex; flex-direction: column;
         }
 
         .section-title {
-            color: var(--text-white);
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            font-weight: 600;
-            opacity: 0;
-            animation: fadeIn 0.8s ease-out 1.6s forwards;
+            color: var(--text-white); font-size: 1.1rem; margin-bottom: 20px; font-weight: 600;
+            opacity: 0; animation: fadeIn 0.8s ease-out 1.6s forwards;
         }
 
         .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            margin-bottom: auto;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px; margin-bottom: auto;
         }
 
         .link-pill {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            padding: 12px 20px;
-            border-radius: 50px;
-            text-decoration: none;
-            color: var(--text-gray);
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            opacity: 0;
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            padding: 12px 20px; border-radius: 50px;
+            text-decoration: none; color: var(--text-gray); font-size: 0.9rem;
+            transition: all 0.3s; opacity: 0; cursor: pointer;
         }
-
         .link-pill:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-color: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
+            background: rgba(255,255,255,0.1); color: white;
+            border-color: rgba(255,255,255,0.3); transform: translateY(-2px);
         }
 
         .footer-info {
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: 30px; padding-top: 20px;
             border-top: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            opacity: 0;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px; opacity: 0;
             animation: fadeIn 0.8s ease-out 2s forwards;
         }
 
         .d-1 { animation: fadeInUp 0.5s ease-out 1.8s forwards; }
-        .d-2 { animation: fadeInUp 0.5s ease-out 1.9s forwards; } /* للبوتات */
+        .d-2 { animation: fadeInUp 0.5s ease-out 1.9s forwards; }
         .d-3 { animation: fadeInUp 0.5s ease-out 2.0s forwards; }
         .d-4 { animation: fadeInUp 0.5s ease-out 2.2s forwards; }
+
+        /* === نافذة الصيانة (Modal) === */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 100;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 30px;
+            text-align: center; max-width: 350px; width: 85%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-icon { font-size: 3rem; color: #fbbf24; margin-bottom: 15px; }
+        .modal-title { color: #fff; font-size: 1.2rem; margin-bottom: 10px; font-weight: bold; }
+        .modal-text { color: #a1a1aa; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5; }
+        .modal-btn {
+            background: white; color: black; border: none;
+            padding: 10px 25px; border-radius: 50px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        .modal-btn:hover { transform: scale(1.05); background: #eee; }
 
         @keyframes cardEntrance { to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { to { opacity: 1; } }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         @media (max-width: 768px) {
             body { height: auto; padding: 40px 0; overflow-y: auto; }
@@ -272,9 +168,7 @@
 <body>
 
     <div class="star-field">
-        <div class="stars1"></div>
-        <div class="stars2"></div>
-        <div class="stars3"></div>
+        <div class="stars1"></div> <div class="stars2"></div> <div class="stars3"></div>
     </div>
 
     <div class="glass-card">
@@ -313,7 +207,7 @@
                     <span>القناة الرسمية</span>
                 </a>
                 
-                <a href="https://t.me/creativityO_O_bot" class="link-pill d-2" target="_blank">
+                <a href="javascript:void(0)" onclick="showMaintenance()" class="link-pill d-2">
                     <i class="fas fa-robot"></i>
                     <span>بوت نوكتورن   Nocturne</span>
                 </a>
@@ -343,6 +237,25 @@
         </div>
 
     </div>
+
+    <div class="modal-overlay" id="maintenanceModal">
+        <div class="modal-content">
+            <div class="modal-icon"><i class="fas fa-tools"></i></div>
+            <div class="modal-title">عذراً، البوت تحت الصيانة 🛠️</div>
+            <p class="modal-text">نعمل حالياً على تطوير وتحسين "بوت نوكتورن" لتقديم تجربة أفضل لكم.<br>عد لنا قريباً! 😎</p>
+            <button class="modal-btn" onclick="closeMaintenance()">حسناً</button>
+        </div>
+    </div>
+
+    <script>
+        function showMaintenance() {
+            document.getElementById('maintenanceModal').style.display = 'flex';
+        }
+
+        function closeMaintenance() {
+            document.getElementById('maintenanceModal').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>
