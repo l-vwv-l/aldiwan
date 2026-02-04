@@ -359,6 +359,8 @@
             const durationMinutes = parseInt(document.getElementById('duration').value);
             const desc = document.getElementById('desc').value;
             const loc = document.getElementById('locationInput').value;
+            // 1. أخذ قيمة التذكير من القائمة المنسدلة
+            const reminder = document.getElementById('reminder').value; 
 
             if(!title || selectedDates.length === 0) { alert('⚠️ يرجى تعبئة العنوان والوقت!'); return; }
 
@@ -378,7 +380,8 @@
             }
 
             const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html";
-            const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${formatLocal(startDate)}&end=${formatLocal(endDate)}&desc=${encodeURIComponent(finalDesc)}`;
+            // 2. تمرير قيمة التذكير في الرابط (rem)
+            const finalUrl = `${baseUrl}?title=${encodeURIComponent(title)}&start=${formatLocal(startDate)}&end=${formatLocal(endDate)}&desc=${encodeURIComponent(finalDesc)}&rem=${reminder}`;
 
             document.getElementById('resultArea').style.display = 'block';
             document.getElementById('finalUrlBox').value = finalUrl;
