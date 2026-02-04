@@ -40,7 +40,6 @@
 
         canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* === البطاقة الزجاجية === */
         .admin-card {
             position: relative; z-index: 10;
             background: rgba(30, 30, 30, 0.5);
@@ -55,7 +54,6 @@
         }
         .admin-card::-webkit-scrollbar { width: 0px; }
 
-        /* === الرأس === */
         .header-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
         .logo-img {
             width: 85px; height: 85px; border-radius: 50%;
@@ -67,7 +65,6 @@
         h2 { margin: 0; color: var(--text-white); font-size: 1.4rem; font-weight: 600; }
         p.subtitle { margin: 5px 0 0; color: var(--text-gray); font-size: 0.85rem; }
 
-        /* === الحقول (Inputs) === */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; font-weight: 500; }
         
         input, textarea, select {
@@ -91,29 +88,31 @@
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
         }
 
-        /* === مكان الأيقونة (يسار - منتصف) === */
-        .date-input-wrapper { position: relative; flex: 2; }
-        
+        /* === (جديد) غلاف خاص للحقل والأيقونة فقط === */
+        .icon-input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        /* الأيقونة: يسار + منتصف عمودي */
         .calendar-icon { 
             position: absolute; 
-            left: 15px; /* يسار الصندوق */
+            left: 15px; 
             top: 50%; 
-            transform: translateY(-50%); /* توسيط عمودي دقيق */
+            transform: translateY(-50%); 
             color: var(--accent); 
             pointer-events: none; 
             z-index: 25; 
             font-size: 1.2rem;
         }
         
-        /* إزاحة النص عشان ما يجي فوق الأيقونة */
         input.flatpickr-input { 
-            padding-left: 45px !important; /* مساحة للأيقونة */
+            padding-left: 45px !important; 
             padding-right: 15px !important; 
             font-family: 'Roboto', sans-serif !important; 
             direction: ltr; text-align: right; 
         }
 
-        /* === القوائم المنسدلة === */
         select {
             appearance: none; cursor: pointer;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -122,7 +121,6 @@
         }
         select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
 
-        /* === التقويم الزجاجي === */
         .flatpickr-calendar {
             background: rgba(25, 25, 25, 0.75) !important; backdrop-filter: blur(30px) !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
@@ -140,8 +138,8 @@
         .flatpickr-current-month .flatpickr-monthDropdown-months { background: transparent !important; }
         .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
 
-        /* === الأزرار === */
         .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
+        .flex-2 { flex: 2; }
         .flex-1 { flex: 1; }
         #hijriDisplay { text-align: center; margin-top: 8px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
 
@@ -168,7 +166,6 @@
         }
         .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
 
-        /* === منطقة النتائج === */
         #resultArea { display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border); animation: fadeInUp 0.5s forwards; }
         .result-actions { display: flex; gap: 10px; margin-top: 10px; }
         
@@ -183,7 +180,6 @@
 
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
-        /* النوافذ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 100;
@@ -227,10 +223,12 @@
         </div>
 
         <div class="row-group">
-            <div class="date-input-wrapper">
+            <div class="flex-2">
                 <label>بداية اللقاء</label>
-                <i class="fa-regular fa-calendar-days calendar-icon"></i>
-                <input type="text" id="start" placeholder="اختر الموعد">
+                <div class="icon-input-container">
+                    <i class="fa-regular fa-calendar-days calendar-icon"></i>
+                    <input type="text" id="start" placeholder="اختر الموعد">
+                </div>
             </div>
             <div class="flex-1">
                 <label>المدة</label>
