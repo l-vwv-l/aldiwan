@@ -40,7 +40,6 @@
 
         canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* --- البطاقة الزجاجية المقسومة --- */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -53,7 +52,6 @@
             max-height: 90vh;
         }
 
-        /* القسم الأيمن (البروفايل) */
         .profile-section {
             flex: 0.8; padding: 40px;
             border-left: 1px solid var(--glass-border);
@@ -71,10 +69,7 @@
         h2.brand-name { color: var(--text-white); margin: 0; font-size: 1.4rem; font-weight: 600; }
         p.brand-tag { color: var(--text-gray); font-size: 0.9rem; margin-top: 5px; }
 
-        /* روابط التواصل الاجتماعي */
-        .social-icons {
-            display: flex; gap: 10px; margin-top: 20px;
-        }
+        .social-icons { display: flex; gap: 10px; margin-top: 20px; }
         .icon-btn {
             width: 35px; height: 35px; border-radius: 50%;
             border: 1px solid var(--glass-border);
@@ -84,14 +79,12 @@
         }
         .icon-btn:hover { background: white; color: black; transform: scale(1.1); }
 
-        /* القسم الأيسر (النموذج) */
         .content-section {
             flex: 1.2; padding: 40px;
             overflow-y: auto;
         }
         .content-section::-webkit-scrollbar { width: 0px; }
 
-        /* --- الحقول --- */
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; font-weight: 500; }
         
         input, textarea, select {
@@ -122,7 +115,6 @@
         }
         select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
 
-        /* Flatpickr Glassy */
         .flatpickr-calendar {
             background: rgba(25, 25, 25, 0.8) !important; backdrop-filter: blur(30px) !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
@@ -152,6 +144,7 @@
             box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); transform: translateY(-2px);
         }
 
+        /* زر اللصق الذكي */
         .magic-btn {
             position: absolute; top: 20px; left: 20px;
             width: 40px; height: 40px; border-radius: 50%;
@@ -161,6 +154,16 @@
             box-shadow: 0 0 20px rgba(217, 70, 239, 0.4); transition: 0.3s; z-index: 30;
         }
         .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
+
+        /* زر الموقع الرسمي الجديد */
+        .home-btn {
+            position: absolute; top: 20px; right: 20px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            transition: 0.3s; z-index: 30; text-decoration: none;
+        }
+        .home-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
 
         #resultArea { display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border); animation: fadeInUp 0.5s forwards; }
         .result-actions { display: flex; gap: 10px; margin-top: 10px; }
@@ -172,7 +175,6 @@
         .action-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
         #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
 
-        /* Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal-box { background: rgba(30, 30, 30, 0.85); width: 90%; max-width: 450px; padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.9); }
         .modal-textarea { height: 150px; margin-top: 15px; resize: none; background: rgba(0,0,0,0.5); }
@@ -182,7 +184,6 @@
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* تجاوب الجوال */
         @media (max-width: 768px) {
             .glass-card { flex-direction: column; overflow-y: auto; }
             .profile-section { padding: 30px; border-left: none; border-bottom: 1px solid var(--glass-border); flex: 0; }
@@ -195,15 +196,13 @@
     <canvas id="stars"></canvas>
 
     <div class="glass-card">
-        <button class="magic-btn" onclick="openMagicModal()" title="لصق ذكي">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </button>
+        <button class="magic-btn" onclick="openMagicModal()" title="لصق ذكي"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+        <a href="https://l-vwv-l.github.io/aldiwan/" target="_blank" class="home-btn" title="الموقع الرسمي"><i class="fa-solid fa-globe"></i></a>
 
         <div class="profile-section">
             <img src="logo.png" alt="Admin" class="profile-img">
             <h2 class="brand-name">المنسق</h2>
             <p class="brand-tag">نظام إنشاء الروابط الذكي</p>
-            
             <div class="social-icons">
                 <a href="https://www.tiktok.com/@l.u_u.l?_r=1&_t=ZS-92xEwljhCaH" class="icon-btn"><i class="fab fa-tiktok"></i></a>
                 <a href="https://x.com/llu_o_ull?s=11" class="icon-btn"><i class="fab fa-x-twitter"></i></a>
