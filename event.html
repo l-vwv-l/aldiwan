@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تذكير | الديوان الجامعي</title>
+    <title>المنسق | الديوان الجامعي</title>
     
     <link rel="shortcut icon" href="logo.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         :root {
             --glass-bg: rgba(30, 30, 30, 0.6);
@@ -16,8 +20,7 @@
             --text-white: #ffffff;
             --text-gray: #a1a1aa;
             --accent: #2563eb;
-            --success: #10b981;
-            --danger: #ef4444; /* لون أحمر للتنبيه */
+            --input-bg: rgba(255, 255, 255, 0.04);
         }
 
         body {
@@ -32,12 +35,11 @@
 
         body::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5); z-index: 0;
+            background: rgba(0, 0, 0, 0.5); z-index: 0; pointer-events: none;
         }
 
-        .star-field { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        canvas#stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* --- البطاقة الزجاجية المقسومة --- */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -67,10 +69,7 @@
         h2.brand-name { color: var(--text-white); margin: 0; font-size: 1.4rem; font-weight: 600; }
         p.brand-tag { color: var(--text-gray); font-size: 0.9rem; margin-top: 5px; }
 
-        /* روابط التواصل الاجتماعي */
-        .social-icons {
-            display: flex; gap: 10px; margin-top: 20px;
-        }
+        .social-icons { display: flex; gap: 10px; margin-top: 20px; }
         .icon-btn {
             width: 35px; height: 35px; border-radius: 50%;
             border: 1px solid var(--glass-border);
@@ -82,93 +81,127 @@
 
         .content-section {
             flex: 1.2; padding: 40px;
-            overflow-y: auto; display: flex; flex-direction: column; justify-content: center;
+            overflow-y: auto;
         }
         .content-section::-webkit-scrollbar { width: 0px; }
 
-        .event-badge {
-            display: inline-block; background: rgba(37, 99, 235, 0.2); color: #60a5fa;
-            border: 1px solid rgba(37, 99, 235, 0.3); padding: 6px 14px; border-radius: 50px;
-            font-size: 0.85rem; width: fit-content; margin-bottom: 15px;
-        }
-
-        h1.event-title { color: var(--text-white); font-size: 1.6rem; font-weight: 700; margin: 0 0 15px 0; line-height: 1.4; }
-
-        /* صندوق الرابط */
-        .link-wrapper { display: none; margin-bottom: 25px; }
-        .link-header { font-size: 0.8rem; color: var(--text-gray); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
-        .link-box-row { display: flex; align-items: stretch; gap: 10px; }
-        .coolinput-box { flex: 1; display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 6px; transition: all 0.3s; }
-        .coolinput-box:focus-within { border-color: var(--accent); box-shadow: 0 0 10px rgba(37, 99, 235, 0.2); }
-        .link-input { flex: 1; background: transparent; border: none; color: #60a5fa; padding: 10px 12px; font-family: inherit; font-size: 0.9rem; outline: none; overflow: hidden; text-overflow: ellipsis; direction: ltr; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; font-weight: 500; }
         
-        .copy-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: var(--text-gray); border-radius: 12px; width: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; font-size: 1.1rem; }
-        .copy-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-white); transform: translateY(-2px); }
-        .copy-success { background: rgba(16, 185, 129, 0.1) !important; border-color: var(--success) !important; color: var(--success) !important; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); transform: scale(1.05); }
-
-        .notes-section { margin-bottom: 25px; display: none; }
-        .notes-label { font-size: 0.8rem; color: var(--text-gray); margin-bottom: 8px; display: block; font-weight: 600; }
-        .event-details { color: var(--text-white); font-size: 0.95rem; line-height: 1.6; white-space: pre-line; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-
-        .links-grid { display: flex; flex-direction: column; gap: 12px; }
-        .link-pill { display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 14px 20px; border-radius: 50px; text-decoration: none; color: var(--text-white); font-size: 1rem; font-weight: 600; transition: all 0.3s; cursor: pointer; }
-        .link-pill:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); transform: translateY(-2px); }
-        .link-pill i { font-size: 1.2rem; }
-        .google-icon { color: #ea4335; }
-        .apple-icon { color: #fff; }
-
-        .footer { margin-top: 30px; font-size: 0.75rem; color: #555; text-align: center; }
-
-        /* --- تصميم حالة الانتهاء --- */
-        #expiredState {
-            display: none; /* مخفي افتراضياً */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            height: 100%;
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-        .expired-icon {
-            font-size: 4rem;
-            color: var(--danger);
-            margin-bottom: 20px;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .expired-title {
-            color: var(--text-white);
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .expired-text {
-            color: var(--text-gray);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        input, textarea, select {
+            width: 100%; background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px; padding: 14px;
+            color: #fff; font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.95rem; box-sizing: border-box; outline: none;
+            transition: 0.3s; position: relative; z-index: 20;
         }
 
-        /* تجاوب الجوال */
+        input:focus, textarea:focus, select:focus { 
+            border-color: var(--accent); background: rgba(37, 99, 235, 0.08);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
+        }
+
+        .icon-input-container { position: relative; width: 100%; }
+        .calendar-icon { 
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%); 
+            color: var(--accent); pointer-events: none; z-index: 25; font-size: 1.2rem;
+        }
+        input.flatpickr-input { padding-left: 45px !important; padding-right: 15px !important; font-family: 'Roboto', sans-serif !important; direction: ltr; text-align: right; }
+
+        select {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: left 15px center; background-size: 18px; padding-left: 40px;
+        }
+        select option { background-color: #1a1a1a; color: #fff; padding: 10px; }
+
+        .flatpickr-calendar {
+            background: rgba(25, 25, 25, 0.8) !important; backdrop-filter: blur(30px) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7) !important;
+            border-radius: 20px !important; font-family: 'IBM Plex Sans Arabic', sans-serif !important;
+        }
+        .flatpickr-day { color: #e0e0e0 !important; }
+        .flatpickr-day.selected { background: var(--accent) !important; border-color: var(--accent) !important; }
+        .flatpickr-months .flatpickr-month { color: #fff !important; fill: #fff !important; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months { background: transparent !important; }
+        .flatpickr-time input { color: #fff !important; font-family: 'Roboto', sans-serif; }
+
+        .row-group { display: flex; gap: 15px; margin-bottom: 20px; }
+        .flex-2 { flex: 2; } .flex-1 { flex: 1; }
+        #hijriDisplay { text-align: center; margin-top: 8px; font-size: 0.85rem; color: #fbbf24; opacity: 0; transition: 0.3s; }
+
+        .btn-generate {
+            width: 100%; padding: 16px; margin-top: 15px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            color: #fff; border: 1px solid var(--glass-border);
+            border-radius: 15px; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s;
+        }
+        .btn-generate:hover {
+            background: var(--accent); border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); transform: translateY(-2px);
+        }
+
+        .magic-btn {
+            position: absolute; top: 20px; left: 20px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            border: none; color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.4); transition: 0.3s; z-index: 30;
+        }
+        .magic-btn:hover { transform: rotate(15deg) scale(1.1); }
+
+        .home-btn {
+            position: absolute; top: 20px; right: 20px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            transition: 0.3s; z-index: 30; text-decoration: none;
+        }
+        .home-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
+
+        #resultArea { display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border); animation: fadeInUp 0.5s forwards; }
+        .result-actions { display: flex; gap: 10px; margin-top: 10px; }
+        
+        .action-btn {
+            flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border); color: #ccc; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-weight: 600;
+        }
+        .action-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
+        #qrcode { margin: 20px auto 0; background: #fff; padding: 10px; border-radius: 15px; width: fit-content; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-box { background: rgba(30, 30, 30, 0.85); width: 90%; max-width: 450px; padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: right; box-shadow: 0 50px 100px rgba(0,0,0,0.9); }
+        .modal-textarea { height: 150px; margin-top: 15px; resize: none; background: rgba(0,0,0,0.5); }
+        .modal-btn { width: 100%; padding: 14px; margin-top: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-parse { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
+        .btn-close { background: transparent; color: #888; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         @media (max-width: 768px) {
-            .glass-card { flex-direction: column; }
+            .glass-card { flex-direction: column; overflow-y: auto; }
             .profile-section { padding: 30px; border-left: none; border-bottom: 1px solid var(--glass-border); flex: 0; }
             .content-section { padding: 30px; }
         }
-
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="star-field"></div>
+    <canvas id="stars"></canvas>
 
     <div class="glass-card">
-        <div class="profile-section">
-            <img src="logo.png" alt="الديوان الجامعي" class="profile-img">
-            <h2 class="brand-name">الديوان الجامعي</h2>
-            <p class="brand-tag">تذكير بالمواعيد الهامة 📅</p>
+        <button class="magic-btn" onclick="openMagicModal()" title="لصق ذكي"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+        <a href="https://l-vwv-l.github.io/aldiwan/" target="_blank" class="home-btn" title="الموقع الرسمي"><i class="fa-solid fa-globe"></i></a>
 
+        <div class="profile-section">
+            <img src="logo.png" alt="Admin" class="profile-img">
+            <h2 class="brand-name">المنسق</h2>
+            <p class="brand-tag">نظام إنشاء الروابط الذكي</p>
             <div class="social-icons">
                 <a href="https://www.tiktok.com/@l.u_u.l?_r=1&_t=ZS-92xEwljhCaH" class="icon-btn"><i class="fab fa-tiktok"></i></a>
                 <a href="https://x.com/llu_o_ull?s=11" class="icon-btn"><i class="fab fa-x-twitter"></i></a>
@@ -178,181 +211,223 @@
             </div>
         </div>
 
-        <div class="content-section" id="mainContent">
-            <div id="activeEventState">
-                <div id="dateBadge" class="event-badge">--/--/----</div>
-                <h1 id="eventTitle" class="event-title">جاري تحميل الحدث...</h1>
-                
-                <div class="link-wrapper" id="linkContainer">
-                    <div class="link-header"><i class="fa-solid fa-link"></i> رابط اللقاء / الاجتماع</div>
-                    <div class="link-box-row">
-                        <div class="coolinput-box">
-                            <input type="text" id="meetingLink" class="link-input" readonly value="">
-                        </div>
-                        <button class="copy-btn" onclick="copyLink()" title="نسخ الرابط">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
+        <div class="content-section">
+            <div style="margin-bottom: 20px;">
+                <label>عنوان الحدث</label>
+                <input type="text" id="title" placeholder="عنوان الدورة أو الاجتماع...">
+            </div>
+
+            <div class="row-group">
+                <div class="flex-2">
+                    <label>بداية اللقاء</label>
+                    <div class="icon-input-container">
+                        <i class="fa-regular fa-calendar-days calendar-icon"></i>
+                        <input type="text" id="start" placeholder="اختر الموعد">
                     </div>
                 </div>
-
-                <div class="notes-section" id="notesContainer">
-                    <span class="notes-label">ملاحظات / تفاصيل:</span>
-                    <div id="eventDesc" class="event-details"></div>
+                <div class="flex-1">
+                    <label>المدة</label>
+                    <select id="duration">
+                        <option value="60">ساعة</option>
+                        <option value="90">ساعة ونصف</option>
+                        <option value="120">ساعتان</option>
+                        <option value="180">3 ساعات</option>
+                        <option value="300">5 ساعات</option>
+                        <option value="1440">يوم كامل (24 ساعة)</option>
+                        <option value="2880">يومين</option>
+                        <option value="10080">أسبوع</option>
+                    </select>
                 </div>
+            </div>
+            <div id="hijriDisplay"></div>
 
-                <div class="links-grid">
-                    <a id="googleBtn" class="link-pill" target="_blank">
-                        <i class="fa-brands fa-google google-icon"></i>
-                        <span>إضافة لتقويم Google</span>
-                    </a>
-                    
-                    <a id="appleBtn" class="link-pill">
-                        <i class="fa-brands fa-apple apple-icon"></i>
-                        <span>إضافة لتقويم Apple</span>
-                    </a>
-
-                    <a href="https://l-vwv-l.github.io/aldiwan/" class="link-pill" target="_blank">
-                        <i class="fa-solid fa-globe"></i>
-                        <span>زيارة الموقع الرسمي</span>
-                    </a>
+            <div class="row-group" style="margin-top: 20px;">
+                <div class="flex-1">
+                    <label>المكان / الرابط</label>
+                    <input type="text" id="locationInput" placeholder="رابط زوم أو اسم القاعة">
+                </div>
+                <div class="flex-1">
+                    <label>وقت التذكير</label>
+                    <select id="reminder">
+                        <option value="30">قبل 30 دقيقة</option>
+                        <option value="60">قبل ساعة</option>
+                        <option value="1440">قبل يوم</option>
+                    </select>
                 </div>
             </div>
 
-            <div id="expiredState">
-                <i class="fa-solid fa-clock-rotate-left expired-icon"></i>
-                <div class="expired-title">عذراً، انتهى وقت اللقاء</div>
-                <div class="expired-text">يبدو أنك تأخرت قليلاً!<br>هذا الرابط لم يعد متاحاً لأن الموعد المحدد له قد انتهى.</div>
-                <div class="links-grid" style="width: 100%; max-width: 300px;">
-                    <a href="https://l-vwv-l.github.io/aldiwan/" class="link-pill" target="_blank" style="background: var(--accent); color: white; border-color: var(--accent);">
-                        <i class="fa-solid fa-home"></i>
-                        <span>العودة للموقع الرسمي</span>
-                    </a>
-                </div>
+            <div style="margin-bottom: 20px;">
+                <label>تفاصيل إضافية (اختياري)</label>
+                <textarea id="desc" rows="3" placeholder="ملاحظات، محاور، متطلبات..."></textarea>
             </div>
 
-            <div class="footer">جميع الحقوق محفوظة © الديوان الجامعي 2026</div>
+            <button class="btn-generate" onclick="generateLink()">
+                <i class="fa-solid fa-link"></i> إنشاء الرابط المدمج
+            </button>
+
+            <div id="resultArea">
+                <input type="text" id="finalUrlBox" readonly style="font-size: 0.8rem; direction: ltr; text-align: left; color: #60a5fa;">
+                <div class="result-actions">
+                    <button class="action-btn" onclick="copyFinalLink()" id="copyBtn"><i class="fa-regular fa-copy"></i> نسخ الرابط</button>
+                    <button class="action-btn" onclick="downloadQR()"><i class="fa-solid fa-download"></i> تحميل QR</button>
+                </div>
+                <div id="qrcode"></div>
+            </div>
         </div>
     </div>
 
+    <div class="modal-overlay" id="magicModal">
+        <div class="modal-box">
+            <h3 style="margin:0; color:#fff;"><i class="fa-solid fa-wand-magic-sparkles" style="color:#d946ef;"></i> تعبئة ذكية</h3>
+            <textarea id="pasteArea" class="modal-textarea" placeholder="مثال: يسرنا دعوتكم..."></textarea>
+            <button class="modal-btn btn-parse" onclick="parseInvite()">تحليل البيانات</button>
+            <button class="modal-btn btn-close" onclick="closeMagicModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script> 
+    
     <script>
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        function initStars() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; stars = []; for(let i=0; i<80; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1}); }
+        function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
+        window.addEventListener('resize', initStars); initStars(); drawStars();
+
+        const fp = flatpickr("#start", {
+            enableTime: true, dateFormat: "Y-m-d h:i K", time_24hr: false, locale: "ar", disableMobile: "true", 
+            onChange: function(selectedDates) { updateHijri(selectedDates[0]); }
+        });
+
+        function updateHijri(dateObj) {
+            const display = document.getElementById("hijriDisplay");
+            if (!dateObj) { display.style.opacity = "0"; return; }
+            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(dateObj);
+            display.innerHTML = `<i class="fa-solid fa-moon"></i> الموافق: ${hijriDate}`; display.style.opacity = "1";
         }
 
-        const title = getQueryParam('title') || 'موعد الديوان الجامعي';
-        const start = getQueryParam('start');
-        const end = getQueryParam('end');
-        let desc = getQueryParam('desc') || '';
-        const rem = getQueryParam('rem') || '30'; 
+        function openMagicModal() { document.getElementById('magicModal').style.display = 'flex'; document.getElementById('pasteArea').focus(); }
+        function closeMagicModal() { document.getElementById('magicModal').style.display = 'none'; }
 
-        // دالة للتحقق من انتهاء الصلاحية
-        function checkExpiration() {
-            if (!end) return false; // إذا لم يكن هناك تاريخ انتهاء، اعتبره صالحاً
+        function parseInvite() {
+            const text = document.getElementById('pasteArea').value;
+            if(!text) return;
+            const cleanText = text.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+            const dateRegex = /(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})|(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})/;
+            const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(مساء|صباحا|م|ص|PM|AM)?/i;
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            
+            const dateMatch = cleanText.match(dateRegex);
+            const timeMatch = cleanText.match(timeRegex);
+            const urlMatch = cleanText.match(urlRegex);
+            const lines = cleanText.split('\n').filter(line => line.trim() !== '');
+            let title = lines[0] || "لقاء جديد";
+            if(title.includes('دعوة') && lines.length > 1) title = lines[1];
 
-            // تحويل سلسلة التاريخ 'YYYYMMDDTHHMMSS' إلى كائن Date
-            const year = parseInt(end.substring(0, 4));
-            const month = parseInt(end.substring(4, 6)) - 1; // الأشهر تبدأ من 0
-            const day = parseInt(end.substring(6, 8));
-            const hour = parseInt(end.substring(9, 11));
-            const minute = parseInt(end.substring(11, 13));
-            const second = parseInt(end.substring(13, 15));
-
-            const endDateObj = new Date(year, month, day, hour, minute, second);
-            const now = new Date();
-
-            return now > endDateObj;
+            document.getElementById('title').value = title.substring(0, 50);
+            if(urlMatch) { document.getElementById('locationInput').value = urlMatch[0]; }
+            
+            if(dateMatch) {
+                let dateStr = dateMatch[0].replace(/\//g, '-');
+                let hour = 12; let minute = 0;
+                if(timeMatch) {
+                    let h = parseInt(timeMatch[1]);
+                    if(cleanText.includes('مساء') || cleanText.includes('م') || cleanText.includes('PM')) { if(h < 12) h += 12; }
+                    hour = h; if(timeMatch[2]) minute = parseInt(timeMatch[2]);
+                }
+                const parts = dateStr.split('-');
+                let y, m, d;
+                if(parts[0].length === 4) { y=parts[0]; m=parts[1]; d=parts[2]; } else { d=parts[0]; m=parts[1]; y=parts[2]; }
+                const finalDateObj = new Date(y, m-1, d, hour, minute);
+                fp.setDate(finalDateObj, true);
+            }
+            document.getElementById('desc').value = ""; 
+            closeMagicModal();
         }
 
-        const isExpired = checkExpiration();
+        // دالة إنشاء الرابط بتشفير Base64
+        function generateLink() {
+            const title = document.getElementById('title').value;
+            const selectedDates = fp.selectedDates;
+            const durationMinutes = parseInt(document.getElementById('duration').value);
+            const desc = document.getElementById('desc').value;
+            const loc = document.getElementById('locationInput').value;
+            const reminder = document.getElementById('reminder').value; 
 
-        if (isExpired) {
-            // إظهار حالة الانتهاء وإخفاء تفاصيل الحدث
-            document.getElementById('activeEventState').style.display = 'none';
-            document.getElementById('expiredState').style.display = 'flex';
-        } else {
-            // عرض تفاصيل الحدث كالمعتاد
-            document.getElementById('eventTitle').innerText = title;
+            if(!title || selectedDates.length === 0) { alert('⚠️ يرجى تعبئة العنوان والوقت!'); return; }
 
-            const urlRegex = /(https?:\/\/[^\s]+)/;
-            const linkMatch = desc.match(urlRegex);
-
-            if(linkMatch) {
-                const link = linkMatch[0];
-                document.getElementById('linkContainer').style.display = 'block';
-                document.getElementById('meetingLink').value = link;
-                const lines = desc.split('\n');
-                const cleanLines = lines.filter(line => !line.includes(link));
-                desc = cleanLines.join('\n').trim();
-            }
-
-            if(desc && desc.length > 0) {
-                document.getElementById('notesContainer').style.display = 'block';
-                document.getElementById('eventDesc').innerText = desc;
-            } else {
-                document.getElementById('notesContainer').style.display = 'none';
-            }
-
-            if(start) {
-                const year = start.substring(0,4);
-                const month = start.substring(4,6);
-                const day = start.substring(6,8);
-                const hour = start.substring(9,11);
-                const min = start.substring(11,13);
-                let h = parseInt(hour);
-                let ampm = h >= 12 ? 'م' : 'ص';
-                h = h % 12; h = h ? h : 12; 
-                document.getElementById('dateBadge').innerText = `${day}/${month}/${year} • ${h}:${min} ${ampm}`;
-            } else {
-                document.getElementById('dateBadge').style.display = 'none';
-            }
-
-            const fullDescForCalendar = desc + (linkMatch ? "\n\nرابط اللقاء: " + linkMatch[0] : "");
-            const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(fullDescForCalendar)}&ctz=Asia/Riyadh`;
-            document.getElementById('googleBtn').href = googleUrl;
-
-            document.getElementById('appleBtn').onclick = function() {
-                const cleanDesc = fullDescForCalendar.replace(/\n/g, '\\n');
-                const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Aldiwan//NONSGML Event//EN
-BEGIN:VEVENT
-UID:${Date.now()}@aldiwan.dev
-DTSTAMP:${start}
-DTSTART:${start}
-DTEND:${end}
-SUMMARY:${title}
-DESCRIPTION:${cleanDesc}
-BEGIN:VALARM
-TRIGGER:-PT${rem}M
-DESCRIPTION:Reminder
-ACTION:DISPLAY
-END:VALARM
-END:VEVENT
-END:VCALENDAR`;
-
-                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.setAttribute('download', 'event.ics');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            const startDate = selectedDates[0];
+            const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+            
+            const formatLocal = (d) => {
+                const pad = (n) => n < 10 ? '0'+n : n;
+                return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00';
             };
+
+            let finalDesc = desc;
+            if(loc && (loc.startsWith('http') || loc.startsWith('www'))) {
+                finalDesc = "رابط اللقاء: " + loc + "\n\n" + desc;
+            } else if (loc) {
+                finalDesc = "الموقع: " + loc + "\n\n" + desc;
+            }
+
+            // تجميع البيانات في كائن واحد وضغطه
+            const dataObj = {
+                t: title,
+                s: formatLocal(startDate),
+                e: formatLocal(endDate),
+                d: finalDesc,
+                r: reminder
+            };
+
+            // تشفير البيانات إلى Base64
+            const jsonString = JSON.stringify(dataObj);
+            const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+
+            const baseUrl = "https://l-vwv-l.github.io/aldiwan/event.html";
+            // الرابط الجديد يستخدم متغير واحد فقط (?data=...)
+            const finalUrl = `${baseUrl}?data=${encodedData}`;
+
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('finalUrlBox').value = finalUrl;
+            
+            document.getElementById('qrcode').innerHTML = ""; 
+            new QRCode(document.getElementById("qrcode"), {
+                text: finalUrl, width: 128, height: 128, colorDark : "#000000", colorLight : "#ffffff"
+            });
+
+            document.getElementById('resultArea').scrollIntoView({behavior: "smooth"});
         }
 
-        function copyLink() {
-            const copyText = document.getElementById("meetingLink");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); 
-            navigator.clipboard.writeText(copyText.value);
-            const btn = document.querySelector('.copy-btn');
-            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-            btn.classList.add('copy-success');
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-                btn.classList.remove('copy-success');
+        function copyFinalLink() {
+            const box = document.getElementById('finalUrlBox');
+            box.select(); navigator.clipboard.writeText(box.value);
+            const btn = document.getElementById('copyBtn');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ';
+            btn.style.borderColor = "#10b981"; btn.style.color = "#10b981";
+            setTimeout(() => { 
+                btn.innerHTML = '<i class="fa-regular fa-copy"></i> نسخ الرابط'; 
+                btn.style.borderColor = "var(--glass-border)"; btn.style.color = "var(--text-gray)";
             }, 2000);
+        }
+
+        function downloadQR() {
+            const qrDiv = document.getElementById("qrcode");
+            const img = qrDiv.querySelector("img");
+            if (img && img.src) {
+                const link = document.createElement("a");
+                link.href = img.src; link.download = "aldiwan-qr.png";
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            } else {
+                const canvas = qrDiv.querySelector("canvas");
+                if (canvas) {
+                    const link = document.createElement("a");
+                    link.href = canvas.toDataURL("image/png"); link.download = "aldiwan-qr.png";
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                } else { alert("⚠️ انتظر قليلاً..."); }
+            }
         }
     </script>
 </body>
