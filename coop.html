@@ -404,26 +404,39 @@
 
         let allData = [...db];
 
-        // دالة سحب البيانات المباشرة من السيرفر (GitHub Actions)
+        // الخوارزمية الذكية لدمج البيانات المباشرة
         async function fetchLiveData() {
             try {
-                // استخدام رقم عشوائي لمنع التخزين المؤقت (Cache)
+                // سحب البيانات من السيرفر بدون التخزين المؤقت
                 const response = await fetch('live_data.json?v=' + new Date().getTime());
                 if(response.ok) {
                     const liveData = await response.json();
-                    allData = [...db, ...liveData];
+                    
+                    // تحديث البطاقات الموجودة أو إضافة الجديدة
+                    liveData.forEach(function(liveItem) {
+                        let existingIndex = db.findIndex(function(item) {
+                            return item.t.includes(liveItem.t) || liveItem.t.includes(item.t);
+                        });
+                        
+                        if (existingIndex !== -1) {
+                            db[existingIndex].e = liveItem.e; 
+                            if (liveItem.m) db[existingIndex].m = liveItem.m; 
+                            db[existingIndex].c = 'live';     
+                        } else {
+                            db.push(liveItem);
+                        }
+                    });
                 }
             } catch (e) {
                 console.log("جاري انتظار أول تحديث للسيرفر...");
             }
             
-            // ترتيب أبجدي للكل
+            allData = [...db];
+
+            // الترتيب الأبجدي وتصعيد الفرص المباشرة
             allData.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
-            
-            // رفع الفرص المباشرة (الجديدة) لتكون أول الكروت دائماً
             allData.sort(function(a, b) { return (a.c === 'live' ? -1 : (b.c === 'live' ? 1 : 0)); });
             
-            // تحديث العرض
             render('all');
         }
 
@@ -437,7 +450,7 @@
                 const card = document.createElement('div');
                 card.className = 'company-card';
                 
-                // توهج بنفسجي خفيف للفرص المباشرة
+                // توهج للفرص المباشرة
                 if(item.c === 'live') card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)';
                 
                 card.onclick = function() { openModal(item); };
@@ -509,7 +522,7 @@
         function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(function(s){ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // بداية التشغيل (سحب البيانات ثم العرض)
+        // بداية التشغيل السحري (سحب ودمج)
         fetchLiveData();
     </script>
 </body>
