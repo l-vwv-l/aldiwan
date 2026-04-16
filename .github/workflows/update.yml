@@ -34,4 +34,5 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add live_data.json
           git commit -m "تحديث تلقائي لبيانات التدريب 🚀" || echo "لا توجد فرص جديدة للتحديث"
+          git pull --rebase origin main
           git push
