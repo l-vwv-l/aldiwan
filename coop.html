@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التدريب التعاوني | الديوان الجامعي</title>
+    
+    <link rel="shortcut icon" href="logo.png?v=99" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --glass-bg: rgba(30, 30, 30, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-white: #ffffff;
+            --text-gray: #a1a1aa;
+            --accent: #2563eb;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6); z-index: 0;
+        }
+
+        /* النجوم */
+        canvas#stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* الحاوية الرئيسية */
+        .main-container {
+            position: relative; z-index: 10;
+            width: 90%; max-width: 1000px;
+            margin: 40px 0;
+        }
+
+        /* رأس الصفحة */
+        .header-section {
+            text-align: center; margin-bottom: 40px;
+            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 25px; padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: fadeInDown 0.8s ease-out forwards;
+        }
+        .header-section h1 { color: var(--text-white); margin: 0 0 10px 0; font-size: 2rem; }
+        .header-section p { color: var(--text-gray); margin: 0; font-size: 1rem; }
+
+        /* زر العودة */
+        .back-btn {
+            position: absolute; top: 30px; right: 30px;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            transition: 0.3s; text-decoration: none;
+        }
+        .back-btn:hover { background: var(--text-white); color: #000; transform: scale(1.1); }
+
+        /* شبكة الشركات */
+        .companies-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* كرت الشركة */
+        .company-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px;
+            text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0; transform: translateY(20px);
+        }
+        
+        /* تأثير الظهور المتتابع للكروت */
+        .company-card:nth-child(1) { animation: fadeInUp 0.6s ease-out 0.2s forwards; }
+        .company-card:nth-child(2) { animation: fadeInUp 0.6s ease-out 0.3s forwards; }
+        .company-card:nth-child(3) { animation: fadeInUp 0.6s ease-out 0.4s forwards; }
+
+        .company-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+            background: rgba(40, 40, 40, 0.8);
+        }
+        .company-icon {
+            width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent);
+            margin: 0 auto 15px auto; border: 1px solid var(--glass-border);
+        }
+        .company-name { color: var(--text-white); font-size: 1.2rem; font-weight: 600; margin: 0 0 5px 0; }
+        .company-sector { color: var(--text-gray); font-size: 0.85rem; margin: 0; }
+
+        /* --- نافذة معلومات الشركة (Modal) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75); z-index: 100;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background: rgba(25, 25, 25, 0.95); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 25px; padding: 40px; width: 90%; max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .close-modal {
+            position: absolute; top: 20px; left: 20px;
+            background: transparent; border: none; color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        }
+        .close-modal:hover { color: white; transform: rotate(90deg); }
+
+        .modal-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; }
+        .modal-header .company-icon { margin: 0; width: 50px; height: 50px; font-size: 1.5rem; }
+        .modal-header h3 { color: white; margin: 0; font-size: 1.4rem; }
+        
+        .info-row { margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; }
+        .info-icon { color: var(--accent); width: 20px; text-align: center; margin-top: 3px; }
+        .info-data { flex: 1; }
+        .info-label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 2px; }
+        .info-value { color: #e4e4e7; font-size: 0.95rem; line-height: 1.5; }
+
+        .apply-btn {
+            display: block; width: 100%; padding: 14px; margin-top: 25px;
+            background: var(--accent); color: white; text-align: center; text-decoration: none;
+            border-radius: 12px; font-weight: bold; transition: 0.3s; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+        .apply-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .header-section { padding: 20px; }
+            .header-section h1 { font-size: 1.5rem; }
+            .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 1rem; }
+            .modal-content { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="stars"></canvas>
+
+    <div class="main-container">
+        
+        <div class="header-section">
+            <a href="index.html" class="back-btn" title="العودة للرئيسية"><i class="fa-solid fa-arrow-right"></i></a>
+            <h1>دليل التدريب الميداني</h1>
+            <p>أبرز الشركات المتاحة للتدريب التعاوني وفرص التقديم 💼</p>
+        </div>
+
+        <div class="companies-grid" id="companiesGrid">
+            </div>
+
+    </div>
+
+    <div class="modal-overlay" id="companyModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="modal-header">
+                <div class="company-icon" id="modalIcon"><i class="fa-solid fa-building"></i></div>
+                <div>
+                    <h3 id="modalName">اسم الشركة</h3>
+                    <div class="company-sector" id="modalSector">القطاع</div>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <i class="fa-solid fa-location-dot info-icon"></i>
+                <div class="info-data">
+                    <span class="info-label">الموقع / الفروع</span>
+                    <span class="info-value" id="modalLocation">مدينة جدة</span>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <i class="fa-solid fa-graduation-cap info-icon"></i>
+                <div class="info-data">
+                    <span class="info-label">التخصصات المستهدفة</span>
+                    <span class="info-value" id="modalMajors">الكيمياء العامة، الهندسة</span>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <i class="fa-solid fa-circle-info info-icon"></i>
+                <div class="info-data">
+                    <span class="info-label">ملاحظات</span>
+                    <span class="info-value" id="modalNotes">متطلبات إضافية هنا...</span>
+                </div>
+            </div>
+
+            <a href="#" id="modalLink" target="_blank" class="apply-btn">بوابة التقديم <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 5px; font-size: 0.8rem;"></i></a>
+        </div>
+    </div>
+
+    <script>
+        // === إعدادات النجوم ===
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        function initStars() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; stars = []; for(let i=0; i<100; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1}); }
+        function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
+        window.addEventListener('resize', initStars); initStars(); drawStars();
+
+        // === قاعدة بيانات الشركات ===
+        // تقدر تضيف أي شركة جديدة هنا بنسخ نفس القالب
+        const companies = [
+            {
+                id: 1,
+                name: "شركة التصنيع الوطنية",
+                sector: "البتروكيماويات والصناعة",
+                icon: "fa-industry",
+                location: "جدة - المدن الصناعية / الجبيل / ينبع",
+                majors: "الكيمياء العامة، الهندسة الكيميائية، ضبط الجودة",
+                notes: "توفر بيئة ممتازة لطلاب الكيمياء في مختبرات الجودة والمصانع.",
+                link: "https://www.tasnee.com/ar/Careers/Pages/default.aspx"
+            },
+            {
+                id: 2,
+                name: "شركة سبكيم (Sipchem)",
+                sector: "الكيماويات المتخصصة",
+                icon: "fa-flask",
+                location: "جدة / الخبر / الجبيل",
+                majors: "الكيمياء، الهندسة، الأمن والسلامة",
+                notes: "من الشركات الرائدة في الصناعات الكيميائية وتدعم برامج التدريب الميداني بكفاءة.",
+                link: "https://www.sipchem.com/ar/Careers"
+            },
+            {
+                id: 3,
+                name: "مجموعة صافولا",
+                sector: "الصناعات الغذائية والتجزئة",
+                icon: "fa-leaf",
+                location: "جدة - المدينة الصناعية الأولى",
+                majors: "الكيمياء، الأحياء الدقيقة، إدارة الجودة",
+                notes: "فرصة ممتازة للتدريب في قطاع الأغذية والتأكد من مطابقة المعايير الكيميائية والصحية.",
+                link: "https://www.savola.com/ar/careers"
+            }
+        ];
+
+        // === توليد الكروت في الصفحة ===
+        const grid = document.getElementById('companiesGrid');
+        
+        companies.forEach((company, index) => {
+            const delay = (index + 1) * 0.1; // لعمل تأثير الظهور المتتالي
+            const card = document.createElement('div');
+            card.className = 'company-card';
+            card.style.animationDelay = `${delay}s`;
+            card.onclick = () => openModal(company);
+            
+            card.innerHTML = `
+                <div class="company-icon"><i class="fa-solid ${company.icon}"></i></div>
+                <h3 class="company-name">${company.name}</h3>
+                <p class="company-sector">${company.sector}</p>
+            `;
+            grid.appendChild(card);
+        });
+
+        // === التحكم بالنافذة المنبثقة ===
+        const modal = document.getElementById('companyModal');
+
+        function openModal(company) {
+            // تعبئة البيانات
+            document.getElementById('modalIcon').innerHTML = `<i class="fa-solid ${company.icon}"></i>`;
+            document.getElementById('modalName').innerText = company.name;
+            document.getElementById('modalSector').innerText = company.sector;
+            document.getElementById('modalLocation').innerText = company.location;
+            document.getElementById('modalMajors').innerText = company.majors;
+            document.getElementById('modalNotes').innerText = company.notes;
+            document.getElementById('modalLink').href = company.link;
+
+            // إظهار النافذة
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+            document.body.style.overflow = 'hidden'; // منع التمرير في الخلفية
+        }
+
+        function closeModal(event) {
+            // إغلاق إذا تم الضغط على الزر أو على الخلفية السوداء
+            if (!event || event.target === modal) {
+                modal.classList.remove('active');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // إعادة التمرير
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
