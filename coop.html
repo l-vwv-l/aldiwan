@@ -16,6 +16,7 @@
             --text-white: #ffffff;
             --text-gray: #a1a1aa;
             --accent: #2563eb;
+            --card-bg: rgba(20, 20, 20, 0.95); /* لون البطاقة الجديدة */
         }
 
         body {
@@ -70,7 +71,7 @@
         }
         .filter-btn:hover, .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* --- الشبكة --- */
+        /* --- الشبكة (الكروت الخارجية) --- */
         .companies-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
         }
@@ -79,9 +80,7 @@
             background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
             border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            /* تم إصلاح الشفافية لدعم الجوالات */
-            -webkit-animation: fadeInUp 0.5s ease-out;
-            animation: fadeInUp 0.5s ease-out;
+            -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out;
         }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
@@ -89,19 +88,71 @@
         .company-name { color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.1rem;}
         .company-tag { color: var(--text-gray); font-size: 0.8rem; }
 
-        /* --- المودال (النافذة المنبثقة) --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: #1a1a1a; border: 1px solid var(--glass-border); border-radius: 25px; padding: 30px; width: 90%; max-width: 450px; position: relative; }
-        .close-modal { position: absolute; top: 20px; left: 20px; background: transparent; border: none; color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
-        .close-modal:hover { color: white; transform: rotate(90deg); }
-        .info-row { display: flex; gap: 12px; margin-bottom: 15px; align-items: flex-start; }
-        .info-label { color: #888; font-size: 0.75rem; display: block; margin-bottom: 3px;}
-        .info-val { color: #fff; font-size: 0.95rem; word-break: break-word;}
-        .apply-link { display: block; width: 100%; background: var(--accent); color: white; text-align: center; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 25px; transition: 0.3s;}
-        .apply-link:hover { background: #1d4ed8; transform: translateY(-2px); }
+        /* --- تصميم النافذة المنبثقة (Uiverse Cookie Style) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            width: 85%; max-width: 400px;
+            position: relative;
+            padding: 40px 25px 25px 25px; /* مساحة علوية للأيقونة */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            text-align: right;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* الأيقونة البارزة من الأعلى (Top Badge) */
+        .modal-top-icon {
+            position: absolute;
+            top: -35px; /* سحبها للأعلى */
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: white;
+            border: 4px solid #1a1a1a; /* فاصل لوني */
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .modal-title { color: #ffffff; font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
+
+        .modal-body-text {
+            color: var(--text-gray); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;
+        }
+
+        .info-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+        .info-icon { color: var(--accent); font-size: 1rem; margin-top: 3px; width: 20px; text-align: center; }
+        .info-text { flex: 1; }
+        .info-label { color: #888; font-size: 0.75rem; display: block; margin-bottom: 2px;}
+        .info-val { color: #e4e4e7; font-size: 0.9rem; word-break: break-word;}
+
+        .modal-actions {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 30px;
+        }
+
+        .close-txt-btn {
+            background: transparent; border: none; color: #888; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: 0.3s;
+        }
+        .close-txt-btn:hover { color: #fff; text-decoration: underline; }
+
+        .apply-btn {
+            background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 12px;
+            text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+        .apply-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
 
         @-webkit-keyframes fadeInUp { from { opacity: 0; -webkit-transform: translateY(15px); } to { opacity: 1; -webkit-transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         @media (max-width: 600px) {
             .header-section { padding: 20px; }
@@ -132,30 +183,39 @@
 
     <div class="modal-overlay" id="infoModal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="close-modal" onclick="closeModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="mTitle" style="color:white; margin-top:0; margin-bottom: 20px; font-size: 1.5rem; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border);"></h3>
             
-            <div class="info-row">
-                <i class="fa-solid fa-location-dot" style="color:var(--accent); font-size: 1.2rem; margin-top: 3px;"></i>
-                <div><span class="info-label">المقر / الفروع</span><span class="info-val" id="mLoc"></span></div>
-            </div>
-            
-            <div class="info-row">
-                <i class="fa-solid fa-envelope" style="color:var(--accent); font-size: 1.2rem; margin-top: 3px;"></i>
-                <div><span class="info-label">التواصل للتقديم</span><span class="info-val" id="mContact" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block;"></span></div>
+            <div class="modal-top-icon" id="mTopIcon">
+                <i class="fa-solid fa-building"></i>
             </div>
 
-            <div class="info-row">
-                <i class="fa-solid fa-graduation-cap" style="color:var(--accent); font-size: 1.1rem; margin-top: 3px;"></i>
-                <div><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div>
+            <h3 class="modal-title" id="mTitle">اسم الشركة</h3>
+            
+            <div class="modal-body-text">
+                <div class="info-row">
+                    <i class="fa-solid fa-location-dot info-icon"></i>
+                    <div class="info-text"><span class="info-label">المقر / الفروع</span><span class="info-val" id="mLoc"></span></div>
+                </div>
+                
+                <div class="info-row">
+                    <i class="fa-solid fa-envelope info-icon"></i>
+                    <div class="info-text"><span class="info-label">التواصل للتقديم</span><span class="info-val" id="mContact" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block;"></span></div>
+                </div>
+
+                <div class="info-row">
+                    <i class="fa-solid fa-graduation-cap info-icon"></i>
+                    <div class="info-text"><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div>
+                </div>
             </div>
 
-            <a href="#" id="mBtn" target="_blank" class="apply-link">تقديم / زيارة الموقع <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 5px;"></i></a>
+            <div class="modal-actions">
+                <button class="close-txt-btn" onclick="closeModal(null, true)">إغلاق</button>
+                <a href="#" id="mBtn" target="_blank" class="apply-btn">التقديم</a>
+            </div>
+
         </div>
     </div>
 
     <script>
-        // قاعدة البيانات الشاملة المستخرجة من ملف الـ PDF
         const db = [
             // --- الشركات ---
             { t: "شركة التصنيع الوطنية", c: "company", l: "جدة / الجبيل / ينبع", e: "عبر الموقع", i: "fa-industry", m: "الكيمياء العامة، الهندسة، الجودة" },
@@ -244,15 +304,12 @@
             { t: "وزارة التجارة", c: "ministry", l: "الرياض", e: "CS@mc.gov.sa", i: "fa-landmark-flag", m: "" }
         ];
 
-        // ترتيب الكروت أبجدياً ببرمجة مبسطة ومضمونة
         db.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
 
         function render(filter) {
             const grid = document.getElementById('dataGrid');
             grid.innerHTML = '';
-            
             const filteredData = db.filter(function(x) { return filter === 'all' || x.c === filter; });
-            
             filteredData.forEach(function(item) {
                 const card = document.createElement('div');
                 card.className = 'company-card';
@@ -262,17 +319,16 @@
             });
         }
 
-        // دالة الفلترة تم تعديلها لاستقبال (this) من الزر نفسه
         function filterData(btnElement, cat) {
             const buttons = document.querySelectorAll('.filter-btn');
-            for(let i=0; i<buttons.length; i++) {
-                buttons[i].classList.remove('active');
-            }
+            for(let i=0; i<buttons.length; i++) { buttons[i].classList.remove('active'); }
             btnElement.classList.add('active');
             render(cat);
         }
 
         function openModal(item) {
+            // تحديث الأيقونة العلوية البارزة
+            document.getElementById('mTopIcon').innerHTML = '<i class="fa-solid ' + item.i + '"></i>';
             document.getElementById('mTitle').innerText = item.t;
             document.getElementById('mLoc').innerText = item.l;
             
@@ -286,15 +342,15 @@
             } else if (item.e.indexOf('http') === 0) {
                 contactText = '<a href="' + item.e + '" target="_blank" style="color:var(--accent); text-decoration:none;">رابط بوابة التقديم</a>';
                 linkHref = item.e;
-                document.getElementById('mBtn').innerText = "الذهاب للتقديم";
+                document.getElementById('mBtn').innerText = "موقع التقديم";
             } else {
                 contactText = item.e;
                 linkHref = 'https://www.google.com/search?q=التدريب+التعاوني+' + item.t;
-                document.getElementById('mBtn').innerText = "البحث في قوقل عن الجهة";
+                document.getElementById('mBtn').innerText = "البحث في جوجل";
             }
 
             document.getElementById('mContact').innerHTML = contactText;
-            document.getElementById('mMajors').innerText = item.m || 'كافة التخصصات / حسب الشواغر المتاحة';
+            document.getElementById('mMajors').innerText = item.m || 'حسب الشواغر المتاحة';
             
             const btn = document.getElementById('mBtn');
             btn.href = linkHref;
@@ -312,7 +368,6 @@
             }
         }
 
-        // إعدادات النجوم
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
