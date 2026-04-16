@@ -2,10 +2,8 @@ name: Auto Update Coop Data
 
 on:
   schedule:
-    # يشتغل 4 مرات باليوم بأوقات مكسورة عشان ما ينعرف التحديث
-    # (بتوقيت جرينتش: 2:15, 8:15, 14:15, 20:15)
     - cron: '15 2,8,14,20 * * *' 
-  workflow_dispatch: # زر التشغيل اليدوي
+  workflow_dispatch: 
 
 jobs:
   update-data:
@@ -14,7 +12,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -30,11 +28,9 @@ jobs:
       - name: Run Scraper
         run: python scraper.py
 
+      # الأداة الاحترافية لرفع الملفات بدون أي أخطاء
       - name: Commit and Push changes
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git add live_data.json
-          git commit -m "تحديث تلقائي لبيانات التدريب 🚀" || echo "لا توجد فرص جديدة للتحديث"
-          git pull --rebase origin main
-          git push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "تحديث تلقائي لبيانات التدريب 🚀"
+          file_pattern: 'live_data.json'
