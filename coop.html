@@ -78,8 +78,10 @@
         .company-card {
             background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
             border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s;
-            animation: fadeInUp 0.4s ease-out forwards;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
+            /* تم إصلاح الشفافية لدعم الجوالات */
+            -webkit-animation: fadeInUp 0.5s ease-out;
+            animation: fadeInUp 0.5s ease-out;
         }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
@@ -98,6 +100,7 @@
         .apply-link { display: block; width: 100%; background: var(--accent); color: white; text-align: center; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 25px; transition: 0.3s;}
         .apply-link:hover { background: #1d4ed8; transform: translateY(-2px); }
 
+        @-webkit-keyframes fadeInUp { from { opacity: 0; -webkit-transform: translateY(15px); } to { opacity: 1; -webkit-transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 600px) {
@@ -117,11 +120,11 @@
         </div>
 
         <div class="filters-container">
-            <button class="filter-btn active" onclick="filterData('all')">الكل</button>
-            <button class="filter-btn" onclick="filterData('company')">الشركات</button>
-            <button class="filter-btn" onclick="filterData('bank')">البنوك</button>
-            <button class="filter-btn" onclick="filterData('agency')">الهيئات والمؤسسات</button>
-            <button class="filter-btn" onclick="filterData('ministry')">الوزارات</button>
+            <button class="filter-btn active" onclick="filterData(this, 'all')">الكل</button>
+            <button class="filter-btn" onclick="filterData(this, 'company')">الشركات</button>
+            <button class="filter-btn" onclick="filterData(this, 'bank')">البنوك</button>
+            <button class="filter-btn" onclick="filterData(this, 'agency')">الهيئات والمؤسسات</button>
+            <button class="filter-btn" onclick="filterData(this, 'ministry')">الوزارات</button>
         </div>
 
         <div class="companies-grid" id="dataGrid"></div>
@@ -129,7 +132,7 @@
 
     <div class="modal-overlay" id="infoModal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <button class="close-modal" onclick="closeModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="mTitle" style="color:white; margin-top:0; margin-bottom: 20px; font-size: 1.5rem; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border);"></h3>
             
             <div class="info-row">
@@ -152,7 +155,7 @@
     </div>
 
     <script>
-        [span_0](start_span)[span_1](start_span)[span_2](start_span)[span_3](start_span)[span_4](start_span)[span_5](start_span)[span_6](start_span)// قاعدة البيانات الشاملة المستخرجة من ملف الـ PDF[span_0](end_span)[span_1](end_span)[span_2](end_span)[span_3](end_span)[span_4](end_span)[span_5](end_span)[span_6](end_span)
+        // قاعدة البيانات الشاملة المستخرجة من ملف الـ PDF
         const db = [
             // --- الشركات ---
             { t: "شركة التصنيع الوطنية", c: "company", l: "جدة / الجبيل / ينبع", e: "عبر الموقع", i: "fa-industry", m: "الكيمياء العامة، الهندسة، الجودة" },
@@ -241,27 +244,31 @@
             { t: "وزارة التجارة", c: "ministry", l: "الرياض", e: "CS@mc.gov.sa", i: "fa-landmark-flag", m: "" }
         ];
 
-        // ترتيب الكروت أبجدياً لتكون مرتبة للطلاب
-        db.sort((a, b) => a.t.localeCompare(b.t, 'ar'));
+        // ترتيب الكروت أبجدياً ببرمجة مبسطة ومضمونة
+        db.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
 
         function render(filter) {
             const grid = document.getElementById('dataGrid');
             grid.innerHTML = '';
             
-            const filteredData = db.filter(x => filter === 'all' || x.c === filter);
+            const filteredData = db.filter(function(x) { return filter === 'all' || x.c === filter; });
             
-            filteredData.forEach(item => {
+            filteredData.forEach(function(item) {
                 const card = document.createElement('div');
                 card.className = 'company-card';
-                card.onclick = () => openModal(item);
-                card.innerHTML = `<div class="company-icon"><i class="fa-solid ${item.i}"></i></div><div class="company-name">${item.t}</div><div class="company-tag">${item.l}</div>`;
+                card.onclick = function() { openModal(item); };
+                card.innerHTML = '<div class="company-icon"><i class="fa-solid ' + item.i + '"></i></div><div class="company-name">' + item.t + '</div><div class="company-tag">' + item.l + '</div>';
                 grid.appendChild(card);
             });
         }
 
-        function filterData(cat) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+        // دالة الفلترة تم تعديلها لاستقبال (this) من الزر نفسه
+        function filterData(btnElement, cat) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            for(let i=0; i<buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            btnElement.classList.add('active');
             render(cat);
         }
 
@@ -269,21 +276,20 @@
             document.getElementById('mTitle').innerText = item.t;
             document.getElementById('mLoc').innerText = item.l;
             
-            // معالجة طريقة التقديم (إيميل أو رابط)
             let contactText = item.e;
             let linkHref = "#";
             
-            if (item.e.includes('@')) {
-                contactText = `<a href="mailto:${item.e}" style="color:var(--accent); text-decoration:none;">${item.e}</a>`;
-                linkHref = `mailto:${item.e}`;
+            if (item.e.indexOf('@') !== -1) {
+                contactText = '<a href="mailto:' + item.e + '" style="color:var(--accent); text-decoration:none;">' + item.e + '</a>';
+                linkHref = 'mailto:' + item.e;
                 document.getElementById('mBtn').innerText = "إرسال إيميل التقديم";
-            } else if (item.e.startsWith('http')) {
-                contactText = `<a href="${item.e}" target="_blank" style="color:var(--accent); text-decoration:none;">رابط بوابة التقديم</a>`;
+            } else if (item.e.indexOf('http') === 0) {
+                contactText = '<a href="' + item.e + '" target="_blank" style="color:var(--accent); text-decoration:none;">رابط بوابة التقديم</a>';
                 linkHref = item.e;
                 document.getElementById('mBtn').innerText = "الذهاب للتقديم";
             } else {
                 contactText = item.e;
-                linkHref = `https://www.google.com/search?q=التدريب+التعاوني+${item.t}`;
+                linkHref = 'https://www.google.com/search?q=التدريب+التعاوني+' + item.t;
                 document.getElementById('mBtn').innerText = "البحث في قوقل عن الجهة";
             }
 
@@ -293,29 +299,27 @@
             const btn = document.getElementById('mBtn');
             btn.href = linkHref;
 
-            // إظهار النافذة
             const modal = document.getElementById('infoModal');
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
 
-        function closeModal(event) {
+        function closeModal(event, isButton) {
             const modal = document.getElementById('infoModal');
-            if (!event || event.target === modal || event.target.closest('.close-modal')) {
+            if (isButton || !event || event.target === modal) {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
             }
         }
 
-        // === إعدادات النجوم ===
+        // إعدادات النجوم
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
         function initStars() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; stars = []; for(let i=0; i<100; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1}); }
-        function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
+        function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(function(s){ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // تشغيل العرض الأولي
         render('all');
     </script>
 </body>
