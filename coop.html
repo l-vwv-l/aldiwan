@@ -40,6 +40,7 @@
             position: relative; z-index: 10;
             width: 95%; max-width: 1200px;
             margin: 40px 0;
+            display: flex; flex-direction: column;
         }
 
         .header-section {
@@ -47,6 +48,7 @@
             background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border); border-radius: 25px; padding: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
         }
 
         .header-section h1 { color: var(--text-white); margin: 0 0 10px 0; font-size: 2rem; }
@@ -74,19 +76,32 @@
         /* --- الشبكة --- */
         .companies-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
+            margin-bottom: 20px;
         }
 
         .company-card {
             background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s;
+            border-radius: 20px; padding: 25px 20px; text-align: center; cursor: pointer; transition: 0.3s;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out;
         }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
-        .company-icon { font-size: 2rem; color: var(--accent); margin-bottom: 15px; }
+        .company-icon { font-size: 2.2rem; color: var(--accent); margin-bottom: 15px; }
         .company-name { color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.1rem;}
-        .company-tag { color: var(--text-gray); font-size: 0.8rem; }
+        .company-tag { color: var(--text-gray); font-size: 0.85rem; }
+
+        /* --- تذييل الصفحة (إثبات الملكية) --- */
+        .footer-info {
+            margin-top: 30px; padding: 20px 30px;
+            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; }
+        .footer-copyright { color: var(--text-gray); font-size: 0.75rem; opacity: 0.8; }
 
         /* --- النافذة المنبثقة (تصميم الكوكيز) --- */
         .modal-overlay {
@@ -96,33 +111,22 @@
         }
 
         .modal-content {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            width: 85%; max-width: 400px;
-            position: relative;
-            padding: 40px 25px 25px 25px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            text-align: right;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px; width: 85%; max-width: 400px; position: relative;
+            padding: 45px 25px 25px 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            text-align: right; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .modal-top-icon {
-            position: absolute;
-            top: -35px; left: 50%; transform: translateX(-50%);
-            background: var(--accent);
-            width: 70px; height: 70px;
-            border-radius: 50%;
+            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); width: 70px; height: 70px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; color: white;
-            border: 4px solid #1a1a1a;
+            font-size: 2rem; color: white; border: 4px solid #1a1a1a;
             box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
         }
 
         .modal-title { color: #ffffff; font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
-
         .modal-body-text { color: var(--text-gray); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
-
         .info-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
         .info-icon { color: var(--accent); font-size: 1rem; margin-top: 3px; width: 20px; text-align: center; }
         .info-text { flex: 1; }
@@ -130,10 +134,8 @@
         .info-val { color: #e4e4e7; font-size: 0.9rem; word-break: break-word;}
 
         .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
-
         .close-txt-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: 0.3s; }
         .close-txt-btn:hover { color: #fff; text-decoration: underline; }
-
         .apply-btn {
             background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 12px;
             text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s;
@@ -145,9 +147,15 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
+        /* --- تحسينات الجوال المتقدمة --- */
         @media (max-width: 600px) {
-            .header-section { padding: 20px; }
+            .header-section { padding: 20px; padding-top: 60px; /* دفع النص لتحت عشان زر الرجوع */ }
             .header-section h1 { font-size: 1.5rem; }
+            .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 0.9rem; }
+            .companies-grid { grid-template-columns: 1fr; gap: 15px; /* كرت واحد لكل سطر عشان تاخذ راحتها */ }
+            .main-container { width: 90%; margin: 20px 0; }
+            .filter-btn { padding: 6px 15px; font-size: 0.85rem; }
+            .footer-info { flex-direction: column; text-align: center; justify-content: center; }
         }
     </style>
 </head>
@@ -155,8 +163,9 @@
     <canvas id="stars"></canvas>
 
     <div class="main-container">
+        
         <div class="header-section">
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+            <a href="index.html" class="back-btn" title="العودة للرئيسية"><i class="fa-solid fa-arrow-right"></i></a>
             <h1>دليل التدريب التعاوني</h1>
             <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب الميداني 💼</p>
         </div>
@@ -170,6 +179,16 @@
         </div>
 
         <div class="companies-grid" id="dataGrid"></div>
+
+        <div class="footer-info">
+            <div class="footer-logo-text">
+                <i class="fas fa-landmark" style="color: #f59e0b; margin-left: 5px;"></i> تأسس الديوان الجامعي عام 2022
+            </div>
+            <div class="footer-copyright">
+                جميع الحقوق محفوظة © 2026 الديوان الجامعي
+            </div>
+        </div>
+
     </div>
 
     <div class="modal-overlay" id="infoModal" onclick="closeModal(event)">
@@ -191,6 +210,11 @@
                     <i class="fa-solid fa-envelope info-icon"></i>
                     <div class="info-text"><span class="info-label">التواصل للتقديم</span><span class="info-val" id="mContact" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block;"></span></div>
                 </div>
+
+                <div class="info-row">
+                    <i class="fa-solid fa-graduation-cap info-icon"></i>
+                    <div class="info-text"><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div>
+                </div>
             </div>
 
             <div class="modal-actions">
@@ -202,7 +226,6 @@
     </div>
 
     <script>
-        // === قاعدة بيانات كاملة (139 جهة) مستخرجة من الـ PDF بدقة ===
         const db = [
             // --- الشركات ---
             { t: "Plan A | marketing solutions", c: "company", l: "الرياض", e: "hr@plana-sa.com", i: "fa-bullhorn" },
@@ -354,7 +377,6 @@
             { t: "وزارة النقل والخدمات اللوجستية", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-truck-fast" }
         ];
 
-        // ترتيب الكروت أبجدياً ببرمجة مبسطة ومضمونة
         db.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
 
         function render(filter) {
@@ -404,6 +426,7 @@
             }
 
             document.getElementById('mContact').innerHTML = contactText;
+            document.getElementById('mMajors').innerText = item.m || 'حسب الشواغر المتاحة';
             
             const btn = document.getElementById('mBtn');
             btn.href = linkHref;
