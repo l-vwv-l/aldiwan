@@ -73,7 +73,11 @@
         }
         .filter-btn:hover, .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* --- الشبكة (تصميم الكروت الجديد) --- */
+        /* الزر المميز للفرص المباشرة */
+        .filter-btn.live-btn { border-color: #d946ef; color: #d946ef; }
+        .filter-btn.live-btn:hover, .filter-btn.live-btn.active { background: #d946ef; color: white; }
+
+        /* --- الشبكة (تصميم الكروت) --- */
         .companies-grid {
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
@@ -94,7 +98,6 @@
         
         .company-name { 
             color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.05rem; line-height: 1.4;
-            /* قص النص الذكي لو كان طويل جداً */
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
         
@@ -159,27 +162,16 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* --- تحسينات الجوال المتقدمة (هنا تم حل المشكلة) --- */
+        /* --- تحسينات الجوال --- */
         @media (max-width: 600px) {
             .header-section { padding: 20px; padding-top: 60px; }
             .header-section h1 { font-size: 1.4rem; }
             .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 0.9rem; }
-            
-            /* إجبار الشبكة على عرض كرتين جنب بعض في الجوال */
-            .companies-grid { 
-                grid-template-columns: repeat(2, 1fr); 
-                gap: 12px; 
-            }
-            
-            /* تصغير الكروت لتناسب الشاشة */
-            .company-card {
-                padding: 15px 10px;
-                border-radius: 16px;
-            }
+            .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .company-card { padding: 15px 10px; border-radius: 16px; }
             .company-icon { font-size: 1.6rem; margin-bottom: 8px; }
             .company-name { font-size: 0.9rem; margin-bottom: 3px; }
             .company-tag { font-size: 0.7rem; }
-            
             .main-container { width: 92%; margin: 20px 0; }
             .filters-container { gap: 8px; }
             .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
@@ -200,6 +192,11 @@
 
         <div class="filters-container">
             <button class="filter-btn active" onclick="filterData(this, 'all')">الكل</button>
+            
+            <button class="filter-btn live-btn" onclick="filterData(this, 'live')">
+                <i class="fa-solid fa-bolt"></i> فرص مباشرة
+            </button>
+
             <button class="filter-btn" onclick="filterData(this, 'company')">الشركات</button>
             <button class="filter-btn" onclick="filterData(this, 'bank')">البنوك</button>
             <button class="filter-btn" onclick="filterData(this, 'agency')">الهيئات والمؤسسات</button>
@@ -405,19 +402,48 @@
             { t: "وزارة النقل والخدمات اللوجستية", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-truck-fast" }
         ];
 
-        db.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
+        let allData = [...db];
+
+        // دالة سحب البيانات المباشرة من السيرفر (GitHub Actions)
+        async function fetchLiveData() {
+            try {
+                // استخدام رقم عشوائي لمنع التخزين المؤقت (Cache)
+                const response = await fetch('live_data.json?v=' + new Date().getTime());
+                if(response.ok) {
+                    const liveData = await response.json();
+                    allData = [...db, ...liveData];
+                }
+            } catch (e) {
+                console.log("جاري انتظار أول تحديث للسيرفر...");
+            }
+            
+            // ترتيب أبجدي للكل
+            allData.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
+            
+            // رفع الفرص المباشرة (الجديدة) لتكون أول الكروت دائماً
+            allData.sort(function(a, b) { return (a.c === 'live' ? -1 : (b.c === 'live' ? 1 : 0)); });
+            
+            // تحديث العرض
+            render('all');
+        }
 
         function render(filter) {
             const grid = document.getElementById('dataGrid');
             grid.innerHTML = '';
             
-            const filteredData = db.filter(function(x) { return filter === 'all' || x.c === filter; });
+            const filteredData = allData.filter(function(x) { return filter === 'all' || x.c === filter; });
             
             filteredData.forEach(function(item) {
                 const card = document.createElement('div');
                 card.className = 'company-card';
+                
+                // توهج بنفسجي خفيف للفرص المباشرة
+                if(item.c === 'live') card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)';
+                
                 card.onclick = function() { openModal(item); };
-                card.innerHTML = '<div class="company-icon"><i class="fa-solid ' + item.i + '"></i></div><div class="company-name">' + item.t + '</div><div class="company-tag">' + item.l + '</div>';
+                
+                let iconColor = item.c === 'live' ? '#d946ef' : 'var(--accent)';
+                card.innerHTML = '<div class="company-icon" style="color:'+iconColor+'"><i class="fa-solid ' + item.i + '"></i></div><div class="company-name">' + item.t + '</div><div class="company-tag">' + item.l + '</div>';
                 grid.appendChild(card);
             });
         }
@@ -432,7 +458,10 @@
         }
 
         function openModal(item) {
+            let iconColor = item.c === 'live' ? '#d946ef' : 'var(--accent)';
             document.getElementById('mTopIcon').innerHTML = '<i class="fa-solid ' + item.i + '"></i>';
+            document.getElementById('mTopIcon').style.background = iconColor;
+
             document.getElementById('mTitle').innerText = item.t;
             document.getElementById('mLoc').innerText = item.l;
             
@@ -440,11 +469,11 @@
             let linkHref = "#";
             
             if (item.e.indexOf('@') !== -1) {
-                contactText = '<a href="mailto:' + item.e + '" style="color:var(--accent); text-decoration:none;">' + item.e + '</a>';
+                contactText = '<a href="mailto:' + item.e + '" style="color:'+iconColor+'; text-decoration:none;">' + item.e + '</a>';
                 linkHref = 'mailto:' + item.e;
                 document.getElementById('mBtn').innerText = "إرسال إيميل للتقديم";
             } else if (item.e.indexOf('http') === 0) {
-                contactText = '<a href="' + item.e + '" target="_blank" style="color:var(--accent); text-decoration:none;">رابط بوابة التقديم</a>';
+                contactText = '<a href="' + item.e + '" target="_blank" style="color:'+iconColor+'; text-decoration:none;">رابط بوابة التقديم</a>';
                 linkHref = item.e;
                 document.getElementById('mBtn').innerText = "الذهاب للتقديم";
             } else {
@@ -458,6 +487,7 @@
             
             const btn = document.getElementById('mBtn');
             btn.href = linkHref;
+            btn.style.background = iconColor;
 
             const modal = document.getElementById('infoModal');
             modal.style.display = 'flex';
@@ -479,7 +509,8 @@
         function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(function(s){ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        render('all');
+        // بداية التشغيل (سحب البيانات ثم العرض)
+        fetchLiveData();
     </script>
 </body>
 </html>
