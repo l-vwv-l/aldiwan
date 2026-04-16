@@ -404,25 +404,38 @@
 
         let allData = [...db];
 
-        // الخوارزمية الذكية لدمج البيانات المباشرة
+        // الخوارزمية الذكية المتطورة (Fuzzy Matching)
         async function fetchLiveData() {
             try {
-                // سحب البيانات من السيرفر بدون التخزين المؤقت
                 const response = await fetch('live_data.json?v=' + new Date().getTime());
                 if(response.ok) {
                     const liveData = await response.json();
                     
-                    // تحديث البطاقات الموجودة أو إضافة الجديدة
                     liveData.forEach(function(liveItem) {
+                        
                         let existingIndex = db.findIndex(function(item) {
-                            return item.t.includes(liveItem.t) || liveItem.t.includes(item.t);
+                            // 1. تنظيف الأسماء (تجاهل الأقواس والرموز)
+                            let t1 = item.t.toLowerCase().replace(/[^\w\s\u0600-\u06FF]/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه');
+                            let t2 = liveItem.t.toLowerCase().replace(/[^\w\s\u0600-\u06FF]/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه');
+                            
+                            // 2. الكلمات اللي ما نبي النظام يطابق بناءً عليها
+                            let stopWords = ['شركة', 'مؤسسة', 'وزارة', 'بنك', 'مصرف', 'هيئة', 'مجموعة', 'برنامج', 'صندوق', 'ال', 'saudi', 'company'];
+                            
+                            // 3. تقسيم الاسم لكلمات أساسية
+                            let words1 = t1.split(/\s+/).filter(w => w.length > 2 && !stopWords.includes(w));
+                            let words2 = t2.split(/\s+/).filter(w => w.length > 2 && !stopWords.includes(w));
+                            
+                            // 4. مطابقة الجوهر: هل في كلمة مشتركة ومهمة بينهم؟ (مثلاً: ارامكو = ارامكو)
+                            return words1.some(w1 => words2.some(w2 => w1 === w2 || w1.includes(w2) || w2.includes(w1)));
                         });
                         
                         if (existingIndex !== -1) {
+                            // تم العثور على الشركة: قم بالتحديث والتوهج
                             db[existingIndex].e = liveItem.e; 
                             if (liveItem.m) db[existingIndex].m = liveItem.m; 
                             db[existingIndex].c = 'live';     
                         } else {
+                            // شركة جديدة بالكامل
                             db.push(liveItem);
                         }
                     });
@@ -433,7 +446,7 @@
             
             allData = [...db];
 
-            // الترتيب الأبجدي وتصعيد الفرص المباشرة
+            // الترتيب والتصعيد
             allData.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
             allData.sort(function(a, b) { return (a.c === 'live' ? -1 : (b.c === 'live' ? 1 : 0)); });
             
@@ -522,7 +535,7 @@
         function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(function(s){ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // بداية التشغيل السحري (سحب ودمج)
+        // بداية التشغيل السحري (سحب ودمج ذكي)
         fetchLiveData();
     </script>
 </body>
