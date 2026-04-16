@@ -11,44 +11,52 @@ def scrape_data():
         try:
             # الدخول للموقع
             page.goto("https://go.3atabah.com/dl/a400f7", timeout=60000)
-            page.wait_for_timeout(5000) # الانتظار 5 ثواني لتتحمل الصفحة (لأنها React)
+            page.wait_for_timeout(8000) # انتظار عشان الموقع يكتمل تحميله
             
-            # ملاحظة للمطور (أنت): هذه المحددات (Selectors) تقريبية وتحتاج تعديل بناءً على كود موقع عتبة الفعلي
-            # هنا نفترض أن الكروت لها كلاس 'job-card'
-            cards = page.locator('.job-card').all()
+            # صيد الروابط الذكي: نبحث عن أي رابط فيه نصوص تدل على التدريب
+            links = page.locator('a').all()
             
-            for card in cards:
+            for link in links:
                 try:
-                    title = card.locator('h2').inner_text().strip()
-                    link = card.locator('a').get_attribute('href')
+                    text = link.inner_text().strip()
+                    href = link.get_attribute('href')
                     
-                    data.append({
-                        "t": title,
-                        "c": "live", # التصنيف الجديد: فرص مباشرة
-                        "l": "عن بعد / مناطق متعددة",
-                        "e": link,
-                        "i": "fa-bolt",
-                        "m": "متاح التقديم الآن"
-                    })
+                    # فلترة: نأخذ بس الروابط اللي فيها كلمات معينة وما تكون فاضية
+                    if text and href and not href.startswith('javascript'):
+                        if 'تدريب' in text or 'تعاوني' in text or 'شركة' in text or 'هيئة' in text or 'برنامج' in text or 'بنك' in text:
+                            
+                            # تنظيف العنوان
+                            clean_title = text.split('\n')[0][:50]
+                            
+                            # التأكد من صحة الرابط
+                            final_link = href if href.startswith('http') else f"https://go.3atabah.com{href}"
+                            
+                            data.append({
+                                "t": clean_title,
+                                "c": "live",
+                                "l": "التقديم متاح حالياً",
+                                "e": final_link,
+                                "i": "fa-bolt",
+                                "m": "تم التحديث آلياً ⚡"
+                            })
                 except Exception:
                     continue
+                    
+            # إزالة الفرص المكررة إذا الموقع كررها
+            unique_data = []
+            seen_titles = set()
+            for d in data:
+                if d['t'] not in seen_titles:
+                    unique_data.append(d)
+                    seen_titles.add(d['t'])
+            data = unique_data
+
         except Exception as e:
             print(f"حدث خطأ أثناء السحب: {e}")
         finally:
             browser.close()
     
-    # إذا لم يجد السكربت شيء (بسبب اختلاف تصميم موقعهم)، نضع كرت تجريبي لتأكيد عمل النظام
-    if not data:
-        data.append({
-            "t": "فرصة تدريب (تحديث آلي)",
-            "c": "live",
-            "l": "تحديث النظام الآلي",
-            "e": "https://go.3atabah.com/dl/a400f7",
-            "i": "fa-bolt",
-            "m": "تم الاتصال بالسيرفر بنجاح"
-        })
-
-    # حفظ البيانات المستخرجة في ملف JSON
+    # حفظ البيانات. إذا ما لقى شيء، يحفظ ملف فارغ عشان ما تطلع إعلانات
     with open('live_data.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
