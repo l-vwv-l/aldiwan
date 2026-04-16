@@ -1,0 +1,37 @@
+name: Auto Update Coop Data
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # تشغيل تلقائي كل يوم منتصف الليل
+  workflow_dispatch: # زر للتشغيل اليدوي متى ما بغيت
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright
+          playwright install chromium
+
+      - name: Run Scraper
+        run: python scraper.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add live_data.json
+          git commit -m "تحديث تلقائي لبيانات التدريب 🚀" || echo "لا توجد فرص جديدة للتحديث"
+          git push
