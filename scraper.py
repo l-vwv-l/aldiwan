@@ -14,8 +14,8 @@ genai.configure(api_key=API_KEY)
 def scrape_data():
     data = []
     sources = [
-        {"url": "https://go.3atabah.com/dl/a400f7", "type": "3atabah"},
-        {"url": "https://www.ewdifh.com/category/corporate-jobs", "type": "ewdifh"}
+        {"url": "[https://go.3atabah.com/dl/a400f7](https://go.3atabah.com/dl/a400f7)", "type": "3atabah"},
+        {"url": "[https://www.ewdifh.com/category/corporate-jobs](https://www.ewdifh.com/category/corporate-jobs)", "type": "ewdifh"}
     ]
     
     model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
@@ -25,15 +25,12 @@ def scrape_data():
         page = browser.new_page()
         job_links = []
         
-        # 1. جمع الروابط بفلتر مبدئي
         for source in sources:
             try:
                 page.goto(source["url"], timeout=60000)
                 page.wait_for_timeout(5000)
                 links = page.locator('a').all()
-                
-                # كلمات نستبعدها فوراً من العناوين
-                bad_words = ['تواصل', 'الأسئلة', 'تسجيل', 'دخول', 'خريج', 'توظيف', 'عمل', 'وظيفة']
+                bad_words = ['تواصل', 'الأسئلة', 'تسجيل', 'دخول', 'شروط', 'سياسة']
                 
                 for link in links:
                     try:
@@ -42,10 +39,10 @@ def scrape_data():
                         is_bad = any(bw in text.lower() for bw in bad_words)
                         
                         if text and href and not href.startswith('javascript') and not is_bad and len(text) > 5:
-                            final_link = href if href.startswith('http') else f"https://www.ewdifh.com{href}"
+                            final_link = href if href.startswith('http') else f"[https://www.ewdifh.com](https://www.ewdifh.com){href}"
                             
-                            # لازم العنوان يكون فيه لمحة عن التدريب
-                            if any(vw in text for vw in ['تدريب', 'تعاوني', 'ميداني', 'coop']):
+                            # وسعنا نطاق البحث ليلتقط التدريب بشكل أذكى
+                            if any(vw in text.lower() for vw in ['تدريب', 'تعاوني', 'coop', 'تمهير']):
                                 job_links.append({"url": final_link})
                     except:
                         continue
@@ -61,7 +58,6 @@ def scrape_data():
                 
         unique_jobs = unique_jobs[:10]
         
-        # 2. الغوص العميق بالذكاء الاصطناعي بأوامر صارمة جداً
         for job in unique_jobs:
             try:
                 page.goto(job['url'], timeout=60000)
@@ -77,46 +73,48 @@ def scrape_data():
                             apply_link = hrf
                             break
 
-                # أمر الذكاء الاصطناعي (صارم ومحدد لطلاب الجامعة فقط)
+                # أمر الذكاء الاصطناعي صار أذكى
                 prompt = f"""
                 أنت خبير توظيف لطلاب الجامعات فقط. اقرأ الإعلان التالي بدقة:
                 {content[:3500]}
                 
-                1. هل الإعلان مخصص حصرياً لـ "التدريب التعاوني" (Co-op) أو "التدريب الميداني" للطلاب الذين لا يزالون على مقاعد الدراسة؟ 
-                (انتبه: إذا كان الإعلان يستهدف "حديثي التخرج"، أو "برنامج تمهير"، أو "وظائف"، أو "تدريب منتهي بالتوظيف"، فيجب عليك إرجاع مصفوفة فارغة [] فوراً).
-                
-                2. إذا كان الإعلان يخص التدريب التعاوني للطلاب فقط، استخرج التالي كـ JSON:
+                هل يحتوي الإعلان على فرص "تدريب تعاوني" أو "تدريب ميداني" أو "تمهير" مخصصة للطلاب أو حديثي التخرج؟ 
+                إذا كانت الإجابة نعم، استخرج البيانات بدقة كـ JSON بالصيغة التالية:
                 {{
-                    "t": "اسم الشركة الرسمي فقط (بدون كلمة يعلن أو شركة)",
-                    "m": "التخصصات المستهدفة باختصار",
-                    "b": "المزايا والمكافآت باختصار",
-                    "a": "نبذة مختصرة عن برنامج التدريب التعاوني",
-                    "s": "اكتب 'مفتوح' أو 'ينتهي قريباً' أو 'مغلق'",
-                    "email": "إذا ذكر الإعلان إيميل للتقديم اكتبه، وإلا اتركه فارغاً"
+                    "t": "اسم الجهة (بدون كلمة يعلن)",
+                    "m": "التخصصات المستهدفة",
+                    "b": "المزايا",
+                    "a": "نبذة عن البرنامج",
+                    "s": "مفتوح أو ينتهي قريباً",
+                    "email": "الإيميل إن وجد"
                 }}
+                إذا كان الإعلان لوظائف للمحترفين (أصحاب الخبرة) فقط، أرجع مصفوفة فارغة [].
+                لا ترجع أي نص خارج الـ JSON.
                 """
                 
                 response = model.generate_content(prompt)
-                ai_data = json.loads(response.text)
                 
-                # إذا كانت القائمة فارغة، يعني الذكاء الاصطناعي اكتشف إنها وظيفة أو للخريجين ورفضها
+                # تنظيف الكود في حال أرسل الذكاء الاصطناعي علامات Markdown
+                clean_response = response.text.replace("```json", "").replace("```", "").strip()
+                ai_data = json.loads(clean_response)
+                
                 if isinstance(ai_data, dict) and "t" in ai_data:
                     email_extracted = ai_data.get("email", "")
                     if email_extracted and "@" not in email_extracted:
                         email_extracted = ""
 
                     data.append({
-                        "t": ai_data["t"],
+                        "t": ai_data.get("t", "غير محدد"),
                         "l": "السعودية",
                         "e": apply_link,
                         "email": email_extracted,
-                        "m": ai_data["m"],
-                        "b": ai_data["b"],
-                        "a": ai_data["a"],
-                        "s": ai_data["s"]
+                        "m": ai_data.get("m", ""),
+                        "b": ai_data.get("b", ""),
+                        "a": ai_data.get("a", ""),
+                        "s": ai_data.get("s", "مفتوح")
                     })
             except Exception as e:
-                print(f"AI Skip/Error (Not a Coop): {e}")
+                print(f"AI Skip/Error: {e}")
                 continue
                 
         browser.close()
