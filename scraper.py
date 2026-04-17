@@ -14,8 +14,8 @@ genai.configure(api_key=API_KEY)
 def scrape_data():
     data = []
     sources = [
-        {"url": "[https://go.3atabah.com/dl/a400f7](https://go.3atabah.com/dl/a400f7)", "type": "3atabah"},
-        {"url": "[https://www.ewdifh.com/category/corporate-jobs](https://www.ewdifh.com/category/corporate-jobs)", "type": "ewdifh"}
+        {"url": "https://go.3atabah.com/dl/a400f7", "type": "3atabah"},
+        {"url": "https://www.ewdifh.com/category/corporate-jobs", "type": "ewdifh"}
     ]
     
     model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
@@ -39,10 +39,10 @@ def scrape_data():
                         is_bad = any(bw in text.lower() for bw in bad_words)
                         
                         if text and href and not href.startswith('javascript') and not is_bad and len(text) > 5:
-                            final_link = href if href.startswith('http') else f"[https://www.ewdifh.com](https://www.ewdifh.com){href}"
+                            final_link = href if href.startswith('http') else f"https://www.ewdifh.com{href}"
                             
-                            # وسعنا نطاق البحث ليلتقط التدريب بشكل أذكى
-                            if any(vw in text.lower() for vw in ['تدريب', 'تعاوني', 'coop', 'تمهير']):
+                            # توسيع كلمات البحث لتلتقط أي فرصة للطلاب
+                            if any(vw in text.lower() for vw in ['تدريب', 'تعاوني', 'coop', 'تمهير', 'صيفي', 'خريج']):
                                 job_links.append({"url": final_link})
                     except:
                         continue
@@ -73,7 +73,7 @@ def scrape_data():
                             apply_link = hrf
                             break
 
-                # أمر الذكاء الاصطناعي صار أذكى
+                # أمر الذكاء الاصطناعي صارم ومحصن
                 prompt = f"""
                 أنت خبير توظيف لطلاب الجامعات فقط. اقرأ الإعلان التالي بدقة:
                 {content[:3500]}
@@ -94,7 +94,7 @@ def scrape_data():
                 
                 response = model.generate_content(prompt)
                 
-                # تنظيف الكود في حال أرسل الذكاء الاصطناعي علامات Markdown
+                # تنظيف الكود في حال أرسل الذكاء الاصطناعي علامات التنسيق (Markdown)
                 clean_response = response.text.replace("```json", "").replace("```", "").strip()
                 ai_data = json.loads(clean_response)
                 
