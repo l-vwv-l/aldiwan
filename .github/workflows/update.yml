@@ -26,6 +26,9 @@ jobs:
           playwright install chromium
 
       - name: Run Scraper (AI Powered)
+        env:
+          # هنا نعطي السيرفر المفتاح من الخزنة
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python scraper.py
 
       - name: Commit and Push changes
