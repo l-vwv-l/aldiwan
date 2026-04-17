@@ -63,10 +63,9 @@
         .admin-edit-btn:hover { transform: scale(1.1); background: #facc15; }
         body.admin-mode .admin-edit-btn { display: flex; }
 
-        .footer-info { margin-top: 30px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .footer-info { margin-top: 30px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
         .footer-copyright { color: var(--text-gray); font-size: 0.75rem; opacity: 0.8; }
-
         .secret-lock { cursor: pointer; opacity: 0.3; transition: 0.3s; font-size: 0.9rem; padding: 5px; }
         .secret-lock:hover { opacity: 1; color: var(--text-white); }
 
@@ -82,12 +81,11 @@
         .flip-container.flipped .flipper { transform: rotateY(180deg); }
         
         .front, .back { backface-visibility: hidden; position: absolute; top: 0; left: 0; width: 100%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 15px 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
-        .front { position: relative; transform: rotateY(0deg); }
         .back { transform: rotateY(180deg); height: 100%; }
         
-        .admin-modal-content { position: relative; max-width: 450px; width: 90%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 20px 25px; margin: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; max-height: 90vh; overflow-y: auto; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .admin-modal-content { position: relative; max-width: 450px; width: 90%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 20px 25px; margin: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        /* نظام التبويبات الجديد للإدارة */
+        /* نظام التبويبات المريح للإدارة */
         .admin-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
         .admin-tab-btn { flex: 1; background: transparent; color: #a1a1aa; border: none; padding: 10px; cursor: pointer; border-bottom: 2px solid transparent; transition: 0.3s; font-family: inherit; font-weight: bold; font-size: 0.85rem;}
         .admin-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -104,13 +102,8 @@
         
         .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
         .flip-btn { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 0.85rem; }
-        .flip-btn:hover { background: rgba(255,255,255,0.2); }
-        .share-btn { color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
-        .share-btn:hover { background: rgba(59, 130, 246, 0.2); }
-        .apply-btn { background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); cursor: pointer;}
-        .apply-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .apply-btn { background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; cursor: pointer;}
         .close-cross { position: absolute; top: 15px; left: 15px; background: none; border: none; color: #ef4444; font-size: 1.5rem; cursor: pointer; z-index: 10; }
-        .prayer-text { font-size: 0.65rem; color: #555; text-align: center; margin-top: 15px; user-select: none; }
 
         .admin-form label { color: #a1a1aa; font-size: 0.8rem; margin-top: 2px; }
         .admin-form input, .admin-form select, .admin-form textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; font-family: inherit; box-sizing: border-box; }
@@ -123,19 +116,12 @@
         @media (max-width: 600px) {
             .header-section { padding: 20px; padding-top: 60px; }
             .header-section h1 { font-size: 1.4rem; }
-            .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 0.9rem; }
             .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .company-card { padding: 35px 8px 12px 8px; border-radius: 14px; }
             .opp-number { font-size: 0.55rem; padding: 2px 6px; top: 6px; right: 6px; border-radius: 4px; }
             .status-badge { font-size: 0.55rem; padding: 2px 6px; top: 6px; left: 6px; border-radius: 4px; }
             .company-icon { font-size: 1.5rem; margin-bottom: 8px; }
             .company-name { font-size: 0.85rem; margin-bottom: 3px; }
-            .company-tag { font-size: 0.65rem; }
-            .main-container { width: 94%; margin: 20px 0; }
-            .filters-container { gap: 6px; }
-            .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
-            .footer-info { flex-direction: column; text-align: center; justify-content: center; }
-            .modal-actions { flex-wrap: wrap; gap: 10px; justify-content: center; }
             .admin-fab-container { bottom: 15px; right: 15px; }
             .admin-fab { width: 50px; height: 50px; font-size: 1.2rem; }
             .admin-modal-content { padding: 35px 15px 15px 15px; }
@@ -155,11 +141,11 @@
 
         <div class="filters-container">
             <button class="filter-btn active" onclick="filterData(this, 'all')">الكل</button>
-            <button class="filter-btn live-btn" onclick="filterData(this, 'live')"><i class="fa-solid fa-bolt"></i> فرص مباشرة</button>
-            <button class="filter-btn email-btn" onclick="filterData(this, 'email')"><i class="fa-solid fa-envelope"></i> إيميلات</button>
+            <button class="filter-btn" onclick="filterData(this, 'live')" style="color:#d946ef; border-color:#d946ef;"><i class="fa-solid fa-bolt"></i> فرص مباشرة</button>
+            <button class="filter-btn" onclick="filterData(this, 'email')" style="color:#10b981; border-color:#10b981;"><i class="fa-solid fa-envelope"></i> إيميلات</button>
             <button class="filter-btn" onclick="filterData(this, 'company')">الشركات</button>
             <button class="filter-btn" onclick="filterData(this, 'bank')">البنوك</button>
-            <button class="filter-btn" onclick="filterData(this, 'agency')">الهيئات والمؤسسات</button>
+            <button class="filter-btn" onclick="filterData(this, 'agency')">الهيئات</button>
             <button class="filter-btn" onclick="filterData(this, 'ministry')">الوزارات</button>
         </div>
 
@@ -168,16 +154,13 @@
         <div class="companies-grid" id="dataGrid" style="display: none;"></div>
 
         <div class="footer-info">
-            <div class="footer-logo-text">
-                <i class="fas fa-landmark" style="color: #f59e0b; margin-left: 5px;"></i> تأسس الديوان الجامعي عام 2022
-                <i class="fa-solid fa-lock secret-lock" onclick="unlockAdmin()" title="تسجيل الدخول للإدارة"></i>
-            </div>
-            <div class="footer-copyright">جميع الحقوق محفوظة © 2026 الديوان الجامعي</div>
+            <div class="footer-logo-text"><i class="fas fa-landmark" style="color: #f59e0b; margin-left: 5px;"></i> تأسس الديوان الجامعي عام 2022 <i class="fa-solid fa-lock secret-lock" onclick="unlockAdmin()"></i></div>
+            <div class="footer-copyright">جميع الحقوق محفوظة © 2026</div>
         </div>
     </div>
 
     <div class="admin-fab-container">
-        <button class="admin-fab add-btn" onclick="openAdminModal()" title="إضافة فرصة جديدة"><i class="fa-solid fa-plus"></i></button>
+        <button class="admin-fab add-btn" onclick="openAdminModal()"><i class="fa-solid fa-plus"></i></button>
     </div>
 
     <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
@@ -302,7 +285,6 @@
                     </div>
                     <div class="modal-actions">
                         <button class="flip-btn" onclick="toggleFlip()">النبذة <i class="fa-solid fa-rotate"></i></button>
-                        <button class="flip-btn share-btn" onclick="shareOpportunity()"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                         <a href="#" id="mBtn" target="_blank" class="apply-btn" style="display: none;">التقديم</a>
                     </div>
                 </div>
@@ -341,7 +323,6 @@
         let allData = [];
         let nextId = 142; 
         let isAdmin = false;
-        let currentModalItem = null;
 
         async function loadDatabase() {
             try {
@@ -380,7 +361,6 @@
             allData = [...db]; sortData(); render('all');
         }
 
-        // واجهة الإدارة
         window.unlockAdmin = async function() {
             if(isAdmin) return;
             let pwd = prompt("أدخل الرقم السري للإدارة:");
@@ -401,7 +381,6 @@
 
         window.openAdminModal = function(item = null) {
             document.getElementById('adminModal').style.display = 'flex';
-            // إعادة التبويب الأول للوضع الافتراضي
             switchAdminTab('tab-basic', document.querySelector('.admin-tab-btn'));
             
             if (item) {
@@ -517,7 +496,6 @@
         window.filterData = function(btn, cat) { document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active')); btn.classList.add('active'); render(cat); };
         window.toggleFlip = function() { document.getElementById('flipContainer').classList.toggle('flipped'); };
         window.openModal = function(item) {
-            currentModalItem = item; // حفظ العنصر الحالي للاستخدام في زر المشاركة
             let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
             document.getElementById('mTopIcon').innerHTML = `<i class="fa-solid ${item.i}"></i>`; document.getElementById('mTopIcon').style.background = iconColor;
             document.getElementById('mTitle').innerText = item.t; document.getElementById('mLoc').innerText = item.l;
@@ -535,20 +513,7 @@
             const btn = document.getElementById('mBtn'); btn.href = linkHref; btn.innerText = btnText; btn.style.background = iconColor; btn.style.display = btnDisplay;
             document.getElementById('flipContainer').classList.remove('flipped'); document.getElementById('infoModal').style.display = 'flex'; document.body.style.overflow = 'hidden';
         };
-        window.closeModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('infoModal')) { document.getElementById('infoModal').style.display = 'none'; document.body.style.overflow = 'auto'; let url = new URL(window.location.href); url.searchParams.delete('id'); window.history.pushState({}, '', url.pathname + url.search); } };
-        window.shareOpportunity = function() {
-            if (navigator.share && currentModalItem) {
-                let url = new URL(window.location.href);
-                url.searchParams.set('id', currentModalItem.id);
-                navigator.share({
-                    title: 'تدريب تعاوني: ' + currentModalItem.t,
-                    text: `شيك على فرصة التدريب في (${currentModalItem.t}) 💼\n\n📌 مقدمة من دليل الديوان الجامعي:\n`,
-                    url: url.href
-                }).catch(err => console.log('خطأ في المشاركة', err));
-            } else {
-                alert("ميزة المشاركة غير مدعومة في متصفحك الحالي، لكن يمكنك نسخ الرابط من الأعلى!");
-            }
-        };
+        window.closeModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('infoModal')) { document.getElementById('infoModal').style.display = 'none'; document.body.style.overflow = 'auto'; } };
         loadDatabase();
     </script>
 </body>
