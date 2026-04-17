@@ -75,7 +75,6 @@
         .admin-fab { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: 0.3s; background: #10b981; }
         .admin-fab:hover { transform: translateY(-5px); }
 
-        /* تعديلات المودال (النافذة المنبثقة) عشان تستوعب النبذة */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); overflow-y: auto; padding: 20px 0;}
         
         .flip-container { perspective: 1000px; width: 90%; max-width: 420px; position: relative; margin: auto; }
@@ -86,7 +85,6 @@
         .front { position: relative; transform: rotateY(0deg); }
         .back { transform: rotateY(180deg); height: 100%; }
         
-        /* تعديلات مخصصة لنافذة الإدارة عشان ما تطلع برا الشاشة */
         .admin-modal-content { position: relative; max-width: 450px; width: 90%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 20px 25px; margin: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; max-height: 90vh; overflow-y: auto; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
         .modal-top-icon { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--accent); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; border: 4px solid #1a1a1a; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
@@ -112,6 +110,9 @@
         .admin-form input, .admin-form select, .admin-form textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; font-family: inherit; box-sizing: border-box; }
         .admin-form input:focus, .admin-form textarea:focus, .admin-form select:focus { outline: none; border-color: var(--accent); }
 
+        optgroup { background: #1a1a1a; color: #10b981; font-weight: bold; font-family: inherit; }
+        option { background: rgba(0,0,0,0.9); color: white; }
+
         @-webkit-keyframes fadeInUp { from { opacity: 0; -webkit-transform: translateY(15px); } to { opacity: 1; -webkit-transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -131,7 +132,6 @@
             .filters-container { gap: 6px; }
             .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
             .footer-info { flex-direction: column; text-align: center; justify-content: center; }
-            .modal-actions { flex-wrap: wrap; gap: 10px; justify-content: center; }
             .admin-fab-container { bottom: 15px; right: 15px; }
             .admin-fab { width: 50px; height: 50px; font-size: 1.2rem; }
         }
@@ -205,17 +205,97 @@
 
                 <label>الأيقونة المناسبة:</label>
                 <select id="a_icon" dir="ltr" style="text-align: right; direction: rtl;">
-                    <option value="fa-building">🏢 شركة / مبنى عام (fa-building)</option>
-                    <option value="fa-building-columns">🏦 بنك / وزارة (fa-building-columns)</option>
-                    <option value="fa-laptop-code">💻 تقنية وبرمجة (fa-laptop-code)</option>
-                    <option value="fa-heart-pulse">🏥 صحة وطب (fa-heart-pulse)</option>
-                    <option value="fa-chart-line">📈 مالية واستثمار (fa-chart-line)</option>
-                    <option value="fa-scale-balanced">⚖️ محاماة وقانون (fa-scale-balanced)</option>
-                    <option value="fa-industry">🏭 مصنع / صناعة (fa-industry)</option>
-                    <option value="fa-plane">✈️ طيران وملاحة (fa-plane)</option>
-                    <option value="fa-bullhorn">📣 تسويق وإعلام (fa-bullhorn)</option>
-                    <option value="fa-shield-halved">🛡️ أمن وحماية (fa-shield-halved)</option>
-                    <option value="fa-leaf">🍃 بيئة وزراعة (fa-leaf)</option>
+                    <optgroup label="🏢 الشركات والأعمال">
+                        <option value="fa-building">🏢 شركة / مبنى عام</option>
+                        <option value="fa-city">🏙️ مدينة / عقارات</option>
+                        <option value="fa-store">🏪 متجر / فرع</option>
+                        <option value="fa-briefcase">💼 حقيبة أعمال / خدمات</option>
+                        <option value="fa-handshake">🤝 شراكة / تعاون</option>
+                        <option value="fa-handshake-angle">🤝 هيئة مشتريات / تعاون</option>
+                    </optgroup>
+                    <optgroup label="💻 التقنية والاتصالات">
+                        <option value="fa-laptop-code">💻 تقنية وبرمجة</option>
+                        <option value="fa-desktop">🖥️ حاسب آلي / أنظمة</option>
+                        <option value="fa-server">🗄️ سيرفرات / بيانات</option>
+                        <option value="fa-database">🗄️ قاعدة بيانات</option>
+                        <option value="fa-network-wired">🌐 شبكات</option>
+                        <option value="fa-wifi">📶 اتصالات (stc/موبايلي)</option>
+                        <option value="fa-tower-broadcast">🗼 برج اتصالات</option>
+                        <option value="fa-satellite-dish">📡 أقمار صناعية / اتصالات</option>
+                        <option value="fa-shield-halved">🛡️ أمن وحماية عامة</option>
+                        <option value="fa-shield-virus">🛡️ أمن سيبراني</option>
+                        <option value="fa-fingerprint">🪪 بصمة / تصديق رقمي</option>
+                    </optgroup>
+                    <optgroup label="📈 المالية والبنوك">
+                        <option value="fa-building-columns">🏦 بنك / وزارة</option>
+                        <option value="fa-chart-line">📈 مالية / أسهم ونمو</option>
+                        <option value="fa-chart-pie">🥧 إحصائيات</option>
+                        <option value="fa-chart-bar">📊 تداول / بيانات مالية</option>
+                        <option value="fa-coins">🪙 أموال / استثمار</option>
+                        <option value="fa-money-bill-wave">💵 مالية</option>
+                        <option value="fa-vault">🏦 صندوق استثمارات / خزانة</option>
+                        <option value="fa-sack-dollar">💰 صندوق تنمية / تمويل</option>
+                        <option value="fa-piggy-bank">🐷 صندوق ادخار</option>
+                        <option value="fa-file-invoice-dollar">🧾 زكاة وضرائب / فواتير</option>
+                        <option value="fa-credit-card">💳 بطاقات ائتمانية / سمة</option>
+                    </optgroup>
+                    <optgroup label="🏥 الطب والصحة">
+                        <option value="fa-heart-pulse">🏥 صحة وطب</option>
+                        <option value="fa-user-doctor">👨‍⚕️ تخصصات صحية / طبيب</option>
+                        <option value="fa-stethoscope">🩺 مستشفى / كيورا</option>
+                        <option value="fa-pills">💊 صيدلة / غذاء ودواء</option>
+                        <option value="fa-truck-medical">🚑 إسعاف / هلال أحمر</option>
+                        <option value="fa-eye">👁️ عيون / طب</option>
+                    </optgroup>
+                    <optgroup label="⚖️ القانون والمحاماة">
+                        <option value="fa-scale-balanced">⚖️ محاماة وعدل</option>
+                        <option value="fa-scale-unbalanced">⚖️ حقوق إنسان</option>
+                        <option value="fa-gavel">🔨 قضاء / منافسة ومحكمة</option>
+                    </optgroup>
+                    <optgroup label="🏭 الصناعة والطاقة">
+                        <option value="fa-industry">🏭 مصنع / صناعة / مدن</option>
+                        <option value="fa-bolt">⚡ طاقة / كهرباء</option>
+                        <option value="fa-oil-well">🛢️ بترول / أرامكو</option>
+                        <option value="fa-gas-pump">⛽ وقود / محطات</option>
+                        <option value="fa-rocket">🚀 فضاء</option>
+                    </optgroup>
+                    <optgroup label="✈️ النقل والسياحة">
+                        <option value="fa-plane">✈️ طيران وملاحة</option>
+                        <option value="fa-plane-departure">🛫 طيران مدني</option>
+                        <option value="fa-plane-up">🛩️ ملاحة جوية</option>
+                        <option value="fa-truck-fast">🚚 نقل ولوجستيات / صادرات</option>
+                        <option value="fa-truck-plane">✈️ خدمات أرضية</option>
+                        <option value="fa-ship">🚢 شحن بحري / الموانئ</option>
+                        <option value="fa-train">🚆 قطارات (SAR)</option>
+                        <option value="fa-car">🚗 سيارات</option>
+                        <option value="fa-map-location-dot">🗺️ سياحة / خرائط</option>
+                        <option value="fa-mountain-sun">⛰️ سياحة العلا / جبال</option>
+                        <option value="fa-compass">🧭 بوصلة</option>
+                    </optgroup>
+                    <optgroup label="🎓 التعليم والمجتمع">
+                        <option value="fa-graduation-cap">🎓 جامعة / تعليم</option>
+                        <option value="fa-book-open">📖 تدريب ومناهج</option>
+                        <option value="fa-users">👥 موارد بشرية ومجتمع</option>
+                        <option value="fa-brain">🧠 ذكاء اصطناعي وسدايا / موهبة</option>
+                        <option value="fa-puzzle-piece">🧩 تكامل / مهارات</option>
+                        <option value="fa-tools">🛠️ تدريب تقني ومهني</option>
+                        <option value="fa-person-cane">🧓 مؤسسة التقاعد</option>
+                        <option value="fa-hand-holding-heart">🤲 أوقاف / رعاية</option>
+                        <option value="fa-hand-holding-medical">🩺 رعاية طبية / تأمين</option>
+                    </optgroup>
+                    <optgroup label="🌿 إعلام وأخرى">
+                        <option value="fa-leaf">🍃 بيئة وزراعة</option>
+                        <option value="fa-cow">🐄 ألبان / زراعة (نادك والمراعي)</option>
+                        <option value="fa-water">💧 مياه وتحلية</option>
+                        <option value="fa-bullhorn">📣 تسويق وإعلام</option>
+                        <option value="fa-tv">📺 إعلام وتلفزيون</option>
+                        <option value="fa-video">🎥 إعلام مرئي ومسموع</option>
+                        <option value="fa-masks-theater">🎭 ترفيه</option>
+                        <option value="fa-palette">🎨 ثقافة وفنون</option>
+                        <option value="fa-lightbulb">💡 ملكية فكرية / ابتكار</option>
+                        <option value="fa-folder-open">📂 وثائق ومحفوظات</option>
+                        <option value="fa-calendar-check">📅 مواعيد / تنظيم</option>
+                    </optgroup>
                 </select>
 
                 <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0;"></div>
@@ -246,8 +326,9 @@
                 </select>
             </div>
 
-            <div class="modal-actions" style="justify-content: center; margin-top: 25px;">
-                <button class="apply-btn" style="background: #10b981; width: 100%; font-size: 1.1rem; padding: 12px;" onclick="saveCompanyToFirebase()">حفظ التعديلات في السحابة ☁️</button>
+            <div class="modal-actions" style="justify-content: center; margin-top: 25px; flex-wrap: wrap; gap: 10px;">
+                <button class="apply-btn" style="background: #10b981; flex: 1; min-width: 150px; font-size: 1.1rem; padding: 12px;" onclick="saveCompanyToFirebase()">حفظ التعديلات ☁️</button>
+                <button id="deleteBtn" class="apply-btn" style="background: #ef4444; flex: 1; min-width: 150px; font-size: 1.1rem; padding: 12px; display: none;" onclick="deleteCompanyFromFirebase()">حذف الفرصة 🗑️</button>
             </div>
         </div>
     </div>
@@ -289,7 +370,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         // === كود الـ Firebase الخاص بك ===
@@ -420,6 +501,7 @@
                 document.getElementById('a_link').value = item.e;
                 document.getElementById('a_email').value = item.email || "";
                 document.getElementById('a_status').value = item.s || "";
+                document.getElementById('deleteBtn').style.display = 'block'; // إظهار زر الحذف
             } else {
                 document.getElementById('adminTitle').innerText = "إضافة فرصة جديدة";
                 document.getElementById('a_id').value = "";
@@ -433,6 +515,7 @@
                 document.getElementById('a_link').value = "";
                 document.getElementById('a_email').value = "";
                 document.getElementById('a_status').value = "مفتوح";
+                document.getElementById('deleteBtn').style.display = 'none'; // إخفاء زر الحذف للفرص الجديدة
             }
         };
 
@@ -487,6 +570,30 @@
             } catch(e) {
                 console.error("خطأ في الحفظ:", e);
                 alert("حدث خطأ أثناء الحفظ! تأكد أنك سجلت الدخول كمسؤول.");
+            }
+        };
+
+        // --- دالة الحذف (Delete) السحرية ---
+        window.deleteCompanyFromFirebase = async function() {
+            let id = document.getElementById('a_id').value;
+            if (!id) return;
+
+            if (confirm("⚠️ هل أنت متأكد من حذف هذه الفرصة نهائياً من السحابة؟\nلا يمكن التراجع عن هذا الإجراء!")) {
+                try {
+                    await deleteDoc(doc(firestoreDB, "companies", id.toString()));
+                    alert("تم مسح الفرصة نهائياً! 🗑️✅");
+                    
+                    // مسحها من الذاكرة المحلية وعرض الباقي
+                    db = db.filter(x => x.id != id);
+                    allData = [...db];
+                    sortData();
+                    render('all');
+                    
+                    document.getElementById('adminModal').style.display = 'none';
+                } catch(e) {
+                    console.error("خطأ في الحذف:", e);
+                    alert("حدث خطأ أثناء الحذف! تأكد أنك تملك الصلاحيات.");
+                }
             }
         };
 
