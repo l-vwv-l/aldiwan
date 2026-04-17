@@ -68,9 +68,11 @@
         .flip-container { perspective: 1000px; width: 90%; max-width: 420px; position: relative; }
         .flipper { transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; position: relative; width: 100%; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .flip-container.flipped .flipper { transform: rotateY(180deg); }
-        .front, .back { backface-visibility: hidden; position: absolute; top: 0; left: 0; width: 100%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 25px 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+        
+        .front, .back { backface-visibility: hidden; position: absolute; top: 0; left: 0; width: 100%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 15px 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
         .front { position: relative; transform: rotateY(0deg); }
         .back { transform: rotateY(180deg); height: 100%; }
+        
         .modal-top-icon { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--accent); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; border: 4px solid #1a1a1a; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
         .modal-title { color: #ffffff; font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
         .info-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
@@ -78,12 +80,20 @@
         .info-text { flex: 1; }
         .info-label { color: #888; font-size: 0.75rem; display: block; margin-bottom: 2px;}
         .info-val { color: #e4e4e7; font-size: 0.9rem; word-break: break-word;}
-        .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        
+        .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
         .flip-btn { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 0.85rem; }
         .flip-btn:hover { background: rgba(255,255,255,0.2); }
+        
+        .share-btn { color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
+        .share-btn:hover { background: rgba(59, 130, 246, 0.2); }
+        
         .apply-btn { background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
         .apply-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
         .close-cross { position: absolute; top: 15px; left: 15px; background: none; border: none; color: #ef4444; font-size: 1.5rem; cursor: pointer; z-index: 10; }
+
+        /* النص اللطيف في الأسفل */
+        .prayer-text { font-size: 0.65rem; color: #555; text-align: center; margin-top: 15px; user-select: none; }
 
         @-webkit-keyframes fadeInUp { from { opacity: 0; -webkit-transform: translateY(15px); } to { opacity: 1; -webkit-transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -102,6 +112,7 @@
             .filters-container { gap: 8px; }
             .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
             .footer-info { flex-direction: column; text-align: center; justify-content: center; }
+            .modal-actions { flex-wrap: wrap; gap: 10px; justify-content: center; }
         }
     </style>
 </head>
@@ -115,16 +126,14 @@
             <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب الميداني 💼</p>
             
             <div class="total-badge" id="totalBadge">
-                إجمالي الفرص: <span id="totalCountSpan">0</span>
+                إجمالي الفرص المتاحة: <span id="totalCountSpan">0</span>
             </div>
         </div>
 
         <div class="filters-container">
             <button class="filter-btn active" onclick="filterData(this, 'all')">الكل</button>
             <button class="filter-btn live-btn" onclick="filterData(this, 'live')"><i class="fa-solid fa-bolt"></i> فرص مباشرة</button>
-            
             <button class="filter-btn email-btn" onclick="filterData(this, 'email')"><i class="fa-solid fa-envelope"></i> إيميلات</button>
-            
             <button class="filter-btn" onclick="filterData(this, 'company')">الشركات</button>
             <button class="filter-btn" onclick="filterData(this, 'bank')">البنوك</button>
             <button class="filter-btn" onclick="filterData(this, 'agency')">الهيئات والمؤسسات</button>
@@ -142,6 +151,7 @@
     <div class="modal-overlay" id="infoModal" onclick="closeModal(event)">
         <div class="flip-container" id="flipContainer" onclick="event.stopPropagation()">
             <div class="flipper">
+                
                 <div class="front">
                     <button class="close-cross" onclick="closeModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
                     <div class="modal-top-icon" id="mTopIcon"><i class="fa-solid fa-building"></i></div>
@@ -150,14 +160,19 @@
                     <div>
                         <div class="info-row"><i class="fa-solid fa-location-dot info-icon"></i><div class="info-text"><span class="info-label">المقر / الفروع</span><span class="info-val" id="mLoc"></span></div></div>
                         <div class="info-row"><i class="fa-solid fa-graduation-cap info-icon"></i><div class="info-text"><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div></div>
-                        <div class="info-row"><i class="fa-solid fa-gift info-icon"></i><div class="info-text"><span class="info-label">المزايا (إن وجدت)</span><span class="info-val" id="mBenefits"></span></div></div>
-                        <div class="info-row"><i class="fa-solid fa-envelope info-icon"></i><div class="info-text"><span class="info-label">طريقة التقديم</span><span class="info-val" id="mContact" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block; width: 100%;"></span></div></div>
+                        
+                        <div class="info-row" id="emailRow"><i class="fa-solid fa-at info-icon"></i><div class="info-text"><span class="info-label">الإيميل الرسمي</span><span class="info-val" id="mEmailVal" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block;"></span></div></div>
+                        
+                        <div class="info-row"><i class="fa-solid fa-envelope info-icon"></i><div class="info-text"><span class="info-label">طريقة التقديم</span><span class="info-val" id="mContact" style="color: #e4e4e7; font-weight: bold;"></span></div></div>
                     </div>
 
                     <div class="modal-actions">
-                        <button class="flip-btn" onclick="toggleFlip()">النبذة <i class="fa-solid fa-rotate"></i></button>
-                        <a href="#" id="mBtn" target="_blank" class="apply-btn">التقديم</a>
+                        <button class="flip-btn" onclick="toggleFlip()">نبذة <i class="fa-solid fa-rotate"></i></button>
+                        <button class="flip-btn share-btn" onclick="shareOpportunity()"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                        <a href="#" id="mBtn" target="_blank" class="apply-btn" style="display: none;">التقديم</a>
                     </div>
+                    
+                    <div class="prayer-text">دعواتكم لنا بالتوفيق 🤍</div>
                 </div>
 
                 <div class="back">
@@ -165,19 +180,24 @@
                     <div class="modal-top-icon" style="background: #10b981;"><i class="fa-solid fa-circle-info"></i></div>
                     <h3 class="modal-title">نبذة عن البرنامج</h3>
                     
-                    <div style="flex: 1; display: flex; align-items: center; text-align: center; color: #a1a1aa; line-height: 1.8; font-size: 0.95rem; padding: 10px 0;" id="mAbout">
+                    <div class="info-row" style="margin-bottom: 15px;"><i class="fa-solid fa-gift info-icon" style="color: #10b981;"></i><div class="info-text"><span class="info-label">المزايا (إن وجدت)</span><span class="info-val" id="mBenefits"></span></div></div>
+                    
+                    <div style="flex: 1; display: flex; align-items: flex-start; text-align: center; color: #a1a1aa; line-height: 1.8; font-size: 0.95rem; padding: 10px 0;" id="mAbout">
                     </div>
 
                     <div class="modal-actions" style="justify-content: center;">
                         <button class="flip-btn" onclick="toggleFlip()"><i class="fa-solid fa-arrow-right"></i> العودة للتفاصيل</button>
                     </div>
+                    
+                    <div class="prayer-text">دعواتكم لنا بالتوفيق 🤍</div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        // الداتا الأساسية
+        // ضع هنا قائمتك الكاملة (الـ 139 شركة) بدلاً من هذه العينة للتأكد من وجودها كلها
         const db = [
             { t: "Plan A | marketing solutions", c: "company", l: "الرياض", e: "hr@plana-sa.com", i: "fa-bullhorn" },
             { t: "شركة الخشيم وشركاه", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-scale-balanced" },
@@ -237,8 +257,6 @@
             { t: "المراعي", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-cow" },
             { t: "شركة التصنيع الوطنية", c: "company", l: "الرياض - الجبيل - ينبع", e: "عبر الموقع", i: "fa-industry" },
             { t: "مجموعة صافولا", c: "company", l: "جدة", e: "https://www.savola.com/ar/careers", i: "fa-leaf" },
-
-            // --- الصناديق والهيئات ---
             { t: "الصندوق السعودي للتنمية", c: "agency", l: "الرياض", e: "info@sfd.gov.sa", i: "fa-sack-dollar" },
             { t: "صندوق الاستثمارات العامة", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-vault" },
             { t: "صندوق التنمية الزراعية", c: "agency", l: "فروع المملكة", e: "عبر الموقع", i: "fa-tractor" },
@@ -264,8 +282,6 @@
             { t: "منشآت", c: "agency", l: "الرياض - جدة", e: "Info@monshaat.gov.sa", i: "fa-store" },
             { t: "الزكاة والضريبة والجمارك", c: "agency", l: "معظم المناطق", e: "care@customs.gov.sa", i: "fa-file-invoice-dollar" },
             { t: "البنك المركزي (SAMA)", c: "agency", l: "الرياض", e: "info@sama.gov.sa", i: "fa-building-columns" },
-
-            // --- البنوك ---
             { t: "البنك الأهلي السعودي", c: "bank", l: "معظم المناطق", e: "contactus@alahli.com", i: "fa-building-columns" },
             { t: "مصرف الانماء", c: "bank", l: "معظم المناطق", e: "info@alinma.com", i: "fa-building-columns" },
             { t: "البنك السعودي الفرنسي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
@@ -273,8 +289,6 @@
             { t: "مجموعة سامبا المالية", c: "bank", l: "معظم المناطق", e: "customerCare@samba.com", i: "fa-building-columns" },
             { t: "مصرف الراجحي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
             { t: "بنك البلاد", c: "bank", l: "معظم المناطق", e: "https://saifi.hrdf.org.sa", i: "fa-building-columns" },
-
-            // --- الوزارات ---
             { t: "وزارة الخارجية", c: "ministry", l: "الرياض", e: "info@mofa.gov.sa", i: "fa-landmark-flag" },
             { t: "وزارة المالية", c: "ministry", l: "الرياض", e: "ccc@mof.gov.sa", i: "fa-landmark-flag" },
             { t: "وزارة العدل", c: "ministry", l: "الرياض", e: "1950@moj.gov.sa", i: "fa-scale-balanced" },
@@ -288,20 +302,17 @@
             { t: "وزارة الصحة", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-heart-pulse" }
         ];
 
-        // إعطاء رقم ثابت (ID) لكل فرصة أساسية
-        db.forEach(function(item, index) {
-            item.id = index + 1;
-        });
-        
+        // إعطاء رقم ثابت لكل فرصة موجودة
+        db.forEach(function(item, index) { item.id = index + 1; });
         let nextId = db.length + 1;
         let allData = [...db];
+        let currentModalItem = null;
 
         async function fetchLiveData() {
             try {
                 const response = await fetch('live_data.json?v=' + new Date().getTime());
                 if(response.ok) {
                     const liveData = await response.json();
-                    
                     liveData.forEach(function(liveItem) {
                         let existingIndex = db.findIndex(function(item) {
                             let t1 = item.t.toLowerCase().replace(/[^\w\s\u0600-\u06FF]/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه');
@@ -314,16 +325,9 @@
                         
                         if (existingIndex !== -1) {
                             let exItem = db[existingIndex];
-                            
-                            // دمج الإيميل مع الرابط
-                            if (exItem.e.includes('@') && !exItem.email) {
-                                exItem.email = exItem.e; 
-                            }
-                            if (liveItem.e && liveItem.e.startsWith('http')) {
-                                exItem.e = liveItem.e;
-                            }
+                            if (exItem.e.includes('@') && !exItem.email) exItem.email = exItem.e; 
+                            if (liveItem.e && liveItem.e.startsWith('http')) exItem.e = liveItem.e;
                             if (liveItem.email) exItem.email = liveItem.email;
-
                             if (liveItem.m) exItem.m = liveItem.m; 
                             if (liveItem.b) exItem.b = liveItem.b; 
                             if (liveItem.a) exItem.a = liveItem.a; 
@@ -343,17 +347,42 @@
             }
             
             allData = [...db];
-            allData.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
-            allData.sort(function(a, b) { return (a.isLive ? -1 : (b.isLive ? 1 : 0)); });
-            
+            sortData();
             render('all');
         }
 
-        // إخفاء الحالة للشركات اللي تعتمد على الإيميل فقط (ولم تُحدث)
-        function getStatusHtml(item) {
-            if ((item.e.includes('@') && !item.e.startsWith('http')) && !item.isLive) return ''; 
+        // خوارزمية الترتيب الاحترافية
+        function getSortScore(item) {
+            let hasLink = item.e && item.e.startsWith('http');
+            let hasEmail = item.email || (item.e && item.e.includes('@'));
+            if (!hasLink && !hasEmail) return 4; // غير متوفر تقديم ينزل لأسفل
             
-            if (!item.s) return '<div class="status-badge status-open">مفتوح 🟢</div>';
+            let s = item.s || "مفتوح";
+            if (s.includes("مفتوح")) return 1;
+            if (s.includes("قريبا") || s.includes("ينتهي")) return 2;
+            if (s.includes("مغلق")) return 3;
+            return 1;
+        }
+
+        function sortData() {
+            allData.sort((a, b) => {
+                let scoreA = getSortScore(a);
+                let scoreB = getSortScore(b);
+                if (scoreA !== scoreB) return scoreA - scoreB;
+                if (a.isLive && !b.isLive) return -1;
+                if (!a.isLive && b.isLive) return 1;
+                return a.t > b.t ? 1 : -1;
+            });
+        }
+
+        function getStatusHtml(item) {
+            let hasLink = item.e && item.e.startsWith('http');
+            let hasEmail = item.email || (item.e && item.e.includes('@'));
+            
+            // إخفاء الحالة إذا كانت مجرد إيميل ثابت أو غير معروفة التقديم
+            if ((!hasLink && hasEmail && !item.isLive) || (!hasLink && !hasEmail)) return ''; 
+
+            if (!item.s || item.s === "مفتوح") return '<div class="status-badge status-open">مفتوح 🟢</div>';
             if (item.s.includes("مغلق")) return '<div class="status-badge status-closed">مغلق 🔴</div>';
             if (item.s.includes("قريبا") || item.s.includes("ينتهي")) return '<div class="status-badge status-closing">قريباً ينتهي 🟠</div>';
             return '<div class="status-badge status-open">مفتوح 🟢</div>';
@@ -363,11 +392,14 @@
             const grid = document.getElementById('dataGrid');
             grid.innerHTML = '';
             
-            // فلتر ذكي يفرز الإيميلات والروابط
             const filteredData = allData.filter(function(x) { 
+                let hasLink = x.e && x.e.startsWith('http');
+                let hasEmail = x.email || (x.e && x.e.includes('@'));
+                if (!hasLink && !hasEmail) return false; // إخفاء الشركات اللي مافيها أي طريقة تقديم
+                
                 if (filter === 'all') return true;
                 if (filter === 'live') return x.isLive || x.c === 'live';
-                if (filter === 'email') return x.e.includes('@') || x.email;
+                if (filter === 'email') return hasEmail;
                 return x.c === filter; 
             });
             
@@ -376,13 +408,12 @@
             filteredData.forEach(function(item) {
                 const card = document.createElement('div');
                 card.className = 'company-card';
-                
                 if(item.isLive) card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)';
                 card.onclick = function() { openModal(item); };
                 
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
                 let statusHtml = getStatusHtml(item);
-                let numHtml = `<div class="opp-number">رقم ${item.id}</div>`;
+                let numHtml = `<div class="opp-number">فرصة رقم ${item.id}</div>`;
                 
                 card.innerHTML = numHtml + statusHtml + '<div class="company-icon" style="color:'+iconColor+'"><i class="fa-solid ' + item.i + '"></i></div><div class="company-name">' + item.t + '</div><div class="company-tag">' + item.l + '</div>';
                 grid.appendChild(card);
@@ -391,59 +422,69 @@
 
         function filterData(btnElement, cat) {
             const buttons = document.querySelectorAll('.filter-btn');
-            for(let i=0; i<buttons.length; i++) {
-                buttons[i].classList.remove('active');
-            }
+            for(let i=0; i<buttons.length; i++) buttons[i].classList.remove('active');
             btnElement.classList.add('active');
             render(cat);
         }
 
-        function toggleFlip() {
-            document.getElementById('flipContainer').classList.toggle('flipped');
-        }
+        function toggleFlip() { document.getElementById('flipContainer').classList.toggle('flipped'); }
 
         function openModal(item) {
+            currentModalItem = item;
             let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
             document.getElementById('mTopIcon').innerHTML = '<i class="fa-solid ' + item.i + '"></i>';
             document.getElementById('mTopIcon').style.background = iconColor;
-
             document.getElementById('mTitle').innerText = item.t;
             document.getElementById('mLoc').innerText = item.l;
             
-            // عرض الرابط والإيميل معاً في حالة توفرهم
-            let contactHtml = '';
-            let linkHref = "#";
+            let hasLink = item.e && item.e.startsWith('http');
+            let actualEmail = item.email || (item.e && item.e.includes('@') ? item.e : null);
             
-            if (item.email) {
-                contactHtml += `<a href="mailto:${item.email}" style="color:${iconColor}; text-decoration:none; display:block; margin-bottom:5px;"><i class="fa-solid fa-at"></i> ${item.email}</a>`;
-            }
-            
-            if (item.e && item.e.startsWith('http')) {
-                contactHtml += `<a href="${item.e}" target="_blank" style="color:${iconColor}; text-decoration:none; display:block;"><i class="fa-solid fa-link"></i> رابط بوابة التقديم</a>`;
-                linkHref = item.e;
-                document.getElementById('mBtn').innerText = "الذهاب للتقديم";
-            } else if (item.e.includes('@') && !item.email) {
-                contactHtml += `<a href="mailto:${item.e}" style="color:${iconColor}; text-decoration:none; display:block;"><i class="fa-solid fa-at"></i> ${item.e}</a>`;
-                linkHref = 'mailto:' + item.e;
-                document.getElementById('mBtn').innerText = "إرسال إيميل التقديم";
-            } else if (!item.e.startsWith('http')) {
-                contactHtml += `<span style="color:${iconColor};"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن: ${item.t}</span>`;
-                linkHref = 'https://www.google.com/search?q=التدريب+التعاوني+' + item.t;
-                document.getElementById('mBtn').innerText = "البحث في جوجل";
+            // خانة الإيميل
+            let emailRow = document.getElementById('emailRow');
+            if (actualEmail) {
+                document.getElementById('mEmailVal').innerText = actualEmail;
+                emailRow.style.display = 'flex';
+            } else {
+                emailRow.style.display = 'none';
             }
 
-            document.getElementById('mContact').innerHTML = contactHtml;
+            // خانة طريقة التقديم
+            let appMethodText = "غير محدد";
+            let linkHref = "#";
+            let btnText = "مشاركة الفرصة";
+            let btnDisplay = "none";
+            
+            if (hasLink && actualEmail) {
+                appMethodText = "رابط إلكتروني + إيميل للشركة";
+                linkHref = item.e;
+                btnText = "بوابة التقديم";
+                btnDisplay = "block";
+            } else if (hasLink) {
+                appMethodText = "رابط بوابة إلكترونية";
+                linkHref = item.e;
+                btnText = "الذهاب للتقديم";
+                btnDisplay = "block";
+            } else if (actualEmail) {
+                appMethodText = "إرسال السيرة الذاتية عبر الإيميل";
+                linkHref = 'mailto:' + actualEmail;
+                btnText = "إرسال إيميل";
+                btnDisplay = "block";
+            }
+            
+            document.getElementById('mContact').innerText = appMethodText;
             document.getElementById('mMajors').innerText = item.m || 'حسب الشواغر المتاحة للشركة';
             document.getElementById('mBenefits').innerText = item.b || 'تخضع لسياسة الجهة المحددة';
             document.getElementById('mAbout').innerText = item.a || 'برنامج تدريب ميداني صُمم لتطوير وصقل مهارات الطلاب وتجهيزهم لدخول سوق العمل من خلال بيئة مهنية متكاملة.';
             
             const btn = document.getElementById('mBtn');
             btn.href = linkHref;
+            btn.innerText = btnText;
             btn.style.background = iconColor;
+            btn.style.display = btnDisplay;
 
             document.getElementById('flipContainer').classList.remove('flipped');
-            const modal = document.getElementById('infoModal');
-            modal.style.display = 'flex';
+            document.getElementById('infoModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
 
@@ -452,6 +493,19 @@
             if (isButton || !event || event.target === modal) {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
+            }
+        }
+
+        function shareOpportunity() {
+            if (navigator.share && currentModalItem) {
+                let shareUrl = currentModalItem.e.startsWith('http') ? currentModalItem.e : window.location.href;
+                navigator.share({
+                    title: 'تدريب تعاوني: ' + currentModalItem.t,
+                    text: `شيك على فرصة التدريب في (${currentModalItem.t}) 💼\n\n📌 مقدمة من دليل الديوان الجامعي:\n`,
+                    url: shareUrl
+                }).catch(err => console.log('خطأ في المشاركة', err));
+            } else {
+                alert("ميزة المشاركة غير مدعومة في متصفحك الحالي، لكن يمكنك نسخ الرابط من الأعلى!");
             }
         }
 
