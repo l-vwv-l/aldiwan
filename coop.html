@@ -19,39 +19,20 @@
             --card-bg: rgba(20, 20, 20, 0.95);
         }
 
-        body {
-            margin: 0; padding: 0; font-family: 'IBM Plex Sans Arabic', sans-serif;
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-            background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; position: relative;
-        }
-
+        body { margin: 0; padding: 0; font-family: 'IBM Plex Sans Arabic', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; position: relative; }
         body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); z-index: 0; }
         canvas#stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
         .main-container { position: relative; z-index: 10; width: 95%; max-width: 1200px; margin: 40px 0; display: flex; flex-direction: column; }
 
-        .header-section {
-            text-align: center; margin-bottom: 30px; background: var(--glass-bg); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); border-radius: 25px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative;
-        }
-
+        .header-section { text-align: center; margin-bottom: 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 25px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; }
         .header-section h1 { color: var(--text-white); margin: 0 0 10px 0; font-size: 2rem; }
         .header-section p { color: var(--text-gray); margin: 0; font-size: 1rem; }
 
-        /* عداد إجمالي الفرص */
-        .total-badge {
-            background: rgba(37, 99, 235, 0.15); border: 1px solid var(--accent); color: white;
-            padding: 8px 20px; border-radius: 50px; display: inline-block; margin-top: 15px;
-            font-weight: 600; font-size: 1.1rem; box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
-        }
+        .total-badge { background: rgba(37, 99, 235, 0.15); border: 1px solid var(--accent); color: white; padding: 8px 20px; border-radius: 50px; display: inline-block; margin-top: 15px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
         .total-badge span { color: #f59e0b; font-weight: bold; font-size: 1.3rem; }
 
-        .back-btn {
-            position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
-            color: white; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s;
-        }
+        .back-btn { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; }
         .back-btn:hover { background: #fff; color: #000; transform: scale(1.1); }
 
         .filters-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
@@ -59,21 +40,16 @@
         .filter-btn:hover, .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
         .filter-btn.live-btn { border-color: #d946ef; color: #d946ef; }
         .filter-btn.live-btn:hover, .filter-btn.live-btn.active { background: #d946ef; color: white; }
+        .filter-btn.email-btn { border-color: #10b981; color: #10b981; }
+        .filter-btn.email-btn:hover, .filter-btn.email-btn.active { background: #10b981; color: white; }
 
         .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-bottom: 20px; }
 
-        /* تصميم البطاقة مع إضافات الذكاء الاصطناعي */
-        .company-card {
-            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 35px 15px 20px 15px; text-align: center; cursor: pointer; transition: 0.3s;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;
-            -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box;
-        }
+        .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 35px 15px 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
-        .opp-number { position: absolute; top: 10px; right: 15px; background: rgba(255,255,255,0.08); color: #a1a1aa; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; }
+        .opp-number { position: absolute; top: 10px; right: 15px; background: rgba(255,255,255,0.08); color: #a1a1aa; padding: 3px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* حالة التقديم */
         .status-badge { position: absolute; top: 10px; left: 15px; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; }
         .status-open { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .status-closing { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
@@ -146,6 +122,9 @@
         <div class="filters-container">
             <button class="filter-btn active" onclick="filterData(this, 'all')">الكل</button>
             <button class="filter-btn live-btn" onclick="filterData(this, 'live')"><i class="fa-solid fa-bolt"></i> فرص مباشرة</button>
+            
+            <button class="filter-btn email-btn" onclick="filterData(this, 'email')"><i class="fa-solid fa-envelope"></i> إيميلات</button>
+            
             <button class="filter-btn" onclick="filterData(this, 'company')">الشركات</button>
             <button class="filter-btn" onclick="filterData(this, 'bank')">البنوك</button>
             <button class="filter-btn" onclick="filterData(this, 'agency')">الهيئات والمؤسسات</button>
@@ -172,7 +151,7 @@
                         <div class="info-row"><i class="fa-solid fa-location-dot info-icon"></i><div class="info-text"><span class="info-label">المقر / الفروع</span><span class="info-val" id="mLoc"></span></div></div>
                         <div class="info-row"><i class="fa-solid fa-graduation-cap info-icon"></i><div class="info-text"><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div></div>
                         <div class="info-row"><i class="fa-solid fa-gift info-icon"></i><div class="info-text"><span class="info-label">المزايا (إن وجدت)</span><span class="info-val" id="mBenefits"></span></div></div>
-                        <div class="info-row"><i class="fa-solid fa-envelope info-icon"></i><div class="info-text"><span class="info-label">طريقة التقديم</span><span class="info-val" id="mContact" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block;"></span></div></div>
+                        <div class="info-row"><i class="fa-solid fa-envelope info-icon"></i><div class="info-text"><span class="info-label">طريقة التقديم</span><span class="info-val" id="mContact" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block; width: 100%;"></span></div></div>
                     </div>
 
                     <div class="modal-actions">
@@ -200,118 +179,123 @@
     <script>
         // الداتا الأساسية
         const db = [
-            { t: "Plan A | marketing solutions", c: "company", l: "الرياض", e: "hr@plana-sa.com", i: "fa-bullhorn", s: "مفتوح" },
-            { t: "شركة الخشيم وشركاه", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-scale-balanced", s: "مفتوح" },
-            { t: "شركة الضبعان وشركاه", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-scale-balanced", s: "مفتوح" },
-            { t: "P Legal in association AlEnezee", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-scale-balanced", s: "مفتوح" },
-            { t: "شركة الصعيب وشركاه للمحاماة", c: "company", l: "الرياض", e: "soaib@soaiblaw.com", i: "fa-scale-balanced", s: "مفتوح" },
-            { t: "جدوى للاستثمار", c: "company", l: "الرياض - جدة - الخبر", e: "info@jadwa.com", i: "fa-chart-line", s: "مفتوح" },
-            { t: "تداول السعودية", c: "company", l: "الرياض", e: "Co.op.training@tadawul.com.sa", i: "fa-chart-bar", s: "مفتوح" },
-            { t: "أديم المالية", c: "company", l: "الرياض", e: "hr@adeemcapital.com", i: "fa-chart-pie", s: "مفتوح" },
-            { t: "دراية المالية", c: "company", l: "الرياض - جدة - الدمام", e: "HR@derayah.com", i: "fa-chart-line", s: "مفتوح" },
-            { t: "فالكم المالية", c: "company", l: "الرياض", e: "hr@falcom.com.sa", i: "fa-chart-pie", s: "مفتوح" },
-            { t: "شركة ثقة", c: "company", l: "الرياض", e: "coop@thiqah.sa", i: "fa-shield-halved", s: "مفتوح" },
-            { t: "شركة معادن", c: "company", l: "الرياض - جدة - الخبر - الجبيل", e: "info@maaden.com.sa", i: "fa-gem", s: "مفتوح" },
-            { t: "شركة كسب المالية", c: "company", l: "الرياض", e: "ialalwan@ksb.com.sa", i: "fa-chart-bar", s: "مفتوح" },
-            { t: "سمة (SIMAH)", c: "company", l: "الرياض", e: "kalmzaini@simah.com", i: "fa-credit-card", s: "مفتوح" },
-            { t: "شركة تكامل", c: "company", l: "الرياض", e: "https://join.takamol.com.sa", i: "fa-puzzle-piece", s: "مفتوح" },
-            { t: "شركة تطوير لتقنيات التعليم (TETCO)", c: "company", l: "الرياض", e: "career@tetco.sa", i: "fa-laptop-code", s: "مفتوح" },
-            { t: "وساطة كابيتال المالية", c: "company", l: "الرياض", e: "info@wasatah.com.sa", i: "fa-handshake", s: "مفتوح" },
-            { t: "نادك (Nadec)", c: "company", l: "الرياض", e: "info@nadec.com.sa", i: "fa-cow", s: "مفتوح" },
-            { t: "ميد غلف للتأمين", c: "company", l: "الرياض", e: "service@medgulf.com.sa", i: "fa-umbrella", s: "مفتوح" },
-            { t: "تكافل الراجحي", c: "company", l: "الرياض", e: "customerservice@alrajhitakaful.com", i: "fa-shield", s: "مفتوح" },
-            { t: "شركة ولاء للتأمين", c: "company", l: "الرياض", e: "walaa@walaa.com", i: "fa-shield-halved", s: "مفتوح" },
-            { t: "الخطوط السعودية", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-plane", s: "مفتوح" },
-            { t: "مستشفى الملك خالد للعيون", c: "company", l: "الرياض", e: "info@kkesh.med.sa", i: "fa-eye", s: "مفتوح" },
-            { t: "شركة بيان للمعلومات الائتمانية", c: "company", l: "الرياض", e: "care@bayancb.com", i: "fa-server", s: "مفتوح" },
-            { t: "كيورا (Cura)", c: "company", l: "الرياض", e: "Jobs@cura.healthcare", i: "fa-stethoscope", s: "مفتوح" },
-            { t: "ابوينت مي", c: "company", l: "الرياض", e: "Abdullah@appointme.sa", i: "fa-calendar-check", s: "مفتوح" },
-            { t: "stc", c: "company", l: "معظم المناطق", e: "عبر الموقع", i: "fa-tower-broadcast", s: "مفتوح" },
-            { t: "موبايلي (Mobily)", c: "company", l: "معظم المناطق", e: "عبر الموقع", i: "fa-signal", s: "مفتوح" },
-            { t: "البحري", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-ship", s: "مفتوح" },
-            { t: "سابك (SABIC)", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-flask", s: "مفتوح" },
-            { t: "أرامكو السعودية (Aramco)", c: "company", l: "الظهران", e: "saempsa_webmaster@aramco.com", i: "fa-oil-well", s: "مفتوح" },
-            { t: "KPMG", c: "company", l: "الرياض - جدة - الخبر", e: "عبر الموقع", i: "fa-building", s: "مفتوح" },
-            { t: "EY", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-building", s: "مفتوح" },
-            { t: "PWC", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-building", s: "مفتوح" },
-            { t: "ديلويت (DELOITTE)", c: "company", l: "الرياض - جدة - الخبر", e: "emakhdoum@deloitte.com", i: "fa-building", s: "مفتوح" },
-            { t: "McKinsey & Company", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-building", s: "مفتوح" },
-            { t: "سنابل للاستثمار", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-coins", s: "مفتوح" },
-            { t: "التعاونية", c: "company", l: "معظم المناطق", e: "info@tawuniya.com.sa", i: "fa-hand-holding-medical", s: "مفتوح" },
-            { t: "شركة ابو حيمد وال الشيخ", c: "company", l: "الرياض", e: "Info.ASH@ashlawksa.com", i: "fa-scale-balanced", s: "مفتوح" },
-            { t: "شركة علم (Elm)", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-desktop", s: "مفتوح" },
-            { t: "شركة وقود التقنية", c: "company", l: "جدة", e: "عبر الموقع", i: "fa-gas-pump", s: "مفتوح" },
-            { t: "شركة الكفاح القابضة", c: "company", l: "الرياض", e: "info@alkifah.com", i: "fa-building", s: "مفتوح" },
-            { t: "شركة لين لخدمات الأعمال", c: "company", l: "الرياض", e: "info@lean.sa", i: "fa-briefcase", s: "مفتوح" },
-            { t: "روابي القابضة", c: "company", l: "الخبر", e: "info@rawabiholding.com", i: "fa-building", s: "مفتوح" },
-            { t: "شركة تطوير للمباني", c: "company", l: "الرياض", e: "info@tbc.sa", i: "fa-city", s: "مفتوح" },
-            { t: "شركة قدرة", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-bolt", s: "مفتوح" },
-            { t: "شركة عبد الله الجندي", c: "company", l: "الرياض", e: "info@aljendy.law", i: "fa-scale-balanced", s: "مفتوح" },
-            { t: "شركة قراجنا", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-car", s: "مفتوح" },
-            { t: "PTWAY", c: "company", l: "الرياض", e: "Info@ptway.net", i: "fa-network-wired", s: "مفتوح" },
-            { t: "نول", c: "company", l: "الرياض", e: "hr@noul.net", i: "fa-desktop", s: "مفتوح" },
-            { t: "سمارت سوفت", c: "company", l: "الرياض", e: "info@smatsoft.sa", i: "fa-laptop-code", s: "مفتوح" },
-            { t: "شركة تطوير التعليمية", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-book-open", s: "مفتوح" },
-            { t: "ولاء بلس", c: "company", l: "الرياض", e: "Jobs@walaplus.com", i: "fa-plus-circle", s: "مفتوح" },
-            { t: "مشروع مولني", c: "company", l: "جدة", e: "hr@mawiny.com", i: "fa-store", s: "مفتوح" },
-            { t: "DataLexing", c: "company", l: "الرياض", e: "Info@datalexing.com", i: "fa-database", s: "مفتوح" },
-            { t: "المراعي", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-cow", s: "مفتوح" },
-            { t: "شركة التصنيع الوطنية", c: "company", l: "الرياض - الجبيل - ينبع", e: "عبر الموقع", i: "fa-industry", s: "مفتوح" },
-            { t: "مجموعة صافولا", c: "company", l: "جدة", e: "https://www.savola.com/ar/careers", i: "fa-leaf", s: "مفتوح" },
+            { t: "Plan A | marketing solutions", c: "company", l: "الرياض", e: "hr@plana-sa.com", i: "fa-bullhorn" },
+            { t: "شركة الخشيم وشركاه", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-scale-balanced" },
+            { t: "شركة الضبعان وشركاه", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-scale-balanced" },
+            { t: "P Legal in association AlEnezee", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-scale-balanced" },
+            { t: "شركة الصعيب وشركاه للمحاماة", c: "company", l: "الرياض", e: "soaib@soaiblaw.com", i: "fa-scale-balanced" },
+            { t: "جدوى للاستثمار", c: "company", l: "الرياض - جدة - الخبر", e: "info@jadwa.com", i: "fa-chart-line" },
+            { t: "تداول السعودية", c: "company", l: "الرياض", e: "Co.op.training@tadawul.com.sa", i: "fa-chart-bar" },
+            { t: "أديم المالية", c: "company", l: "الرياض", e: "hr@adeemcapital.com", i: "fa-chart-pie" },
+            { t: "دراية المالية", c: "company", l: "الرياض - جدة - الدمام", e: "HR@derayah.com", i: "fa-chart-line" },
+            { t: "فالكم المالية", c: "company", l: "الرياض", e: "hr@falcom.com.sa", i: "fa-chart-pie" },
+            { t: "شركة ثقة", c: "company", l: "الرياض", e: "coop@thiqah.sa", i: "fa-shield-halved" },
+            { t: "شركة معادن", c: "company", l: "الرياض - جدة - الخبر - الجبيل", e: "info@maaden.com.sa", i: "fa-gem" },
+            { t: "شركة كسب المالية", c: "company", l: "الرياض", e: "ialalwan@ksb.com.sa", i: "fa-chart-bar" },
+            { t: "سمة (SIMAH)", c: "company", l: "الرياض", e: "kalmzaini@simah.com", i: "fa-credit-card" },
+            { t: "شركة تكامل", c: "company", l: "الرياض", e: "https://join.takamol.com.sa", i: "fa-puzzle-piece" },
+            { t: "شركة تطوير لتقنيات التعليم (TETCO)", c: "company", l: "الرياض", e: "career@tetco.sa", i: "fa-laptop-code" },
+            { t: "وساطة كابيتال المالية", c: "company", l: "الرياض", e: "info@wasatah.com.sa", i: "fa-handshake" },
+            { t: "نادك (Nadec)", c: "company", l: "الرياض", e: "info@nadec.com.sa", i: "fa-cow" },
+            { t: "ميد غلف للتأمين", c: "company", l: "الرياض", e: "service@medgulf.com.sa", i: "fa-umbrella" },
+            { t: "تكافل الراجحي", c: "company", l: "الرياض", e: "customerservice@alrajhitakaful.com", i: "fa-shield" },
+            { t: "شركة ولاء للتأمين", c: "company", l: "الرياض", e: "walaa@walaa.com", i: "fa-shield-halved" },
+            { t: "الخطوط السعودية", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-plane" },
+            { t: "مستشفى الملك خالد للعيون", c: "company", l: "الرياض", e: "info@kkesh.med.sa", i: "fa-eye" },
+            { t: "شركة بيان للمعلومات الائتمانية", c: "company", l: "الرياض", e: "care@bayancb.com", i: "fa-server" },
+            { t: "كيورا (Cura)", c: "company", l: "الرياض", e: "Jobs@cura.healthcare", i: "fa-stethoscope" },
+            { t: "ابوينت مي", c: "company", l: "الرياض", e: "Abdullah@appointme.sa", i: "fa-calendar-check" },
+            { t: "stc", c: "company", l: "معظم المناطق", e: "عبر الموقع", i: "fa-tower-broadcast" },
+            { t: "موبايلي (Mobily)", c: "company", l: "معظم المناطق", e: "عبر الموقع", i: "fa-signal" },
+            { t: "البحري", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-ship" },
+            { t: "سابك (SABIC)", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-flask" },
+            { t: "أرامكو السعودية (Aramco)", c: "company", l: "الظهران", e: "saempsa_webmaster@aramco.com", i: "fa-oil-well" },
+            { t: "KPMG", c: "company", l: "الرياض - جدة - الخبر", e: "عبر الموقع", i: "fa-building" },
+            { t: "EY", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-building" },
+            { t: "PWC", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-building" },
+            { t: "ديلويت (DELOITTE)", c: "company", l: "الرياض - جدة - الخبر", e: "emakhdoum@deloitte.com", i: "fa-building" },
+            { t: "McKinsey & Company", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-building" },
+            { t: "سنابل للاستثمار", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-coins" },
+            { t: "التعاونية", c: "company", l: "معظم المناطق", e: "info@tawuniya.com.sa", i: "fa-hand-holding-medical" },
+            { t: "شركة ابو حيمد وال الشيخ", c: "company", l: "الرياض", e: "Info.ASH@ashlawksa.com", i: "fa-scale-balanced" },
+            { t: "شركة علم (Elm)", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-desktop" },
+            { t: "شركة وقود التقنية", c: "company", l: "جدة", e: "عبر الموقع", i: "fa-gas-pump" },
+            { t: "شركة الكفاح القابضة", c: "company", l: "الرياض", e: "info@alkifah.com", i: "fa-building" },
+            { t: "شركة لين لخدمات الأعمال", c: "company", l: "الرياض", e: "info@lean.sa", i: "fa-briefcase" },
+            { t: "روابي القابضة", c: "company", l: "الخبر", e: "info@rawabiholding.com", i: "fa-building" },
+            { t: "شركة تطوير للمباني", c: "company", l: "الرياض", e: "info@tbc.sa", i: "fa-city" },
+            { t: "شركة قدرة", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-bolt" },
+            { t: "شركة عبد الله الجندي", c: "company", l: "الرياض", e: "info@aljendy.law", i: "fa-scale-balanced" },
+            { t: "شركة قراجنا", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-car" },
+            { t: "PTWAY", c: "company", l: "الرياض", e: "Info@ptway.net", i: "fa-network-wired" },
+            { t: "نول", c: "company", l: "الرياض", e: "hr@noul.net", i: "fa-desktop" },
+            { t: "سمارت سوفت", c: "company", l: "الرياض", e: "info@smatsoft.sa", i: "fa-laptop-code" },
+            { t: "شركة تطوير التعليمية", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-book-open" },
+            { t: "ولاء بلس", c: "company", l: "الرياض", e: "Jobs@walaplus.com", i: "fa-plus-circle" },
+            { t: "مشروع مولني", c: "company", l: "جدة", e: "hr@mawiny.com", i: "fa-store" },
+            { t: "DataLexing", c: "company", l: "الرياض", e: "Info@datalexing.com", i: "fa-database" },
+            { t: "المراعي", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-cow" },
+            { t: "شركة التصنيع الوطنية", c: "company", l: "الرياض - الجبيل - ينبع", e: "عبر الموقع", i: "fa-industry" },
+            { t: "مجموعة صافولا", c: "company", l: "جدة", e: "https://www.savola.com/ar/careers", i: "fa-leaf" },
 
             // --- الصناديق والهيئات ---
-            { t: "الصندوق السعودي للتنمية", c: "agency", l: "الرياض", e: "info@sfd.gov.sa", i: "fa-sack-dollar", s: "مفتوح" },
-            { t: "صندوق الاستثمارات العامة", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-vault", s: "مفتوح" },
-            { t: "صندوق التنمية الزراعية", c: "agency", l: "فروع المملكة", e: "عبر الموقع", i: "fa-tractor", s: "مفتوح" },
-            { t: "صندوق التنمية الصناعية", c: "agency", l: "الرياض", e: "info@sidf.gov.sa", i: "fa-industry", s: "مفتوح" },
-            { t: "صندوق التنمية العقارية", c: "agency", l: "الرياض", e: "info@housing.gov.sa", i: "fa-house", s: "مفتوح" },
-            { t: "صندوق تنمية الموارد البشرية", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-users", s: "مفتوح" },
-            { t: "سدايا (SDAIA)", c: "agency", l: "الرياض", e: "info@sdaia.gov.sa", i: "fa-brain", s: "مفتوح" },
-            { t: "هيئة حقوق الإنسان", c: "agency", l: "الرياض", e: "info@hrc.gov.sa", i: "fa-scale-unbalanced", s: "مفتوح" },
-            { t: "هيئة تنمية الصادرات", c: "agency", l: "الرياض", e: "info@saudiexports.sa", i: "fa-truck-fast", s: "مفتوح" },
-            { t: "هيئة تقويم التعليم", c: "agency", l: "الرياض", e: "Faq@etec.gov.sa", i: "fa-file-signature", s: "مفتوح" },
-            { t: "هيئة المواصفات والمقاييس", c: "agency", l: "الرياض - جدة - الدمام", e: "info@saso.gov.sa", i: "fa-ruler-combined", s: "مفتوح" },
-            { t: "هيئة المحتوى المحلي", c: "agency", l: "الرياض", e: "info@Icgpa.gov.sa", i: "fa-handshake-angle", s: "مفتوح" },
-            { t: "هيئة السوق المالية", c: "agency", l: "الرياض", e: "info@cma.org.sa", i: "fa-arrow-trend-up", s: "مفتوح" },
-            { t: "هيئة الاتصالات", c: "agency", l: "الرياض", e: "info@citc.gov.sa", i: "fa-wifi", s: "مفتوح" },
-            { t: "نزاهة", c: "agency", l: "الرياض", e: "info@nazaha.gov.sa", i: "fa-user-shield", s: "مفتوح" },
-            { t: "الهيئة الملكية للجبيل وينبع", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-industry", s: "مفتوح" },
-            { t: "الغذاء والدواء", c: "agency", l: "الرياض", e: "webmaster@sfda.gov.sa", i: "fa-pills", s: "مفتوح" },
-            { t: "هيئة الطيران المدني", c: "agency", l: "الرياض - جدة - ابها", e: "HR-Support@gaca.gov.sa", i: "fa-plane-departure", s: "مفتوح" },
-            { t: "الهيئة العامة للإحصاء", c: "agency", l: "معظم المناطق", e: "info@stats.gov.sa", i: "fa-chart-simple", s: "مفتوح" },
-            { t: "مدن (MODON)", c: "agency", l: "الرياض - الدمام", e: "info@modon.gov.sa", i: "fa-industry", s: "مفتوح" },
-            { t: "الهلال الأحمر السعودي", c: "agency", l: "الرياض", e: "info@srca.org.sa", i: "fa-truck-medical", s: "مفتوح" },
-            { t: "الهيئة السعودية للتخصصات الصحية", c: "agency", l: "معظم المناطق", e: "عبر الموقع", i: "fa-user-doctor", s: "مفتوح" },
-            { t: "منشآت", c: "agency", l: "الرياض - جدة", e: "Info@monshaat.gov.sa", i: "fa-store", s: "مفتوح" },
-            { t: "الزكاة والضريبة والجمارك", c: "agency", l: "معظم المناطق", e: "care@customs.gov.sa", i: "fa-file-invoice-dollar", s: "مفتوح" },
-            { t: "البنك المركزي (SAMA)", c: "agency", l: "الرياض", e: "info@sama.gov.sa", i: "fa-building-columns", s: "مفتوح" },
+            { t: "الصندوق السعودي للتنمية", c: "agency", l: "الرياض", e: "info@sfd.gov.sa", i: "fa-sack-dollar" },
+            { t: "صندوق الاستثمارات العامة", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-vault" },
+            { t: "صندوق التنمية الزراعية", c: "agency", l: "فروع المملكة", e: "عبر الموقع", i: "fa-tractor" },
+            { t: "صندوق التنمية الصناعية", c: "agency", l: "الرياض", e: "info@sidf.gov.sa", i: "fa-industry" },
+            { t: "صندوق التنمية العقارية", c: "agency", l: "الرياض", e: "info@housing.gov.sa", i: "fa-house" },
+            { t: "صندوق تنمية الموارد البشرية", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-users" },
+            { t: "سدايا (SDAIA)", c: "agency", l: "الرياض", e: "info@sdaia.gov.sa", i: "fa-brain" },
+            { t: "هيئة حقوق الإنسان", c: "agency", l: "الرياض", e: "info@hrc.gov.sa", i: "fa-scale-unbalanced" },
+            { t: "هيئة تنمية الصادرات", c: "agency", l: "الرياض", e: "info@saudiexports.sa", i: "fa-truck-fast" },
+            { t: "هيئة تقويم التعليم", c: "agency", l: "الرياض", e: "Faq@etec.gov.sa", i: "fa-file-signature" },
+            { t: "هيئة المواصفات والمقاييس", c: "agency", l: "الرياض - جدة - الدمام", e: "info@saso.gov.sa", i: "fa-ruler-combined" },
+            { t: "هيئة المحتوى المحلي", c: "agency", l: "الرياض", e: "info@Icgpa.gov.sa", i: "fa-handshake-angle" },
+            { t: "هيئة السوق المالية", c: "agency", l: "الرياض", e: "info@cma.org.sa", i: "fa-arrow-trend-up" },
+            { t: "هيئة الاتصالات", c: "agency", l: "الرياض", e: "info@citc.gov.sa", i: "fa-wifi" },
+            { t: "نزاهة", c: "agency", l: "الرياض", e: "info@nazaha.gov.sa", i: "fa-user-shield" },
+            { t: "الهيئة الملكية للجبيل وينبع", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-industry" },
+            { t: "الغذاء والدواء", c: "agency", l: "الرياض", e: "webmaster@sfda.gov.sa", i: "fa-pills" },
+            { t: "هيئة الطيران المدني", c: "agency", l: "الرياض - جدة - ابها", e: "HR-Support@gaca.gov.sa", i: "fa-plane-departure" },
+            { t: "الهيئة العامة للإحصاء", c: "agency", l: "معظم المناطق", e: "info@stats.gov.sa", i: "fa-chart-simple" },
+            { t: "مدن (MODON)", c: "agency", l: "الرياض - الدمام", e: "info@modon.gov.sa", i: "fa-industry" },
+            { t: "الهلال الأحمر السعودي", c: "agency", l: "الرياض", e: "info@srca.org.sa", i: "fa-truck-medical" },
+            { t: "الهيئة السعودية للتخصصات الصحية", c: "agency", l: "معظم المناطق", e: "عبر الموقع", i: "fa-user-doctor" },
+            { t: "منشآت", c: "agency", l: "الرياض - جدة", e: "Info@monshaat.gov.sa", i: "fa-store" },
+            { t: "الزكاة والضريبة والجمارك", c: "agency", l: "معظم المناطق", e: "care@customs.gov.sa", i: "fa-file-invoice-dollar" },
+            { t: "البنك المركزي (SAMA)", c: "agency", l: "الرياض", e: "info@sama.gov.sa", i: "fa-building-columns" },
 
             // --- البنوك ---
-            { t: "البنك الأهلي السعودي", c: "bank", l: "معظم المناطق", e: "contactus@alahli.com", i: "fa-building-columns", s: "مفتوح" },
-            { t: "مصرف الانماء", c: "bank", l: "معظم المناطق", e: "info@alinma.com", i: "fa-building-columns", s: "مفتوح" },
-            { t: "البنك السعودي الفرنسي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns", s: "مفتوح" },
-            { t: "بنك الرياض", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns", s: "مفتوح" },
-            { t: "مجموعة سامبا المالية", c: "bank", l: "معظم المناطق", e: "customerCare@samba.com", i: "fa-building-columns", s: "مفتوح" },
-            { t: "مصرف الراجحي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns", s: "مفتوح" },
-            { t: "بنك البلاد", c: "bank", l: "معظم المناطق", e: "https://saifi.hrdf.org.sa", i: "fa-building-columns", s: "مفتوح" },
+            { t: "البنك الأهلي السعودي", c: "bank", l: "معظم المناطق", e: "contactus@alahli.com", i: "fa-building-columns" },
+            { t: "مصرف الانماء", c: "bank", l: "معظم المناطق", e: "info@alinma.com", i: "fa-building-columns" },
+            { t: "البنك السعودي الفرنسي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
+            { t: "بنك الرياض", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
+            { t: "مجموعة سامبا المالية", c: "bank", l: "معظم المناطق", e: "customerCare@samba.com", i: "fa-building-columns" },
+            { t: "مصرف الراجحي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
+            { t: "بنك البلاد", c: "bank", l: "معظم المناطق", e: "https://saifi.hrdf.org.sa", i: "fa-building-columns" },
 
             // --- الوزارات ---
-            { t: "وزارة الخارجية", c: "ministry", l: "الرياض", e: "info@mofa.gov.sa", i: "fa-landmark-flag", s: "مفتوح" },
-            { t: "وزارة المالية", c: "ministry", l: "الرياض", e: "ccc@mof.gov.sa", i: "fa-landmark-flag", s: "مفتوح" },
-            { t: "وزارة العدل", c: "ministry", l: "الرياض", e: "1950@moj.gov.sa", i: "fa-scale-balanced", s: "مفتوح" },
-            { t: "وزارة الموارد البشرية", c: "ministry", l: "الرياض", e: "info@hrsd.gov.sa", i: "fa-users", s: "مفتوح" },
-            { t: "وزارة التعليم", c: "ministry", l: "الرياض", e: "contact@mohe.gov.sa", i: "fa-graduation-cap", s: "مفتوح" },
-            { t: "وزارة الاستثمار", c: "ministry", l: "الرياض", e: "InvestorCare@misa.gov.sa", i: "fa-handshake", s: "مفتوح" },
-            { t: "وزارة الطاقة", c: "ministry", l: "الرياض", e: "webmaster@moenergy.gov.sa", i: "fa-bolt", s: "مفتوح" },
-            { t: "وزارة الثقافة", c: "ministry", l: "الرياض", e: "info@moc.gov.sa", i: "fa-palette", s: "مفتوح" },
-            { t: "وزارة الاسكان", c: "ministry", l: "الرياض", e: "info@housing.gov.sa", i: "fa-city", s: "مفتوح" },
-            { t: "وزارة التجارة", c: "ministry", l: "الرياض", e: "CS@mc.gov.sa", i: "fa-store", s: "مفتوح" },
-            { t: "وزارة الصحة", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-heart-pulse", s: "مفتوح" }
+            { t: "وزارة الخارجية", c: "ministry", l: "الرياض", e: "info@mofa.gov.sa", i: "fa-landmark-flag" },
+            { t: "وزارة المالية", c: "ministry", l: "الرياض", e: "ccc@mof.gov.sa", i: "fa-landmark-flag" },
+            { t: "وزارة العدل", c: "ministry", l: "الرياض", e: "1950@moj.gov.sa", i: "fa-scale-balanced" },
+            { t: "وزارة الموارد البشرية", c: "ministry", l: "الرياض", e: "info@hrsd.gov.sa", i: "fa-users" },
+            { t: "وزارة التعليم", c: "ministry", l: "الرياض", e: "contact@mohe.gov.sa", i: "fa-graduation-cap" },
+            { t: "وزارة الاستثمار", c: "ministry", l: "الرياض", e: "InvestorCare@misa.gov.sa", i: "fa-handshake" },
+            { t: "وزارة الطاقة", c: "ministry", l: "الرياض", e: "webmaster@moenergy.gov.sa", i: "fa-bolt" },
+            { t: "وزارة الثقافة", c: "ministry", l: "الرياض", e: "info@moc.gov.sa", i: "fa-palette" },
+            { t: "وزارة الاسكان", c: "ministry", l: "الرياض", e: "info@housing.gov.sa", i: "fa-city" },
+            { t: "وزارة التجارة", c: "ministry", l: "الرياض", e: "CS@mc.gov.sa", i: "fa-store" },
+            { t: "وزارة الصحة", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-heart-pulse" }
         ];
 
+        // إعطاء رقم ثابت (ID) لكل فرصة أساسية
+        db.forEach(function(item, index) {
+            item.id = index + 1;
+        });
+        
+        let nextId = db.length + 1;
         let allData = [...db];
 
-        // الخوارزمية المدعومة بالذكاء الاصطناعي
         async function fetchLiveData() {
             try {
                 const response = await fetch('live_data.json?v=' + new Date().getTime());
@@ -329,33 +313,49 @@
                         });
                         
                         if (existingIndex !== -1) {
-                            db[existingIndex].e = liveItem.e; 
-                            if (liveItem.m) db[existingIndex].m = liveItem.m; 
-                            if (liveItem.b) db[existingIndex].b = liveItem.b; 
-                            if (liveItem.a) db[existingIndex].a = liveItem.a; 
-                            if (liveItem.s) db[existingIndex].s = liveItem.s; 
-                            db[existingIndex].c = 'live';     
+                            let exItem = db[existingIndex];
+                            
+                            // دمج الإيميل مع الرابط
+                            if (exItem.e.includes('@') && !exItem.email) {
+                                exItem.email = exItem.e; 
+                            }
+                            if (liveItem.e && liveItem.e.startsWith('http')) {
+                                exItem.e = liveItem.e;
+                            }
+                            if (liveItem.email) exItem.email = liveItem.email;
+
+                            if (liveItem.m) exItem.m = liveItem.m; 
+                            if (liveItem.b) exItem.b = liveItem.b; 
+                            if (liveItem.a) exItem.a = liveItem.a; 
+                            if (liveItem.s) exItem.s = liveItem.s; 
+                            exItem.isLive = true;     
                         } else {
                             if (!liveItem.s) liveItem.s = "مفتوح";
+                            liveItem.id = nextId++;
+                            liveItem.isLive = true;
+                            if(!liveItem.c) liveItem.c = 'live';
                             db.push(liveItem);
                         }
                     });
                 }
             } catch (e) {
-                console.log("جاري انتظار أول تحديث من الذكاء الاصطناعي...");
+                console.log("جاري انتظار تحديث السيرفر...");
             }
             
             allData = [...db];
             allData.sort(function(a, b) { return a.t > b.t ? 1 : -1; });
-            allData.sort(function(a, b) { return (a.c === 'live' ? -1 : (b.c === 'live' ? 1 : 0)); });
+            allData.sort(function(a, b) { return (a.isLive ? -1 : (b.isLive ? 1 : 0)); });
             
             render('all');
         }
 
-        function getStatusHtml(status) {
-            if (!status) return '<div class="status-badge status-open">مفتوح</div>';
-            if (status.includes("مغلق")) return '<div class="status-badge status-closed">مغلق 🔴</div>';
-            if (status.includes("قريبا") || status.includes("ينتهي")) return '<div class="status-badge status-closing">قريباً ينتهي 🟠</div>';
+        // إخفاء الحالة للشركات اللي تعتمد على الإيميل فقط (ولم تُحدث)
+        function getStatusHtml(item) {
+            if ((item.e.includes('@') && !item.e.startsWith('http')) && !item.isLive) return ''; 
+            
+            if (!item.s) return '<div class="status-badge status-open">مفتوح 🟢</div>';
+            if (item.s.includes("مغلق")) return '<div class="status-badge status-closed">مغلق 🔴</div>';
+            if (item.s.includes("قريبا") || item.s.includes("ينتهي")) return '<div class="status-badge status-closing">قريباً ينتهي 🟠</div>';
             return '<div class="status-badge status-open">مفتوح 🟢</div>';
         }
 
@@ -363,21 +363,26 @@
             const grid = document.getElementById('dataGrid');
             grid.innerHTML = '';
             
-            const filteredData = allData.filter(function(x) { return filter === 'all' || x.c === filter; });
+            // فلتر ذكي يفرز الإيميلات والروابط
+            const filteredData = allData.filter(function(x) { 
+                if (filter === 'all') return true;
+                if (filter === 'live') return x.isLive || x.c === 'live';
+                if (filter === 'email') return x.e.includes('@') || x.email;
+                return x.c === filter; 
+            });
             
-            // تحديث العداد
             document.getElementById('totalCountSpan').innerText = filteredData.length;
             
-            filteredData.forEach(function(item, index) {
+            filteredData.forEach(function(item) {
                 const card = document.createElement('div');
                 card.className = 'company-card';
                 
-                if(item.c === 'live') card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)';
+                if(item.isLive) card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)';
                 card.onclick = function() { openModal(item); };
                 
-                let iconColor = item.c === 'live' ? '#d946ef' : 'var(--accent)';
-                let statusHtml = getStatusHtml(item.s);
-                let numHtml = `<div class="opp-number">الفرصة رقم ${index + 1}</div>`;
+                let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
+                let statusHtml = getStatusHtml(item);
+                let numHtml = `<div class="opp-number">رقم ${item.id}</div>`;
                 
                 card.innerHTML = numHtml + statusHtml + '<div class="company-icon" style="color:'+iconColor+'"><i class="fa-solid ' + item.i + '"></i></div><div class="company-name">' + item.t + '</div><div class="company-tag">' + item.l + '</div>';
                 grid.appendChild(card);
@@ -398,31 +403,36 @@
         }
 
         function openModal(item) {
-            let iconColor = item.c === 'live' ? '#d946ef' : 'var(--accent)';
+            let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
             document.getElementById('mTopIcon').innerHTML = '<i class="fa-solid ' + item.i + '"></i>';
             document.getElementById('mTopIcon').style.background = iconColor;
 
             document.getElementById('mTitle').innerText = item.t;
             document.getElementById('mLoc').innerText = item.l;
             
-            let contactText = item.e;
+            // عرض الرابط والإيميل معاً في حالة توفرهم
+            let contactHtml = '';
             let linkHref = "#";
             
-            if (item.e.indexOf('@') !== -1) {
-                contactText = '<a href="mailto:' + item.e + '" style="color:'+iconColor+'; text-decoration:none;">' + item.e + '</a>';
-                linkHref = 'mailto:' + item.e;
-                document.getElementById('mBtn').innerText = "إرسال إيميل للتقديم";
-            } else if (item.e.indexOf('http') === 0) {
-                contactText = '<a href="' + item.e + '" target="_blank" style="color:'+iconColor+'; text-decoration:none;">رابط بوابة التقديم الرسمي</a>';
+            if (item.email) {
+                contactHtml += `<a href="mailto:${item.email}" style="color:${iconColor}; text-decoration:none; display:block; margin-bottom:5px;"><i class="fa-solid fa-at"></i> ${item.email}</a>`;
+            }
+            
+            if (item.e && item.e.startsWith('http')) {
+                contactHtml += `<a href="${item.e}" target="_blank" style="color:${iconColor}; text-decoration:none; display:block;"><i class="fa-solid fa-link"></i> رابط بوابة التقديم</a>`;
                 linkHref = item.e;
                 document.getElementById('mBtn').innerText = "الذهاب للتقديم";
-            } else {
-                contactText = item.e;
+            } else if (item.e.includes('@') && !item.email) {
+                contactHtml += `<a href="mailto:${item.e}" style="color:${iconColor}; text-decoration:none; display:block;"><i class="fa-solid fa-at"></i> ${item.e}</a>`;
+                linkHref = 'mailto:' + item.e;
+                document.getElementById('mBtn').innerText = "إرسال إيميل التقديم";
+            } else if (!item.e.startsWith('http')) {
+                contactHtml += `<span style="color:${iconColor};"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن: ${item.t}</span>`;
                 linkHref = 'https://www.google.com/search?q=التدريب+التعاوني+' + item.t;
-                document.getElementById('mBtn').innerText = "البحث في جوجل عن التقديم";
+                document.getElementById('mBtn').innerText = "البحث في جوجل";
             }
 
-            document.getElementById('mContact').innerHTML = contactText;
+            document.getElementById('mContact').innerHTML = contactHtml;
             document.getElementById('mMajors').innerText = item.m || 'حسب الشواغر المتاحة للشركة';
             document.getElementById('mBenefits').innerText = item.b || 'تخضع لسياسة الجهة المحددة';
             document.getElementById('mAbout').innerText = item.a || 'برنامج تدريب ميداني صُمم لتطوير وصقل مهارات الطلاب وتجهيزهم لدخول سوق العمل من خلال بيئة مهنية متكاملة.';
@@ -452,7 +462,6 @@
         function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(function(s){ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        // التشغيل
         fetchLiveData();
     </script>
 </body>
