@@ -4,11 +4,9 @@ import os
 import google.generativeai as genai
 from playwright.sync_api import sync_playwright
 
-# 🔑 سحب المفتاح من الخزنة السرية الخاصة بـ GitHub
 API_KEY = os.environ.get("GEMINI_API_KEY")
-
 if not API_KEY:
-    print("❌ خطأ: لم يتم العثور على مفتاح الذكاء الاصطناعي في الخزنة!")
+    print("❌ خطأ: لم يتم العثور على مفتاح الذكاء الاصطناعي!")
     exit()
 
 genai.configure(api_key=API_KEY)
@@ -20,7 +18,6 @@ def scrape_data():
         {"url": "https://www.ewdifh.com/category/corporate-jobs", "type": "ewdifh"}
     ]
     
-    # إعداد نموذج الذكاء الاصطناعي
     model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
     
     with sync_playwright() as p:
@@ -28,7 +25,7 @@ def scrape_data():
         page = browser.new_page()
         job_links = []
         
-        # المرحلة 1: جلب الروابط
+        # 1. جمع الروابط
         for source in sources:
             try:
                 page.goto(source["url"], timeout=60000)
@@ -51,7 +48,6 @@ def scrape_data():
             except Exception as e:
                 print(f"Error source: {e}")
                 
-        # إزالة التكرار
         unique_jobs = []
         seen = set()
         for job in job_links:
@@ -61,7 +57,7 @@ def scrape_data():
                 
         unique_jobs = unique_jobs[:10]
         
-        # المرحلة 2: الغوص والتحليل بالذكاء الاصطناعي
+        # 2. الغوص العميق بالذكاء الاصطناعي
         for job in unique_jobs:
             try:
                 page.goto(job['url'], timeout=60000)
@@ -77,18 +73,20 @@ def scrape_data():
                             apply_link = hrf
                             break
 
+                # تطوير أمر الذكاء الاصطناعي ليصطاد الإيميلات
                 prompt = f"""
                 أنت خبير توظيف. اقرأ الإعلان التالي بدقة:
-                {content[:3000]}
+                {content[:3500]}
                 
-                1. هل الإعلان يخص "تدريب تعاوني" أو "تدريب صيفي" أو "تمهير" أو تأهيل خريجين؟ إذا كان الإعلان عن "وظيفة عادية للمحترفين" أو "دورة تدريبية بمقابل مالي"، أرجع مصفوفة فارغة [].
-                2. إذا كان يخص التدريب التعاوني/الخريجين، استخرج التالي كـ JSON:
+                1. هل الإعلان يخص "تدريب تعاوني" أو "تدريب صيفي" أو "تمهير" أو تأهيل خريجين؟ إذا كان الإعلان عن "وظيفة عادية" أرجع مصفوفة فارغة [].
+                2. إذا كان يخص التدريب، استخرج التالي كـ JSON:
                 {{
-                    "t": "اسم الشركة الرسمي فقط (بدون كلمة يعلن أو شركة)",
-                    "m": "التخصصات المستهدفة باختصار شديد",
+                    "t": "اسم الشركة الرسمي فقط (بدون كلمة شركة)",
+                    "m": "التخصصات المستهدفة باختصار",
                     "b": "المزايا والمكافآت باختصار",
-                    "a": "نبذة مختصرة عن برنامج التدريب",
-                    "s": "اكتب 'مفتوح' إذا لم يذكر موعد انتهاء، أو 'ينتهي قريباً' إذا كان الانتهاء قريب، أو 'مغلق' إذا انتهى."
+                    "a": "نبذة مختصرة عن البرنامج",
+                    "s": "اكتب 'مفتوح' أو 'ينتهي قريباً' أو 'مغلق'",
+                    "email": "إذا ذكر في الإعلان إيميل للتقديم، استخرجه وضعه هنا، وإلا اتركه فارغاً"
                 }}
                 """
                 
@@ -96,19 +94,23 @@ def scrape_data():
                 ai_data = json.loads(response.text)
                 
                 if isinstance(ai_data, dict) and "t" in ai_data:
+                    # تنظيف الإيميل إذا كان موجود
+                    email_extracted = ai_data.get("email", "")
+                    if email_extracted and "@" not in email_extracted:
+                        email_extracted = ""
+
                     data.append({
                         "t": ai_data["t"],
-                        "c": "live",
                         "l": "السعودية",
                         "e": apply_link,
-                        "i": "fa-bolt",
+                        "email": email_extracted,
                         "m": ai_data["m"],
                         "b": ai_data["b"],
                         "a": ai_data["a"],
                         "s": ai_data["s"]
                     })
             except Exception as e:
-                print(f"AI Skip or Error: {e}")
+                print(f"AI Error: {e}")
                 continue
                 
         browser.close()
