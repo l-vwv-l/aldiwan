@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دليل التدريب الميداني | الديوان الجامعي</title>
+    <title>دليل التدريب التعاوني | الديوان الجامعي</title>
     
     <link rel="shortcut icon" href="logo.png?v=2026" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -48,7 +48,6 @@
         .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 40px 15px 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
-        /* البادجات في الكمبيوتر */
         .opp-number { position: absolute; top: 12px; right: 15px; background: rgba(255,255,255,0.08); color: #a1a1aa; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
         .status-badge { position: absolute; top: 12px; left: 15px; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; }
         
@@ -64,7 +63,6 @@
         .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; }
         .footer-copyright { color: var(--text-gray); font-size: 0.75rem; opacity: 0.8; }
 
-        /* النافذة المنبثقة */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .flip-container { perspective: 1000px; width: 90%; max-width: 420px; position: relative; }
         .flipper { transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; position: relative; width: 100%; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -98,20 +96,14 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* --- تحسينات الجوال المريحة جداً (CSS الجديد) --- */
         @media (max-width: 600px) {
             .header-section { padding: 20px; padding-top: 60px; }
             .header-section h1 { font-size: 1.4rem; }
             .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 0.9rem; }
             .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            
-            /* التعديل الجوهري للبطاقة في الجوال لتكون واسعة */
             .company-card { padding: 35px 8px 12px 8px; border-radius: 14px; }
-            
-            /* تصغير البادجات وتغيير مكانها عشان ما تزعج العين */
             .opp-number { font-size: 0.6rem; padding: 2px 6px; top: 8px; right: 8px; border-radius: 6px; }
             .status-badge { font-size: 0.6rem; padding: 2px 6px; top: 8px; left: 8px; border-radius: 6px; }
-            
             .company-icon { font-size: 1.5rem; margin-bottom: 8px; }
             .company-name { font-size: 0.85rem; margin-bottom: 3px; }
             .company-tag { font-size: 0.65rem; }
@@ -129,7 +121,7 @@
     <div class="main-container">
         <div class="header-section">
             <a href="index.html" class="back-btn" title="العودة للرئيسية"><i class="fa-solid fa-arrow-right"></i></a>
-            <h1> التدريب التعاوني</h1>
+            <h1>دليل التدريب التعاوني</h1>
             <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب التعاوني 💼</p>
             
             <div class="total-badge" id="totalBadge">
@@ -167,9 +159,7 @@
                     <div>
                         <div class="info-row"><i class="fa-solid fa-location-dot info-icon"></i><div class="info-text"><span class="info-label">المقر / الفروع</span><span class="info-val" id="mLoc"></span></div></div>
                         <div class="info-row"><i class="fa-solid fa-graduation-cap info-icon"></i><div class="info-text"><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div></div>
-                        
                         <div class="info-row" id="benefitsRow"><i class="fa-solid fa-gift info-icon" style="color: #10b981;"></i><div class="info-text"><span class="info-label">المزايا (إن وجدت)</span><span class="info-val" id="mBenefits"></span></div></div>
-                        
                         <div class="info-row" id="emailRow"><i class="fa-solid fa-at info-icon"></i><div class="info-text"><span class="info-label">الإيميل الرسمي</span><span class="info-val" id="mEmailVal" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block;"></span></div></div>
                         <div class="info-row"><i class="fa-solid fa-envelope info-icon"></i><div class="info-text"><span class="info-label">طريقة التقديم</span><span class="info-val" id="mContact" style="color: #e4e4e7; font-weight: bold;"></span></div></div>
                     </div>
@@ -203,8 +193,7 @@
     </div>
 
     <script>
-        // === هنا تضع مصفوفة الـ 139 شركة التي سأعطيها لك في الخطوة الثانية ===
-        // سيتم وضع الـ db هنا
+        // === القائمة الشاملة لجميع الجهات (141 جهة) ===
         const db = [
             // --- الشركات ---
             { t: "Plan A | marketing solutions", c: "company", l: "الرياض", e: "hr@plana-sa.com", i: "fa-bullhorn" },
