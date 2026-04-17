@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دليل التدريب التعاوني | الديوان الجامعي</title>
+    <title>دليل التدريب الميداني | الديوان الجامعي</title>
     
     <link rel="shortcut icon" href="logo.png?v=2026" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -122,7 +122,7 @@
         <div class="header-section">
             <a href="index.html" class="back-btn" title="العودة للرئيسية"><i class="fa-solid fa-arrow-right"></i></a>
             <h1>دليل التدريب التعاوني</h1>
-            <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب التعاوني 💼</p>
+            <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب الميداني 💼</p>
             
             <div class="total-badge" id="totalBadge">
                 إجمالي الفرص المتاحة: <span id="totalCountSpan">0</span>
@@ -351,6 +351,35 @@
         let allData = [...db];
         let currentModalItem = null;
 
+        // دالة الترتيب (يتم استدعاؤها فوراً عند فتح الصفحة)
+        function getSortScore(item) {
+            let hasActualLink = item.e && item.e.startsWith('http');
+            let hasActualEmail = item.email || (item.e && item.e.includes('@'));
+            
+            // الشركات اللي فقط مكتوب لها "عبر الموقع" ولم تتحدث، نضعها بآخر القائمة
+            if (!hasActualLink && !hasActualEmail && !item.isLive) return 4;
+            
+            let s = item.s || "مفتوح";
+            if (s.includes("مفتوح")) return 1;
+            if (s.includes("قريبا") || s.includes("ينتهي")) return 2;
+            if (s.includes("مغلق")) return 3;
+            return 4; 
+        }
+
+        function sortData() {
+            allData.sort((a, b) => {
+                let scoreA = getSortScore(a);
+                let scoreB = getSortScore(b);
+                if (scoreA !== scoreB) return scoreA - scoreB;
+                if (a.isLive && !b.isLive) return -1;
+                if (!a.isLive && b.isLive) return 1;
+                return a.t > b.t ? 1 : -1;
+            });
+        }
+
+        // الترتيب الأولي والرسم المبدئي
+        sortData();
+        
         async function fetchLiveData() {
             try {
                 const response = await fetch('live_data.json?v=' + new Date().getTime());
@@ -393,7 +422,6 @@
             sortData();
             render('all');
 
-            // فتح البطاقة مباشرة لو كان فيه ID بالرابط (Deep Link)
             const urlParams = new URLSearchParams(window.location.search);
             const sharedId = urlParams.get('id');
             if (sharedId) {
@@ -404,35 +432,11 @@
             }
         }
 
-        // خوارزمية الترتيب الاحترافية
-        function getSortScore(item) {
-            let hasLink = item.e && item.e.startsWith('http');
-            let hasEmail = item.email || (item.e && item.e.includes('@'));
-            if (!hasLink && !hasEmail) return 4; 
-            
-            let s = item.s || "مفتوح";
-            if (s.includes("مفتوح")) return 1;
-            if (s.includes("قريبا") || s.includes("ينتهي")) return 2;
-            if (s.includes("مغلق")) return 3;
-            return 1;
-        }
-
-        function sortData() {
-            allData.sort((a, b) => {
-                let scoreA = getSortScore(a);
-                let scoreB = getSortScore(b);
-                if (scoreA !== scoreB) return scoreA - scoreB;
-                if (a.isLive && !b.isLive) return -1;
-                if (!a.isLive && b.isLive) return 1;
-                return a.t > b.t ? 1 : -1;
-            });
-        }
-
-        // إخفاء الحالة إذا مافيه طريقة تقديم واضحة
+        // إخفاء الحالة عن الشركات اللي بدون رابط (عبر الموقع)
         function getStatusHtml(item) {
             let hasLink = item.e && item.e.startsWith('http');
             let hasEmail = item.email || (item.e && item.e.includes('@'));
-            if ((!hasLink && hasEmail && !item.isLive) || (!hasLink && !hasEmail)) return ''; 
+            if (!hasLink && !hasEmail && !item.isLive) return ''; 
 
             if (!item.s || item.s === "مفتوح") return '<div class="status-badge status-open">مفتوح 🟢</div>';
             if (item.s.includes("مغلق")) return '<div class="status-badge status-closed">مغلق 🔴</div>';
@@ -444,14 +448,11 @@
             const grid = document.getElementById('dataGrid');
             grid.innerHTML = '';
             
+            // رفعنا سطر الإخفاء، الآن يطبع كل الـ 141 فرصة
             const filteredData = allData.filter(function(x) { 
-                let hasLink = x.e && x.e.startsWith('http');
-                let hasEmail = x.email || (x.e && x.e.includes('@'));
-                if (!hasLink && !hasEmail) return false; 
-                
                 if (filter === 'all') return true;
                 if (filter === 'live') return x.isLive || x.c === 'live';
-                if (filter === 'email') return hasEmail;
+                if (filter === 'email') return x.email || (x.e && x.e.includes('@'));
                 return x.c === filter; 
             });
             
@@ -500,7 +501,7 @@
                 emailRow.style.display = 'none';
             }
 
-            let appMethodText = "غير محدد";
+            let appMethodText = "غير محدد / عبر الموقع";
             let linkHref = "#";
             let btnText = "مشاركة الفرصة";
             let btnDisplay = "none";
@@ -519,6 +520,12 @@
                 appMethodText = "إرسال السيرة الذاتية عبر الإيميل";
                 linkHref = 'mailto:' + actualEmail;
                 btnText = "إرسال إيميل";
+                btnDisplay = "block";
+            } else {
+                // للشركات اللي كاتبين لها "عبر الموقع" فقط
+                appMethodText = "ابحث عن التقديم في الموقع الرسمي";
+                linkHref = 'https://www.google.com/search?q=التدريب+التعاوني+' + item.t;
+                btnText = "البحث في جوجل";
                 btnDisplay = "block";
             }
             
@@ -573,7 +580,7 @@
         function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(function(s){ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
         window.addEventListener('resize', initStars); initStars(); drawStars();
 
-        fetchLiveData();
+        fetchLiveData(); // يتم تشغيل الجلب بعد الترتيب المبدئي
     </script>
 </body>
 </html>
