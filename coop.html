@@ -116,12 +116,9 @@
             .header-section h1 { font-size: 1.4rem; }
             .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 0.9rem; }
             .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            
-            /* تحسين البادجات في الجوال لتكون أصغر وأرتب */
             .company-card { padding: 35px 8px 12px 8px; border-radius: 14px; }
             .opp-number { font-size: 0.55rem; padding: 2px 6px; top: 6px; right: 6px; border-radius: 4px; }
             .status-badge { font-size: 0.55rem; padding: 2px 6px; top: 6px; left: 6px; border-radius: 4px; }
-            
             .company-icon { font-size: 1.5rem; margin-bottom: 8px; }
             .company-name { font-size: 0.85rem; margin-bottom: 3px; }
             .company-tag { font-size: 0.65rem; }
@@ -142,7 +139,7 @@
         <div class="header-section">
             <a href="index.html" class="back-btn" title="العودة للرئيسية"><i class="fa-solid fa-arrow-right"></i></a>
             <h1>دليل التدريب التعاوني</h1>
-            <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب التعاوني 💼</p>
+            <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب الميداني 💼</p>
             <div class="total-badge" id="totalBadge">إجمالي الفرص المتاحة: <span id="totalCountSpan">0</span></div>
         </div>
 
@@ -257,7 +254,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         // === كود الـ Firebase الخاص بك ===
         const firebaseConfig = {
@@ -271,188 +268,36 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const firestoreDB = getFirestore(app);
+        const auth = getAuth(app); // تشغيل المصادقة
 
-        let db = []; // الداتا بتنحفظ هنا من السحابة
+        let db = []; 
         let allData = [];
         let nextId = 142; 
         let isAdmin = false;
         let currentModalItem = null;
 
-        // مصفوفة مبدئية لرفعها تلقائياً إذا كانت قاعدة البيانات فارغة
-        const initialSeedData = [
-            { id: 1, t: "Plan A | marketing solutions", c: "company", l: "الرياض", e: "hr@plana-sa.com", i: "fa-bullhorn" },
-            { id: 2, t: "شركة الخشيم وشركاه", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-scale-balanced" },
-            { id: 3, t: "شركة الضبعان وشركاه", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-scale-balanced" },
-            { id: 4, t: "P Legal in association AlEnezee", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-scale-balanced" },
-            { id: 5, t: "شركة الصعيب وشركاه للمحاماة", c: "company", l: "الرياض", e: "soaib@soaiblaw.com", i: "fa-scale-balanced" },
-            { id: 6, t: "جدوى للاستثمار", c: "company", l: "الرياض - جدة - الخبر", e: "info@jadwa.com", i: "fa-chart-line" },
-            { id: 7, t: "تداول السعودية", c: "company", l: "الرياض", e: "Co.op.training@tadawul.com.sa", i: "fa-chart-bar" },
-            { id: 8, t: "شركة تقنية", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-laptop-code" },
-            { id: 9, t: "أديم المالية", c: "company", l: "الرياض", e: "hr@adeemcapital.com", i: "fa-chart-pie" },
-            { id: 10, t: "دراية المالية", c: "company", l: "الرياض - جدة - الدمام", e: "HR@derayah.com", i: "fa-chart-line" },
-            { id: 11, t: "فالكم المالية", c: "company", l: "الرياض", e: "hr@falcom.com.sa", i: "fa-chart-pie" },
-            { id: 12, t: "شركة ثقة", c: "company", l: "الرياض", e: "coop@thiqah.sa", i: "fa-shield-halved" },
-            { id: 13, t: "شركة معادن", c: "company", l: "الرياض - جدة - الخبر - الجبيل", e: "info@maaden.com.sa", i: "fa-gem" },
-            { id: 14, t: "شركة كسب المالية", c: "company", l: "الرياض", e: "ialalwan@ksb.com.sa", i: "fa-chart-bar" },
-            { id: 15, t: "سمة (SIMAH)", c: "company", l: "الرياض", e: "kalmzaini@simah.com", i: "fa-credit-card" },
-            { id: 16, t: "شركة تكامل", c: "company", l: "الرياض", e: "https://join.takamol.com.sa", i: "fa-puzzle-piece" },
-            { id: 17, t: "شركة تطوير لتقنيات التعليم (TETCO)", c: "company", l: "الرياض", e: "career@tetco.sa", i: "fa-laptop-code" },
-            { id: 18, t: "وساطة كابيتال المالية", c: "company", l: "الرياض", e: "info@wasatah.com.sa", i: "fa-handshake" },
-            { id: 19, t: "نادك (Nadec)", c: "company", l: "الرياض", e: "info@nadec.com.sa", i: "fa-cow" },
-            { id: 20, t: "أليانز السعودي الفرنسي", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-shield-heart" },
-            { id: 21, t: "ميد غلف للتأمين", c: "company", l: "الرياض", e: "service@medgulf.com.sa", i: "fa-umbrella" },
-            { id: 22, t: "تكافل الراجحي", c: "company", l: "الرياض", e: "customerservice@alrajhitakaful.com", i: "fa-shield" },
-            { id: 23, t: "بوبا العربية للتأمين", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-heart-pulse" },
-            { id: 24, t: "شركة ولاء للتأمين", c: "company", l: "الرياض", e: "walaa@walaa.com", i: "fa-shield-halved" },
-            { id: 25, t: "الخطوط السعودية", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-plane" },
-            { id: 26, t: "الشركة السعودية للخدمات الأرضية", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-truck-plane" },
-            { id: 27, t: "خدمات الملاحة الجوية السعودية", c: "company", l: "جدة", e: "عبر الموقع", i: "fa-plane-up" },
-            { id: 28, t: "مستشفى الملك خالد للعيون", c: "company", l: "الرياض", e: "info@kkesh.med.sa", i: "fa-eye" },
-            { id: 29, t: "شركة بيان للمعلومات الائتمانية", c: "company", l: "الرياض", e: "care@bayancb.com", i: "fa-server" },
-            { id: 30, t: "كيورا (Cura)", c: "company", l: "الرياض", e: "Jobs@cura.healthcare", i: "fa-stethoscope" },
-            { id: 31, t: "ابوينت مي", c: "company", l: "الرياض", e: "Abdullah@appointme.sa", i: "fa-calendar-check" },
-            { id: 32, t: "stc", c: "company", l: "معظم المناطق", e: "عبر الموقع", i: "fa-tower-broadcast" },
-            { id: 33, t: "موبايلي (Mobily)", c: "company", l: "معظم المناطق", e: "عبر الموقع", i: "fa-signal" },
-            { id: 34, t: "البحري", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-ship" },
-            { id: 35, t: "سابك (SABIC)", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-flask" },
-            { id: 36, t: "أرامكو السعودية (Aramco)", c: "company", l: "الظهران", e: "saempsa_webmaster@aramco.com", i: "fa-oil-well" },
-            { id: 37, t: "الخطوط الحديدية (SAR)", c: "company", l: "معظم المناطق", e: "Training@sar.com.sa", i: "fa-train" },
-            { id: 38, t: "KPMG", c: "company", l: "الرياض - جدة - الخبر", e: "عبر الموقع", i: "fa-building" },
-            { id: 39, t: "EY", c: "company", l: "الرياض - جدة", e: "عبر الموقع", i: "fa-building" },
-            { id: 40, t: "PWC", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-building" },
-            { id: 41, t: "ديلويت (DELOITTE)", c: "company", l: "الرياض - جدة - الخبر", e: "emakhdoum@deloitte.com", i: "fa-building" },
-            { id: 42, t: "McKinsey & Company", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-building" },
-            { id: 43, t: "سنابل للاستثمار", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-coins" },
-            { id: 44, t: "التعاونية", c: "company", l: "معظم المناطق", e: "info@tawuniya.com.sa", i: "fa-hand-holding-medical" },
-            { id: 45, t: "شركة ابو حيمد وال الشيخ", c: "company", l: "الرياض", e: "Info.ASH@ashlawksa.com", i: "fa-scale-balanced" },
-            { id: 46, t: "شركة علم (Elm)", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-desktop" },
-            { id: 47, t: "شركة وقود التقنية", c: "company", l: "جدة", e: "عبر الموقع", i: "fa-gas-pump" },
-            { id: 48, t: "شركة الكفاح القابضة", c: "company", l: "الرياض", e: "info@alkifah.com", i: "fa-building" },
-            { id: 49, t: "شركة لين لخدمات الأعمال", c: "company", l: "الرياض", e: "info@lean.sa", i: "fa-briefcase" },
-            { id: 50, t: "روابي القابضة", c: "company", l: "الخبر", e: "info@rawabiholding.com", i: "fa-building" },
-            { id: 51, t: "شركة تطوير للمباني", c: "company", l: "الرياض", e: "info@tbc.sa", i: "fa-city" },
-            { id: 52, t: "شركة قدرة", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-bolt" },
-            { id: 53, t: "شركة عبد الله الجندي للمحاماة", c: "company", l: "الرياض", e: "info@aljendy.law", i: "fa-scale-balanced" },
-            { id: 54, t: "شركة قراجنا", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-car" },
-            { id: 55, t: "شركة استشارية سعودية EPEC", c: "company", l: "الدمام", e: "admin@educa.com.sa", i: "fa-comments" },
-            { id: 56, t: "PTWAY", c: "company", l: "الرياض", e: "Info@ptway.net", i: "fa-network-wired" },
-            { id: 57, t: "بوصلة", c: "company", l: "جدة", e: "hi@bawsala.sa", i: "fa-compass" },
-            { id: 58, t: "نول", c: "company", l: "الرياض", e: "hr@noul.net", i: "fa-desktop" },
-            { id: 59, t: "سمارت سوفت", c: "company", l: "الرياض", e: "info@smatsoft.sa", i: "fa-laptop-code" },
-            { id: 60, t: "شركة تطوير التعليمية", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-book-open" },
-            { id: 61, t: "ولاء بلس", c: "company", l: "الرياض", e: "Jobs@walaplus.com", i: "fa-plus-circle" },
-            { id: 62, t: "مشروع مولني", c: "company", l: "جدة", e: "hr@mawiny.com", i: "fa-store" },
-            { id: 63, t: "DataLexing", c: "company", l: "الرياض", e: "Info@datalexing.com", i: "fa-database" },
-            { id: 64, t: "المراعي", c: "company", l: "الرياض", e: "عبر الموقع", i: "fa-cow" },
-            { id: 65, t: "شركة التصنيع الوطنية", c: "company", l: "الرياض - الجبيل - ينبع", e: "عبر الموقع", i: "fa-industry" },
-            { id: 66, t: "مجموعة صافولا", c: "company", l: "جدة", e: "https://www.savola.com/ar/careers", i: "fa-leaf" },
-            { id: 67, t: "الصندوق السعودي للتنمية", c: "agency", l: "الرياض", e: "info@sfd.gov.sa", i: "fa-sack-dollar" },
-            { id: 68, t: "صندوق الاستثمارات العامة", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-vault" },
-            { id: 69, t: "صندوق التنمية الزراعية", c: "agency", l: "فروع المملكة", e: "عبر الموقع", i: "fa-tractor" },
-            { id: 70, t: "صندوق التنمية الصناعية السعودي", c: "agency", l: "الرياض", e: "info@sidf.gov.sa", i: "fa-industry" },
-            { id: 71, t: "صندوق التنمية العقارية", c: "agency", l: "الرياض", e: "info@housing.gov.sa", i: "fa-house" },
-            { id: 72, t: "صندوق التنمية الوطني", c: "agency", l: "الرياض", e: "info@ndf.gov.sa", i: "fa-piggy-bank" },
-            { id: 73, t: "صندوق تنمية الموارد البشرية (هدف)", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-users" },
-            { id: 74, t: "سدايا (SDAIA)", c: "agency", l: "الرياض", e: "info@sdaia.gov.sa", i: "fa-brain" },
-            { id: 75, t: "هيئة حقوق الإنسان", c: "agency", l: "الرياض", e: "info@hrc.gov.sa", i: "fa-scale-unbalanced" },
-            { id: 76, t: "هيئة تنمية الصادرات السعودية", c: "agency", l: "الرياض", e: "info@saudiexports.sa", i: "fa-truck-fast" },
-            { id: 77, t: "هيئة تقويم التعليم", c: "agency", l: "الرياض", e: "Faq@etec.gov.sa", i: "fa-file-signature" },
-            { id: 78, t: "الهيئة الملكية لمدينة الرياض", c: "agency", l: "الرياض", e: "info@rcrc.gov.sa", i: "fa-city" },
-            { id: 79, t: "هيئة المواصفات والمقاييس", c: "agency", l: "الرياض - جدة - الدمام", e: "info@saso.gov.sa", i: "fa-ruler-combined" },
-            { id: 80, t: "هيئة المدن الاقتصادية", c: "agency", l: "مدينة الملك عبد الله", e: "info@ecza.gov.sa", i: "fa-building-circle-check" },
-            { id: 81, t: "هيئة المحتوى المحلي", c: "agency", l: "الرياض", e: "info@Icgpa.gov.sa", i: "fa-handshake-angle" },
-            { id: 82, t: "هيئة السوق المالية", c: "agency", l: "الرياض", e: "info@cma.org.sa", i: "fa-arrow-trend-up" },
-            { id: 83, t: "هيئة الاتصالات", c: "agency", l: "الرياض", e: "info@citc.gov.sa", i: "fa-wifi" },
-            { id: 84, t: "نزاهة (مكافحة الفساد)", c: "agency", l: "الرياض", e: "info@nazaha.gov.sa", i: "fa-user-shield" },
-            { id: 85, t: "الهيئة الملكية لمحافظة العلا", c: "agency", l: "الرياض", e: "rcuinfo@rcu.gov.sa", i: "fa-mountain-sun" },
-            { id: 86, t: "الهيئة الملكية للجبيل وينبع", c: "agency", l: "الرياض", e: "عبر الموقع", i: "fa-industry" },
-            { id: 87, t: "الهيئة العامة للمنافسة", c: "agency", l: "الرياض", e: "info@gac.gov.sa", i: "fa-gavel" },
-            { id: 88, t: "الغذاء والدواء", c: "agency", l: "الرياض", e: "webmaster@sfda.gov.sa", i: "fa-pills" },
-            { id: 89, t: "الهيئة العامة للعقار", c: "agency", l: "الرياض", e: "info@rega.gov.sa", i: "fa-building-user" },
-            { id: 90, t: "الهيئة العامة للطيران المدني", c: "agency", l: "الرياض - جدة - ابها", e: "HR-Support@gaca.gov.sa", i: "fa-plane-departure" },
-            { id: 91, t: "الهيئة العامة للترفيه", c: "agency", l: "الرياض", e: "info@gea.gov.sa", i: "fa-masks-theater" },
-            { id: 92, t: "الاعلام المرئي والمسموع", c: "agency", l: "الرياض - الدمام", e: "info@gcam.gov.sa", i: "fa-video" },
-            { id: 93, t: "الهيئة العامة للإحصاء", c: "agency", l: "معظم المناطق", e: "info@stats.gov.sa", i: "fa-chart-simple" },
-            { id: 94, t: "الملكية الفكرية", c: "agency", l: "الرياض", e: "Recruitment@saip.gov.sa", i: "fa-lightbulb" },
-            { id: 95, t: "مدن (المدن الصناعية)", c: "agency", l: "الرياض - الدمام", e: "info@modon.gov.sa", i: "fa-industry" },
-            { id: 96, t: "الهيئة السعودية للفضاء", c: "agency", l: "الرياض", e: "Info@ssc.gov.sa", i: "fa-rocket" },
-            { id: 97, t: "الهلال الأحمر السعودي", c: "agency", l: "الرياض", e: "info@srca.org.sa", i: "fa-truck-medical" },
-            { id: 98, t: "هيئة التخصصات الصحية", c: "agency", l: "معظم المناطق", e: "عبر الموقع", i: "fa-user-doctor" },
-            { id: 99, t: "الهيئة الوطنية للأمن السيبراني", c: "agency", l: "الرياض", e: "Info@nca.gov.sa", i: "fa-shield-virus" },
-            { id: 100, t: "الهيئة السعودية للسياحة", c: "agency", l: "معظم المناطق", e: "عبر الموقع", i: "fa-map-location-dot" },
-            { id: 101, t: "منشآت", c: "agency", l: "الرياض - جدة", e: "Info@monshaat.gov.sa", i: "fa-store" },
-            { id: 102, t: "هيئة الزكاة والضريبة", c: "agency", l: "معظم المناطق", e: "care@customs.gov.sa", i: "fa-file-invoice-dollar" },
-            { id: 103, t: "الهيئة العامة للأوقاف", c: "agency", l: "الرياض - جدة", e: "info@awqaf.gov.sa", i: "fa-hand-holding-heart" },
-            { id: 104, t: "البنك المركزي السعودي (SAMA)", c: "agency", l: "الرياض", e: "info@sama.gov.sa", i: "fa-building-columns" },
-            { id: 105, t: "المؤسسة العامة لتحلية المياه", c: "agency", l: "الرياض", e: "alhassan@swcc.gov.sa", i: "fa-water" },
-            { id: 106, t: "التدريب التقني والمهني", c: "agency", l: "الرياض", e: "cso@tvtc.gov.sa", i: "fa-tools" },
-            { id: 107, t: "المؤسسة العامة للتقاعد", c: "agency", l: "الرياض", e: "governor@pension.gov.sa", i: "fa-person-cane" },
-            { id: 108, t: "موهبة", c: "agency", l: "الرياض", e: "Info@mawhiba.org.sa", i: "fa-brain" },
-            { id: 109, t: "المركز السعودي لكفاءة الطاقة", c: "agency", l: "الرياض", e: "info@seec.gov.sa", i: "fa-leaf" },
-            { id: 110, t: "المركز الوطني للتصديق الرقمي", c: "agency", l: "الرياض", e: "info@ncdc.gov.sa", i: "fa-fingerprint" },
-            { id: 111, t: "المركز الوطني للتنافسية", c: "agency", l: "الرياض", e: "info@ncc.gov.sa", i: "fa-trophy" },
-            { id: 112, t: "المركز الوطني للذكاء الاصطناعي", c: "agency", l: "الرياض", e: "info@sdaia.gov.sa", i: "fa-brain" },
-            { id: 113, t: "المركز الوطني للوثائق والمحفوظات", c: "agency", l: "الرياض", e: "info@ncar.gov.sa", i: "fa-folder-open" },
-            { id: 114, t: "مركز كابسارك (KAPSARC)", c: "agency", l: "الرياض", e: "jobs@kapsarc.org", i: "fa-gas-pump" },
-            { id: 115, t: "البنك الأهلي السعودي", c: "bank", l: "معظم المناطق", e: "contactus@alahli.com", i: "fa-building-columns" },
-            { id: 116, t: "البنك السعودي للإستثمار", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
-            { id: 117, t: "مصرف الانماء", c: "bank", l: "معظم المناطق", e: "info@alinma.com", i: "fa-building-columns" },
-            { id: 118, t: "البنك السعودي الفرنسي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
-            { id: 119, t: "بنك الرياض", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
-            { id: 120, t: "مجموعة سامبا المالية", c: "bank", l: "معظم المناطق", e: "customerCare@samba.com", i: "fa-building-columns" },
-            { id: 121, t: "مصرف الراجحي", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
-            { id: 122, t: "البنك العربي الوطني", c: "bank", l: "معظم المناطق", e: "عبر الموقع", i: "fa-building-columns" },
-            { id: 123, t: "بنك البلاد", c: "bank", l: "معظم المناطق", e: "https://saifi.hrdf.org.sa", i: "fa-building-columns" },
-            { id: 124, t: "بنك الجزيرة", c: "bank", l: "معظم المناطق", e: "Call_Center_Supervisor@BAJ.Com.SA", i: "fa-building-columns" },
-            { id: 125, t: "وزارة الخارجية", c: "ministry", l: "الرياض", e: "info@mofa.gov.sa", i: "fa-landmark-flag" },
-            { id: 126, t: "وزارة المالية", c: "ministry", l: "الرياض", e: "ccc@mof.gov.sa", i: "fa-landmark-flag" },
-            { id: 127, t: "وزارة العدل", c: "ministry", l: "الرياض", e: "1950@moj.gov.sa", i: "fa-scale-balanced" },
-            { id: 128, t: "وزارة الموارد البشرية", c: "ministry", l: "الرياض", e: "info@hrsd.gov.sa", i: "fa-users" },
-            { id: 129, t: "وزارة التعليم", c: "ministry", l: "الرياض", e: "contact@mohe.gov.sa", i: "fa-graduation-cap" },
-            { id: 130, t: "وزارة الاقتصاد والتخطيط", c: "ministry", l: "الرياض", e: "info@mep.gov.sa", i: "fa-chart-line" },
-            { id: 131, t: "وزارة الاستثمار", c: "ministry", l: "الرياض", e: "InvestorCare@misa.gov.sa", i: "fa-handshake" },
-            { id: 132, t: "وزارة الطاقة", c: "ministry", l: "الرياض", e: "webmaster@moenergy.gov.sa", i: "fa-bolt" },
-            { id: 133, t: "وزارة الثقافة", c: "ministry", l: "الرياض", e: "info@moc.gov.sa", i: "fa-palette" },
-            { id: 134, t: "وزارة الاسكان", c: "ministry", l: "الرياض", e: "info@housing.gov.sa", i: "fa-city" },
-            { id: 135, t: "وزارة الاعلام", c: "ministry", l: "الرياض", e: "info@media.gov.sa", i: "fa-tv" },
-            { id: 136, t: "وزارة الاتصالات", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-satellite-dish" },
-            { id: 137, t: "وزارة البيئة والمياه", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-leaf" },
-            { id: 138, t: "وزارة التجارة", c: "ministry", l: "الرياض", e: "CS@mc.gov.sa", i: "fa-store" },
-            { id: 139, t: "وزارة الصحة", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-heart-pulse" },
-            { id: 140, t: "وزارة الصناعة", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-industry" },
-            { id: 141, t: "وزارة النقل", c: "ministry", l: "الرياض", e: "عبر الموقع", i: "fa-truck-fast" }
-        ];
-
         // --- جلب البيانات من السحابة ---
         async function loadDatabase() {
-            const querySnapshot = await getDocs(collection(firestoreDB, "companies"));
-            
-            if (querySnapshot.empty) {
-                console.log("القاعدة السحابية فارغة! جاري رفع الـ 141 شركة...");
-                for (const item of initialSeedData) {
-                    await setDoc(doc(firestoreDB, "companies", item.id.toString()), item);
-                    db.push(item);
-                }
-            } else {
+            try {
+                const querySnapshot = await getDocs(collection(firestoreDB, "companies"));
                 querySnapshot.forEach((docSnap) => {
                     db.push(docSnap.data());
                 });
+                
+                if (db.length > 0) {
+                    let maxId = Math.max(...db.map(o => o.id));
+                    nextId = maxId + 1;
+                }
+                
+                await fetchLiveData();
+                
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('dataGrid').style.display = 'grid';
+            } catch (error) {
+                console.error("Error loading database:", error);
+                document.getElementById('loadingIndicator').innerText = "حدث خطأ في جلب البيانات.";
             }
-            
-            // حساب الرقم التالي للشركات الجديدة
-            if (db.length > 0) {
-                let maxId = Math.max(...db.map(o => o.id));
-                nextId = maxId + 1;
-            }
-            
-            // دمج تحديثات الذكاء الاصطناعي (الملف المحلي live_data.json)
-            await fetchLiveData();
-            
-            // إخفاء مؤشر التحميل وإظهار الشبكة
-            document.getElementById('loadingIndicator').style.display = 'none';
-            document.getElementById('dataGrid').style.display = 'grid';
         }
 
         async function fetchLiveData() {
@@ -490,7 +335,7 @@
                     });
                 }
             } catch (e) {
-                console.log("لم يتم العثور على تحديثات ذكاء اصطناعي.");
+                console.log("لا يوجد تحديث من الذكاء الاصطناعي.");
             }
             
             allData = [...db];
@@ -505,16 +350,24 @@
             }
         }
 
-        // === دوال الإدارة والواجهة مرتبطة بالـ Window (مهم لعملها داخل module) ===
-        window.unlockAdmin = function() {
+        // === نظام الإدارة (مرتبط بحساب جوجل السري) ===
+        window.unlockAdmin = async function() {
             if(isAdmin) return;
-            let pwd = prompt("أدخل رمز الوصول الخاص بالديوان الجامعي:");
-            if (pwd && btoa(pwd) === "YWxkaXdhbg==") {
-                isAdmin = true;
-                document.body.classList.add('admin-mode');
-                alert("تم تفعيل وضع المسؤول بنجاح! ✅");
-                render('all');
-            } else if(pwd) alert("عذراً، رمز الوصول غير صحيح! ❌");
+            // هنا تم تحديث الإيميل إلى إيميلك الأساسي
+            let email = "university.diwan@gmail.com"; 
+            let pwd = prompt("أدخل الرقم السري للإدارة:");
+            
+            if (pwd) {
+                try {
+                    await signInWithEmailAndPassword(auth, email, pwd);
+                    isAdmin = true;
+                    document.body.classList.add('admin-mode');
+                    alert("تم تسجيل الدخول بنجاح كمسؤول! 🔓✅");
+                    render('all');
+                } catch(e) {
+                    alert("الرقم السري غير صحيح! ❌");
+                }
+            }
         };
 
         window.openAdminModal = function(item = null) {
@@ -560,7 +413,6 @@
 
             if(!name || !link) { alert("الرجاء إدخال اسم الشركة ورابط التقديم!"); return; }
 
-            // تجهيز كائن البيانات
             let compData = { t: name, c: cat, l: loc, e: link, i: icon };
             if(email) compData.email = email;
             if(status) compData.s = status;
@@ -578,7 +430,6 @@
                     db.push(compData);
                 }
 
-                // الحفظ الفعلي في سحابة جوجل
                 await setDoc(doc(firestoreDB, "companies", finalId.toString()), compData);
                 alert("تم الحفظ في السحابة بنجاح! ☁️✅");
                 
@@ -588,7 +439,7 @@
                 render('all');
             } catch(e) {
                 console.error("خطأ في الحفظ:", e);
-                alert("حدث خطأ أثناء الحفظ! تأكد من إعدادات قاعدة البيانات.");
+                alert("حدث خطأ أثناء الحفظ! تأكد أنك سجلت الدخول كمسؤول.");
             }
         };
 
@@ -755,7 +606,13 @@
             }
         };
 
-        // تشغيل النظام وجلب البيانات
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        function initStars() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; stars = []; for(let i=0; i<100; i++) stars.push({x:Math.random()*width, y:Math.random()*height, r:Math.random()*1.5, d:Math.random()*0.5+0.1}); }
+        function drawStars() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.7)"; stars.forEach(function(s){ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y-=s.d; if(s.y<0)s.y=height;}); requestAnimationFrame(drawStars); }
+        window.addEventListener('resize', initStars); initStars(); drawStars();
+
         loadDatabase();
 
     </script>
