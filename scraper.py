@@ -25,13 +25,15 @@ def scrape_data():
         page = browser.new_page()
         job_links = []
         
-        # 1. جمع الروابط
+        # 1. جمع الروابط بفلتر مبدئي
         for source in sources:
             try:
                 page.goto(source["url"], timeout=60000)
                 page.wait_for_timeout(5000)
                 links = page.locator('a').all()
-                bad_words = ['تواصل', 'الأسئلة', 'تسجيل', 'دخول', 'شروط', 'سياسة']
+                
+                # كلمات نستبعدها فوراً من العناوين
+                bad_words = ['تواصل', 'الأسئلة', 'تسجيل', 'دخول', 'خريج', 'توظيف', 'عمل', 'وظيفة']
                 
                 for link in links:
                     try:
@@ -41,7 +43,9 @@ def scrape_data():
                         
                         if text and href and not href.startswith('javascript') and not is_bad and len(text) > 5:
                             final_link = href if href.startswith('http') else f"https://www.ewdifh.com{href}"
-                            if any(vw in text for vw in ['تدريب', 'تعاوني', 'تمهير', 'صيفي', 'خريج', 'برنامج', 'Aramco', 'SABIC']):
+                            
+                            # لازم العنوان يكون فيه لمحة عن التدريب
+                            if any(vw in text for vw in ['تدريب', 'تعاوني', 'ميداني', 'coop']):
                                 job_links.append({"url": final_link})
                     except:
                         continue
@@ -57,7 +61,7 @@ def scrape_data():
                 
         unique_jobs = unique_jobs[:10]
         
-        # 2. الغوص العميق بالذكاء الاصطناعي
+        # 2. الغوص العميق بالذكاء الاصطناعي بأوامر صارمة جداً
         for job in unique_jobs:
             try:
                 page.goto(job['url'], timeout=60000)
@@ -73,28 +77,30 @@ def scrape_data():
                             apply_link = hrf
                             break
 
-                # تطوير أمر الذكاء الاصطناعي ليصطاد الإيميلات
+                # أمر الذكاء الاصطناعي (صارم ومحدد لطلاب الجامعة فقط)
                 prompt = f"""
-                أنت خبير توظيف. اقرأ الإعلان التالي بدقة:
+                أنت خبير توظيف لطلاب الجامعات فقط. اقرأ الإعلان التالي بدقة:
                 {content[:3500]}
                 
-                1. هل الإعلان يخص "تدريب تعاوني" أو "تدريب صيفي" أو "تمهير" أو تأهيل خريجين؟ إذا كان الإعلان عن "وظيفة عادية" أرجع مصفوفة فارغة [].
-                2. إذا كان يخص التدريب، استخرج التالي كـ JSON:
+                1. هل الإعلان مخصص حصرياً لـ "التدريب التعاوني" (Co-op) أو "التدريب الميداني" للطلاب الذين لا يزالون على مقاعد الدراسة؟ 
+                (انتبه: إذا كان الإعلان يستهدف "حديثي التخرج"، أو "برنامج تمهير"، أو "وظائف"، أو "تدريب منتهي بالتوظيف"، فيجب عليك إرجاع مصفوفة فارغة [] فوراً).
+                
+                2. إذا كان الإعلان يخص التدريب التعاوني للطلاب فقط، استخرج التالي كـ JSON:
                 {{
-                    "t": "اسم الشركة الرسمي فقط (بدون كلمة شركة)",
+                    "t": "اسم الشركة الرسمي فقط (بدون كلمة يعلن أو شركة)",
                     "m": "التخصصات المستهدفة باختصار",
                     "b": "المزايا والمكافآت باختصار",
-                    "a": "نبذة مختصرة عن البرنامج",
+                    "a": "نبذة مختصرة عن برنامج التدريب التعاوني",
                     "s": "اكتب 'مفتوح' أو 'ينتهي قريباً' أو 'مغلق'",
-                    "email": "إذا ذكر في الإعلان إيميل للتقديم، استخرجه وضعه هنا، وإلا اتركه فارغاً"
+                    "email": "إذا ذكر الإعلان إيميل للتقديم اكتبه، وإلا اتركه فارغاً"
                 }}
                 """
                 
                 response = model.generate_content(prompt)
                 ai_data = json.loads(response.text)
                 
+                # إذا كانت القائمة فارغة، يعني الذكاء الاصطناعي اكتشف إنها وظيفة أو للخريجين ورفضها
                 if isinstance(ai_data, dict) and "t" in ai_data:
-                    # تنظيف الإيميل إذا كان موجود
                     email_extracted = ai_data.get("email", "")
                     if email_extracted and "@" not in email_extracted:
                         email_extracted = ""
@@ -110,7 +116,7 @@ def scrape_data():
                         "s": ai_data["s"]
                     })
             except Exception as e:
-                print(f"AI Error: {e}")
+                print(f"AI Skip/Error (Not a Coop): {e}")
                 continue
                 
         browser.close()
