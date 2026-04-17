@@ -529,7 +529,6 @@
         }
         window.filterData = function(btn, cat) { document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active')); btn.classList.add('active'); render(cat); };
         window.toggleFlip = function() { document.getElementById('flipContainer').classList.toggle('flipped'); };
-        
         window.openModal = function(item) {
             currentModalItem = item;
             let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
@@ -549,7 +548,6 @@
             const btn = document.getElementById('mBtn'); btn.href = linkHref; btn.innerText = btnText; btn.style.background = iconColor; btn.style.display = btnDisplay;
             document.getElementById('flipContainer').classList.remove('flipped'); document.getElementById('infoModal').style.display = 'flex'; document.body.style.overflow = 'hidden';
         };
-        
         window.closeModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('infoModal')) { document.getElementById('infoModal').style.display = 'none'; document.body.style.overflow = 'auto'; } };
         
         window.shareOpportunity = function() {
