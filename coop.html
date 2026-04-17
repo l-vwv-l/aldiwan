@@ -43,25 +43,100 @@
         .filter-btn.email-btn { border-color: #10b981; color: #10b981; }
         .filter-btn.email-btn:hover, .filter-btn.email-btn.active { background: #10b981; color: white; }
 
-        .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        /* ================= التصميم الجديد للبطاقات ================= */
+        /* مسافة علوية للشبكة عشان الأيقونات العائمة ما تنقص */
+        .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-bottom: 20px; padding-top: 35px; }
 
-        .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 40px 15px 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
-        .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
+        .company-card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 20px; 
+            padding: 45px 20px 20px 20px; /* مسافة من فوق للأيقونة */
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            position: relative; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .company-card:hover { 
+            transform: translateY(-8px); 
+            border-color: rgba(255,255,255,0.3); 
+            background: rgba(40,40,40,0.8); 
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.2);
+        }
         
-        .opp-number { position: absolute; top: 12px; right: 15px; background: rgba(255,255,255,0.08); color: #a1a1aa; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
-        .status-badge { position: absolute; top: 12px; left: 15px; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; }
+        /* الأيقونة البارزة من الأعلى */
+        .card-top-icon {
+            position: absolute;
+            top: -35px; /* رفعها برا البطاقة */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 70px;
+            background: #1e1e1e; /* لون ثابت عشان يغطي حد البطاقة */
+            border: 2px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            transition: 0.3s;
+            z-index: 2;
+        }
+        .company-card:hover .card-top-icon {
+            border-color: var(--accent);
+            transform: translateX(-50%) translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .company-name { color: white; font-weight: 700; margin-bottom: 8px; font-size: 1.15rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-align: center; }
         
+        .company-tag { color: #d4d4d8; font-size: 0.85rem; text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; opacity: 0.8;}
+
+        /* الفوتر السفلي للبطاقة */
+        .card-footer { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: auto; 
+            padding-top: 15px; 
+            border-top: 1px solid rgba(255,255,255,0.08); 
+        }
+        
+        .status-badge { padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; }
         .status-open { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .status-closing { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
         .status-closed { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 
-        .company-icon { font-size: 2.2rem; color: var(--accent); margin-bottom: 12px; }
-        .company-name { color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.05rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .company-tag { color: var(--text-gray); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .details-btn { 
+            background: rgba(255,255,255,0.05); 
+            color: white; 
+            padding: 6px 14px; 
+            border-radius: 10px; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            border: 1px solid var(--glass-border);
+            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+        }
+        .company-card:hover .details-btn { 
+            background: var(--accent); 
+            border-color: var(--accent);
+            padding-left: 20px; /* تأثير حركة لطيف */
+        }
 
-        .admin-edit-btn { position: absolute; top: -15px; left: -15px; width: 35px; height: 35px; background: #eab308; color: #000; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; border: 3px solid #1a1a1a; z-index: 5; box-shadow: 0 5px 15px rgba(234, 179, 8, 0.4); transition: 0.3s; }
+        .opp-number { position: absolute; top: 12px; left: 15px; background: rgba(255,255,255,0.08); color: #a1a1aa; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .admin-edit-btn { position: absolute; top: 12px; right: 15px; width: 30px; height: 30px; background: #eab308; color: #000; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid #1a1a1a; z-index: 5; box-shadow: 0 5px 10px rgba(234, 179, 8, 0.4); transition: 0.3s; left: auto; }
         .admin-edit-btn:hover { transform: scale(1.1); background: #facc15; }
         body.admin-mode .admin-edit-btn { display: flex; }
+        /* ========================================================= */
 
         .footer-info { margin-top: 30px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
@@ -72,9 +147,7 @@
         .admin-fab-container { position: fixed; bottom: 30px; right: 30px; display: none; flex-direction: column; gap: 15px; z-index: 90; }
         body.admin-mode .admin-fab-container { display: flex; }
         .admin-fab { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: 0.3s; background: #10b981; }
-        .admin-fab:hover { transform: translateY(-5px); }
-
-        /* الإصلاحات الهامة للمركزية وعدم الخروج من الشاشة */
+        
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.8); z-index: 100; display: none; 
@@ -82,19 +155,10 @@
             padding: 15px; box-sizing: border-box; 
         }
         
-        .flip-container { 
-            perspective: 1000px; width: 100%; max-width: 420px; position: relative; 
-        }
-        
-        .flipper { 
-            transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            transform-style: preserve-3d; position: relative; width: 100%; 
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        
+        .flip-container { perspective: 1000px; width: 100%; max-width: 420px; position: relative; }
+        .flipper { transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; position: relative; width: 100%; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .flip-container.flipped .flipper { transform: rotateY(180deg); }
         
-        /* إصلاح الوجه الأمامي والخلفي (إضافة webkit ومنع ظهور إكسين) */
         .front, .back { 
             -webkit-backface-visibility: hidden; backface-visibility: hidden; 
             width: 100%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); 
@@ -102,18 +166,11 @@
             text-align: right; box-sizing: border-box; display: flex; flex-direction: column; 
             justify-content: space-between; max-height: 88vh; overflow-y: auto; 
         }
-        
         .front { position: relative; transform: rotateY(0deg); z-index: 2;}
         .back { position: absolute; transform: rotateY(180deg); top: 0; left: 0; right: 0; bottom: 0; height: 100%; }
         
-        .admin-modal-content { 
-            position: relative; width: 100%; max-width: 450px; background: var(--card-bg); 
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 20px 25px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; 
-            max-height: 90vh; overflow-y: auto; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
+        .admin-modal-content { position: relative; width: 100%; max-width: 450px; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 20px 25px; margin: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; max-height: 90vh; overflow-y: auto; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        /* نظام التبويبات الجديد للإدارة */
         .admin-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
         .admin-tab-btn { flex: 1; background: transparent; color: #a1a1aa; border: none; padding: 10px; cursor: pointer; border-bottom: 2px solid transparent; transition: 0.3s; font-family: inherit; font-weight: bold; font-size: 0.85rem;}
         .admin-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -145,15 +202,22 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
+        /* تناسق شكل البطاقات في الجوال */
         @media (max-width: 600px) {
             .header-section { padding: 20px; padding-top: 60px; }
             .header-section h1 { font-size: 1.4rem; }
-            .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .company-card { padding: 35px 8px 12px 8px; border-radius: 14px; }
-            .opp-number { font-size: 0.55rem; padding: 2px 6px; top: 6px; right: 6px; border-radius: 4px; }
-            .status-badge { font-size: 0.55rem; padding: 2px 6px; top: 6px; left: 6px; border-radius: 4px; }
-            .company-icon { font-size: 1.5rem; margin-bottom: 8px; }
-            .company-name { font-size: 0.85rem; margin-bottom: 3px; }
+            .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; padding-top: 25px;}
+            .company-card { padding: 35px 12px 15px 12px; border-radius: 16px; margin-top: 25px; }
+            .card-top-icon { width: 50px; height: 50px; top: -25px; font-size: 1.3rem; }
+            .opp-number { font-size: 0.55rem; top: 10px; left: 10px; padding: 2px 6px; }
+            .admin-edit-btn { top: 10px; right: 10px; width: 26px; height: 26px; font-size: 0.75rem; }
+            .company-name { font-size: 0.95rem; margin-bottom: 5px; }
+            .company-tag { font-size: 0.75rem; margin-bottom: 12px; }
+            
+            /* ترتيب الفوتر في الجوال ليكون الأزرار فوق بعض لو الشاشة صغيرة مرة */
+            .card-footer { flex-direction: column; gap: 8px; padding-top: 12px;}
+            .details-btn, .status-badge { width: 100%; text-align: center; justify-content: center; box-sizing: border-box; }
+
             .admin-fab-container { bottom: 15px; right: 15px; }
             .admin-fab { width: 50px; height: 50px; font-size: 1.2rem; }
             .front, .back, .admin-modal-content { padding: 35px 15px 15px 15px; }
@@ -509,6 +573,7 @@
 
         function sortData() { allData.sort((a, b) => { let sA = getSortScore(a), sB = getSortScore(b); return sA !== sB ? sA - sB : (a.isLive && !b.isLive ? -1 : (!a.isLive && b.isLive ? 1 : (a.t > b.t ? 1 : -1))); }); }
 
+        // الدالة التي ترسم البطاقات بالتصميم الجديد
         function render(filter) {
             const grid = document.getElementById('dataGrid'); grid.innerHTML = '';
             const filteredData = allData.filter(x => filter === 'all' ? true : (filter === 'live' ? (x.isLive || x.c === 'live') : (filter === 'email' ? (x.email || (x.e && x.e.includes('@'))) : x.c === filter)));
@@ -517,20 +582,43 @@
                 const card = document.createElement('div'); card.className = 'company-card';
                 if(item.isLive) card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)';
                 card.onclick = (e) => { if(!e.target.closest('.admin-edit-btn')) openModal(item); };
+                
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
-                let statusHtml = ''; let hasL = item.e && item.e.startsWith('http'); let hasE = item.email || (item.e && item.e.includes('@'));
+                let borderColor = item.isLive ? '#d946ef' : 'var(--glass-border)';
+                let statusHtml = '<div class="status-badge status-open" style="visibility:hidden;">مفتوح 🟢</div>'; // حجز مساحة لو مافي حالة
+                let hasL = item.e && item.e.startsWith('http'); let hasE = item.email || (item.e && item.e.includes('@'));
+                
                 if (hasL || hasE || item.isLive) {
                     let st = item.s || "مفتوح";
                     if(st.includes("مغلق")) statusHtml = '<div class="status-badge status-closed">مغلق 🔴</div>';
                     else if(st.includes("قريبا")) statusHtml = '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>';
                     else statusHtml = '<div class="status-badge status-open">مفتوح 🟢</div>';
                 }
-                card.innerHTML = `<div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div><div class="opp-number">رقم ${item.id}</div>${statusHtml}<div class="company-icon" style="color:${iconColor}"><i class="fa-solid ${item.i}"></i></div><div class="company-name">${item.t}</div><div class="company-tag">${item.l}</div>`;
+
+                // هيكل البطاقة الجديد (يطابق شكل الكوكيز)
+                card.innerHTML = `
+                    <div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div>
+                    <div class="opp-number">#${item.id}</div>
+                    
+                    <div class="card-top-icon" style="color:${iconColor}; border-color:${borderColor};">
+                        <i class="fa-solid ${item.i}"></i>
+                    </div>
+                    
+                    <div class="company-name">${item.t}</div>
+                    <div class="company-tag"><i class="fa-solid fa-location-dot"></i> ${item.l}</div>
+                    
+                    <div class="card-footer">
+                        ${statusHtml}
+                        <div class="details-btn">التفاصيل <i class="fa-solid fa-arrow-left" style="margin-right: 6px; font-size: 0.8rem;"></i></div>
+                    </div>
+                `;
                 grid.appendChild(card);
             });
         }
+
         window.filterData = function(btn, cat) { document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active')); btn.classList.add('active'); render(cat); };
         window.toggleFlip = function() { document.getElementById('flipContainer').classList.toggle('flipped'); };
+        
         window.openModal = function(item) {
             currentModalItem = item;
             let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
@@ -550,6 +638,7 @@
             const btn = document.getElementById('mBtn'); btn.href = linkHref; btn.innerText = btnText; btn.style.background = iconColor; btn.style.display = btnDisplay;
             document.getElementById('flipContainer').classList.remove('flipped'); document.getElementById('infoModal').style.display = 'flex'; document.body.style.overflow = 'hidden';
         };
+
         window.closeModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('infoModal')) { document.getElementById('infoModal').style.display = 'none'; document.body.style.overflow = 'auto'; } };
         
         window.shareOpportunity = function() {
