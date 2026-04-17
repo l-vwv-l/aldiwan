@@ -63,32 +63,31 @@
         .admin-edit-btn:hover { transform: scale(1.1); background: #facc15; }
         body.admin-mode .admin-edit-btn { display: flex; }
 
-        .footer-info { margin-top: 30px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .footer-info { margin-top: 30px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
         .footer-copyright { color: var(--text-gray); font-size: 0.75rem; opacity: 0.8; }
+
         .secret-lock { cursor: pointer; opacity: 0.3; transition: 0.3s; font-size: 0.9rem; padding: 5px; }
         .secret-lock:hover { opacity: 1; color: var(--text-white); }
 
         .admin-fab-container { position: fixed; bottom: 30px; right: 30px; display: none; flex-direction: column; gap: 15px; z-index: 90; }
         body.admin-mode .admin-fab-container { display: flex; }
         .admin-fab { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: 0.3s; background: #10b981; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 15px; box-sizing: border-box; }
-        
-        /* ------------------ إصلاح تصميم الإدارة ------------------ */
-        .admin-modal-content { position: relative; width: 100%; max-width: 450px; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin: auto; }
-        .admin-scroll-area { padding: 45px 25px 20px 25px; max-height: 85vh; overflow-y: auto; border-radius: 24px; }
-        /* --------------------------------------------------------- */
+        .admin-fab:hover { transform: translateY(-5px); }
 
-        /* ------------------ إصلاح البطاقة (الوجهين) والكلام المعكوس ------------------ */
+        /* التعديل لضمان التوسيط وعدم خروج البطاقة من الشاشة */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 15px; box-sizing: border-box; }
         .flip-container { perspective: 1000px; width: 100%; max-width: 420px; position: relative; margin: 0 auto; }
         .flipper { transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; position: relative; width: 100%; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .flip-container.flipped .flipper { transform: rotateY(180deg); }
-        .front, .back { -webkit-backface-visibility: hidden; backface-visibility: hidden; position: absolute; top: 0; left: 0; width: 100%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 20px 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; max-height: 88vh; }
-        .front { position: relative; transform: rotateY(0deg); z-index: 2; overflow-y: auto; }
-        .back { transform: rotateY(180deg); height: 100%; direction: rtl; } /* تم التعديل لمنع ظهور الكلام معكوس */
-        /* -------------------------------------------------------------------------- */
         
+        /* إضافة -webkit-backface-visibility لحل مشكلة الإكسين في الآيفون */
+        .front, .back { -webkit-backface-visibility: hidden; backface-visibility: hidden; position: absolute; top: 0; left: 0; width: 100%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 45px 25px 15px 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+        .front { position: relative; transform: rotateY(0deg); }
+        .back { transform: rotateY(180deg); height: 100%; }
+
+        /* ستايل نافذة الإدارة (معزولة عن بطاقة الطالب) */
+        .admin-panel { background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 35px 20px 20px 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); text-align: right; width: 100%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-sizing: border-box; margin: auto; }
         .admin-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; margin-top: 10px;}
         .admin-tab-btn { flex: 1; background: transparent; color: #a1a1aa; border: none; padding: 10px; cursor: pointer; border-bottom: 2px solid transparent; transition: 0.3s; font-family: inherit; font-weight: bold; font-size: 0.85rem;}
         .admin-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -96,7 +95,7 @@
         .admin-tab-content.active { display: flex; animation: fadeIn 0.3s; }
         optgroup { background: #1a1a1a; color: #10b981; font-family: inherit; font-weight: bold; } option { background: rgba(0,0,0,0.9); color: white; }
 
-        .modal-top-icon { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--accent); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; border: 4px solid #1a1a1a; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); z-index: 10;}
+        .modal-top-icon { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--accent); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; border: 4px solid #1a1a1a; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
         .modal-title { color: #ffffff; font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
         .info-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
         .info-icon { color: var(--accent); font-size: 1rem; margin-top: 3px; width: 20px; text-align: center; }
@@ -105,14 +104,14 @@
         .info-val { color: #e4e4e7; font-size: 0.9rem; word-break: break-word;}
         
         .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 8px;}
-        .flip-btn { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 0.85rem; flex: 1; min-width: 100px; text-align: center;}
+        .flip-btn { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 0.85rem; }
         .flip-btn:hover { background: rgba(255,255,255,0.2); }
         .share-btn { color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
         .share-btn:hover { background: rgba(59, 130, 246, 0.2); }
-        .apply-btn { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); cursor: pointer; flex: 1; min-width: 100px; text-align: center;}
+        .apply-btn { background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); cursor: pointer;}
         .apply-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
         .close-cross { position: absolute; top: 15px; left: 15px; background: none; border: none; color: #ef4444; font-size: 1.5rem; cursor: pointer; z-index: 10; }
-        .prayer-text { font-size: 0.7rem; color: #a1a1aa; text-align: center; margin-top: 15px; user-select: none; width: 100%;}
+        .prayer-text { font-size: 0.65rem; color: #555; text-align: center; margin-top: 15px; user-select: none; }
 
         .admin-form { display: flex; flex-direction: column; gap: 10px; width: 100%; }
         .admin-form label { color: #a1a1aa; font-size: 0.8rem; margin-top: 5px; }
@@ -139,6 +138,7 @@
             .filters-container { gap: 6px; }
             .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
             .footer-info { flex-direction: column; text-align: center; justify-content: center; }
+            .modal-actions { flex-wrap: wrap; justify-content: center; }
             .admin-fab-container { bottom: 15px; right: 15px; }
             .admin-fab { width: 50px; height: 50px; font-size: 1.2rem; }
         }
@@ -151,7 +151,7 @@
         <div class="header-section">
             <a href="index.html" class="back-btn" title="العودة للرئيسية"><i class="fa-solid fa-arrow-right"></i></a>
             <h1>دليل التدريب التعاوني</h1>
-            <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب الميداني 💼</p>
+            <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب التعاوني 💼</p>
             <div class="total-badge" id="totalBadge">إجمالي الفرص المتاحة: <span id="totalCountSpan">0</span></div>
         </div>
 
@@ -183,118 +183,115 @@
     </div>
 
     <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
-        <div class="admin-modal-content" onclick="event.stopPropagation()">
-            <div class="modal-top-icon" style="background: #eab308;"><i class="fa-solid fa-pen-to-square"></i></div>
+        <div class="admin-panel" onclick="event.stopPropagation()">
             <button class="close-cross" onclick="closeAdminModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-top-icon" style="background: #eab308;"><i class="fa-solid fa-pen-to-square"></i></div>
+            <h3 class="modal-title" id="adminTitle">إضافة فرصة جديدة</h3>
             
-            <div class="admin-scroll-area">
-                <h3 class="modal-title" id="adminTitle">إضافة فرصة جديدة</h3>
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" onclick="switchAdminTab('tab-basic', this)">الأساسيات</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('tab-details', this)">التفاصيل</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('tab-apply', this)">التقديم</button>
+            </div>
+
+            <div class="admin-form">
+                <input type="hidden" id="a_id">
                 
-                <div class="admin-tabs">
-                    <button class="admin-tab-btn active" onclick="switchAdminTab('tab-basic', this)">الأساسيات</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tab-details', this)">التفاصيل</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tab-apply', this)">التقديم</button>
-                </div>
-
-                <div class="admin-form">
-                    <input type="hidden" id="a_id">
-                    
-                    <div id="tab-basic" class="admin-tab-content active">
-                        <label>اسم الجهة:</label>
-                        <input type="text" id="a_name" placeholder="أرامكو السعودية...">
-                        <div style="display: flex; gap: 10px;">
-                            <div style="flex:1;">
-                                <label>التصنيف:</label>
-                                <select id="a_cat">
-                                    <option value="company">شركة</option>
-                                    <option value="agency">هيئة / مؤسسة</option>
-                                    <option value="bank">بنك</option>
-                                    <option value="ministry">وزارة</option>
-                                </select>
-                            </div>
-                            <div style="flex:1;">
-                                <label>المقر:</label>
-                                <input type="text" id="a_loc" placeholder="الرياض - جدة...">
-                            </div>
+                <div id="tab-basic" class="admin-tab-content active">
+                    <label>اسم الجهة:</label>
+                    <input type="text" id="a_name" placeholder="أرامكو السعودية...">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex:1;">
+                            <label>التصنيف:</label>
+                            <select id="a_cat">
+                                <option value="company">شركة</option>
+                                <option value="agency">هيئة / مؤسسة</option>
+                                <option value="bank">بنك</option>
+                                <option value="ministry">وزارة</option>
+                            </select>
                         </div>
-                        <label>الأيقونة المناسبة:</label>
-                        <select id="a_icon" dir="ltr" style="text-align: right; direction: rtl;">
-                            <optgroup label="🏢 الشركات والأعمال">
-                                <option value="fa-building">🏢 مبنى عام</option>
-                                <option value="fa-city">🏙️ مدينة / عقارات</option>
-                                <option value="fa-store">🏪 متجر / فرع</option>
-                                <option value="fa-briefcase">💼 حقيبة أعمال / خدمات</option>
-                                <option value="fa-handshake">🤝 شراكة / تعاون</option>
-                            </optgroup>
-                            <optgroup label="💻 التقنية والاتصالات">
-                                <option value="fa-laptop-code">💻 تقنية وبرمجة</option>
-                                <option value="fa-desktop">🖥️ حاسب آلي</option>
-                                <option value="fa-server">🗄️ سيرفرات</option>
-                                <option value="fa-network-wired">🌐 شبكات</option>
-                                <option value="fa-wifi">📶 اتصالات</option>
-                                <option value="fa-shield-virus">🛡️ أمن سيبراني</option>
-                            </optgroup>
-                            <optgroup label="📈 المالية والبنوك">
-                                <option value="fa-building-columns">🏦 بنك / وزارة</option>
-                                <option value="fa-chart-line">📈 مالية واستثمار</option>
-                                <option value="fa-coins">🪙 أموال</option>
-                                <option value="fa-credit-card">💳 بطاقات ائتمانية</option>
-                            </optgroup>
-                            <optgroup label="🏥 الطب والصحة">
-                                <option value="fa-heart-pulse">🏥 صحة وطب</option>
-                                <option value="fa-stethoscope">🩺 مستشفى</option>
-                                <option value="fa-pills">💊 صيدلة</option>
-                            </optgroup>
-                            <optgroup label="⚖️ القانون والمحاماة">
-                                <option value="fa-scale-balanced">⚖️ محاماة وعدل</option>
-                            </optgroup>
-                            <optgroup label="🏭 الصناعة والطاقة">
-                                <option value="fa-industry">🏭 مصنع / صناعة</option>
-                                <option value="fa-bolt">⚡ طاقة / كهرباء</option>
-                                <option value="fa-oil-well">🛢️ بترول</option>
-                            </optgroup>
-                            <optgroup label="✈️ النقل والسياحة">
-                                <option value="fa-plane">✈️ طيران</option>
-                                <option value="fa-truck-fast">🚚 نقل ولوجستيات</option>
-                                <option value="fa-ship">🚢 شحن بحري</option>
-                                <option value="fa-map-location-dot">🗺️ سياحة وخرائط</option>
-                            </optgroup>
-                            <optgroup label="🎓 أخرى">
-                                <option value="fa-graduation-cap">🎓 جامعة / تعليم</option>
-                                <option value="fa-leaf">🍃 بيئة وزراعة</option>
-                                <option value="fa-bullhorn">📣 تسويق وإعلام</option>
-                            </optgroup>
-                        </select>
+                        <div style="flex:1;">
+                            <label>المقر:</label>
+                            <input type="text" id="a_loc" placeholder="الرياض - جدة...">
+                        </div>
                     </div>
-
-                    <div id="tab-details" class="admin-tab-content">
-                        <label>التخصصات المستهدفة:</label>
-                        <input type="text" id="a_majors" placeholder="مثال: هندسة، إدارة، تقنية معلومات...">
-                        <label>المزايا (إن وجدت):</label>
-                        <input type="text" id="a_benefits" placeholder="مثال: مكافأة مالية، تأمين طبي...">
-                        <label>نبذة عن البرنامج (تظهر خلف البطاقة):</label>
-                        <textarea id="a_about" rows="4" placeholder="اكتب تفاصيل البرنامج هنا..."></textarea>
-                    </div>
-
-                    <div id="tab-apply" class="admin-tab-content">
-                        <label>رابط التقديم (e):</label>
-                        <input type="text" id="a_link" placeholder="http://... أو عبر الموقع" dir="ltr">
-                        <label>الإيميل الرسمي (اختياري):</label>
-                        <input type="text" id="a_email" placeholder="email@company.com" dir="ltr">
-                        <label>حالة التقديم:</label>
-                        <select id="a_status">
-                            <option value="مفتوح">مفتوح 🟢</option>
-                            <option value="ينتهي قريبا">ينتهي قريباً 🟠</option>
-                            <option value="مغلق">مغلق 🔴</option>
-                            <option value="">غير محدد (عبر الموقع)</option>
-                        </select>
-                    </div>
+                    <label>الأيقونة المناسبة:</label>
+                    <select id="a_icon" dir="ltr" style="text-align: right; direction: rtl;">
+                        <optgroup label="🏢 الشركات والأعمال">
+                            <option value="fa-building">🏢 مبنى عام</option>
+                            <option value="fa-city">🏙️ مدينة / عقارات</option>
+                            <option value="fa-store">🏪 متجر / فرع</option>
+                            <option value="fa-briefcase">💼 حقيبة أعمال / خدمات</option>
+                            <option value="fa-handshake">🤝 شراكة / تعاون</option>
+                        </optgroup>
+                        <optgroup label="💻 التقنية والاتصالات">
+                            <option value="fa-laptop-code">💻 تقنية وبرمجة</option>
+                            <option value="fa-desktop">🖥️ حاسب آلي</option>
+                            <option value="fa-server">🗄️ سيرفرات</option>
+                            <option value="fa-network-wired">🌐 شبكات</option>
+                            <option value="fa-wifi">📶 اتصالات</option>
+                            <option value="fa-shield-virus">🛡️ أمن سيبراني</option>
+                        </optgroup>
+                        <optgroup label="📈 المالية والبنوك">
+                            <option value="fa-building-columns">🏦 بنك / وزارة</option>
+                            <option value="fa-chart-line">📈 مالية واستثمار</option>
+                            <option value="fa-coins">🪙 أموال</option>
+                            <option value="fa-credit-card">💳 بطاقات ائتمانية</option>
+                        </optgroup>
+                        <optgroup label="🏥 الطب والصحة">
+                            <option value="fa-heart-pulse">🏥 صحة وطب</option>
+                            <option value="fa-stethoscope">🩺 مستشفى</option>
+                            <option value="fa-pills">💊 صيدلة</option>
+                        </optgroup>
+                        <optgroup label="⚖️ القانون والمحاماة">
+                            <option value="fa-scale-balanced">⚖️ محاماة وعدل</option>
+                        </optgroup>
+                        <optgroup label="🏭 الصناعة والطاقة">
+                            <option value="fa-industry">🏭 مصنع / صناعة</option>
+                            <option value="fa-bolt">⚡ طاقة / كهرباء</option>
+                            <option value="fa-oil-well">🛢️ بترول</option>
+                        </optgroup>
+                        <optgroup label="✈️ النقل والسياحة">
+                            <option value="fa-plane">✈️ طيران</option>
+                            <option value="fa-truck-fast">🚚 نقل ولوجستيات</option>
+                            <option value="fa-ship">🚢 شحن بحري</option>
+                            <option value="fa-map-location-dot">🗺️ سياحة وخرائط</option>
+                        </optgroup>
+                        <optgroup label="🎓 أخرى">
+                            <option value="fa-graduation-cap">🎓 جامعة / تعليم</option>
+                            <option value="fa-leaf">🍃 بيئة وزراعة</option>
+                            <option value="fa-bullhorn">📣 تسويق وإعلام</option>
+                        </optgroup>
+                    </select>
                 </div>
 
-                <div class="modal-actions" style="justify-content: center; margin-top: 20px;">
-                    <button class="apply-btn" style="background: #10b981; flex: 1; margin-left: 5px;" onclick="saveCompanyToFirebase()">حفظ التعديلات ☁️</button>
-                    <button id="deleteBtn" class="apply-btn" style="background: #ef4444; flex: 1; display: none;" onclick="deleteCompanyFromFirebase()">حذف الفرصة 🗑️</button>
+                <div id="tab-details" class="admin-tab-content">
+                    <label>التخصصات المستهدفة:</label>
+                    <input type="text" id="a_majors" placeholder="مثال: هندسة، إدارة، تقنية معلومات...">
+                    <label>المزايا (إن وجدت):</label>
+                    <input type="text" id="a_benefits" placeholder="مثال: مكافأة مالية، تأمين طبي...">
+                    <label>نبذة عن البرنامج (تظهر خلف البطاقة):</label>
+                    <textarea id="a_about" rows="4" placeholder="اكتب تفاصيل البرنامج هنا..."></textarea>
                 </div>
+
+                <div id="tab-apply" class="admin-tab-content">
+                    <label>رابط التقديم (e):</label>
+                    <input type="text" id="a_link" placeholder="http://... أو عبر الموقع" dir="ltr">
+                    <label>الإيميل الرسمي (اختياري):</label>
+                    <input type="text" id="a_email" placeholder="email@company.com" dir="ltr">
+                    <label>حالة التقديم:</label>
+                    <select id="a_status">
+                        <option value="مفتوح">مفتوح 🟢</option>
+                        <option value="ينتهي قريبا">ينتهي قريباً 🟠</option>
+                        <option value="مغلق">مغلق 🔴</option>
+                        <option value="">غير محدد (عبر الموقع)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="justify-content: center; margin-top: 20px;">
+                <button class="apply-btn" style="background: #10b981; flex: 1; margin-left: 5px;" onclick="saveCompanyToFirebase()">حفظ التعديلات ☁️</button>
+                <button id="deleteBtn" class="apply-btn" style="background: #ef4444; flex: 1; display: none;" onclick="deleteCompanyFromFirebase()">حذف الفرصة 🗑️</button>
             </div>
         </div>
     </div>
@@ -306,7 +303,7 @@
                     <button class="close-cross" onclick="closeModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
                     <div class="modal-top-icon" id="mTopIcon"><i class="fa-solid fa-building"></i></div>
                     <h3 class="modal-title" id="mTitle">اسم الشركة</h3>
-                    <div style="flex: 1;">
+                    <div>
                         <div class="info-row"><i class="fa-solid fa-location-dot info-icon"></i><div class="info-text"><span class="info-label">المقر / الفروع</span><span class="info-val" id="mLoc"></span></div></div>
                         <div class="info-row"><i class="fa-solid fa-graduation-cap info-icon"></i><div class="info-text"><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div></div>
                         <div class="info-row" id="benefitsRow"><i class="fa-solid fa-gift info-icon" style="color: #10b981;"></i><div class="info-text"><span class="info-label">المزايا (إن وجدت)</span><span class="info-val" id="mBenefits"></span></div></div>
@@ -324,9 +321,9 @@
                     <button class="close-cross" onclick="closeModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
                     <div class="modal-top-icon" style="background: #10b981;"><i class="fa-solid fa-circle-info"></i></div>
                     <h3 class="modal-title">نبذة عن البرنامج</h3>
-                    <div style="flex: 1; display: block; text-align: center; color: #a1a1aa; line-height: 1.8; font-size: 0.95rem; padding: 10px 0; overflow-y: auto;" id="mAbout"></div>
+                    <div style="flex: 1; display: block; text-align: center; color: #a1a1aa; line-height: 1.8; font-size: 0.95rem; padding: 10px 0; max-height: 200px; overflow-y: auto;" id="mAbout"></div>
                     <div class="modal-actions" style="justify-content: center;">
-                        <button class="flip-btn" style="width: 100%; text-align: center;" onclick="toggleFlip()"><i class="fa-solid fa-arrow-right"></i> العودة للتفاصيل</button>
+                        <button class="flip-btn" onclick="toggleFlip()"><i class="fa-solid fa-arrow-right"></i> العودة للتفاصيل</button>
                     </div>
                     <div class="prayer-text">دعواتكم لنا بالتوفيق 🤍</div>
                 </div>
@@ -366,9 +363,6 @@
                 await fetchLiveData();
                 document.getElementById('loadingIndicator').style.display = 'none';
                 document.getElementById('dataGrid').style.display = 'grid';
-                
-                // التحقق المباشر من وجود رابط مشاركة لفتحه تلقائياً
-                checkSharedURL();
             } catch (error) { console.error(error); }
         }
 
@@ -399,18 +393,6 @@
                 }
             } catch (e) { console.log("لا يوجد تحديثات ذكاء اصطناعي."); }
             allData = [...db]; sortData(); render('all');
-        }
-
-        // دالة فتح البطاقة تلقائياً إذا كان الرابط مٌشارك
-        function checkSharedURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedId = urlParams.get('id');
-            if (sharedId) {
-                const itemToOpen = allData.find(item => item.id == sharedId);
-                if (itemToOpen) {
-                    setTimeout(() => openModal(itemToOpen), 300);
-                }
-            }
         }
 
         window.unlockAdmin = async function() {
@@ -467,7 +449,8 @@
         };
 
         window.closeAdminModal = function(event, isButton) {
-            if (isButton || !event || event.target.classList.contains('modal-overlay')) {
+            if (isButton || !event || event.target.classList.contains('admin-panel') === false) {
+                if(event && event.target.closest('.admin-panel')) return;
                 document.getElementById('adminModal').style.display = 'none';
             }
         };
@@ -544,7 +527,6 @@
                 grid.appendChild(card);
             });
         }
-        
         window.filterData = function(btn, cat) { document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active')); btn.classList.add('active'); render(cat); };
         window.toggleFlip = function() { document.getElementById('flipContainer').classList.toggle('flipped'); };
         
@@ -565,47 +547,22 @@
             document.getElementById('mBenefits').innerText = item.b || 'تخضع لسياسة الجهة المحددة';
             document.getElementById('mAbout').innerText = item.a || 'برنامج تدريب ميداني صُمم لتطوير وصقل مهارات الطلاب وتجهيزهم لدخول سوق العمل من خلال بيئة مهنية متكاملة.';
             const btn = document.getElementById('mBtn'); btn.href = linkHref; btn.innerText = btnText; btn.style.background = iconColor; btn.style.display = btnDisplay;
-            
-            document.getElementById('flipContainer').classList.remove('flipped'); 
-            document.getElementById('infoModal').style.display = 'flex'; 
-            document.body.style.overflow = 'hidden';
-            
-            // تغيير الرابط بصمت عند فتح البطاقة
-            let url = new URL(window.location.href);
-            url.searchParams.set('id', item.id);
-            window.history.replaceState({}, '', url);
+            document.getElementById('flipContainer').classList.remove('flipped'); document.getElementById('infoModal').style.display = 'flex'; document.body.style.overflow = 'hidden';
         };
         
-        window.closeModal = function(e, isBtn) { 
-            if (isBtn || !e || e.target.classList.contains('modal-overlay')) { 
-                document.getElementById('infoModal').style.display = 'none'; 
-                document.body.style.overflow = 'auto'; 
-                
-                // مسح الـ ID من الرابط عند إغلاق البطاقة
-                let url = new URL(window.location.href);
-                url.searchParams.delete('id');
-                window.history.replaceState({}, '', url);
-            } 
-        };
+        window.closeModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('infoModal')) { document.getElementById('infoModal').style.display = 'none'; document.body.style.overflow = 'auto'; } };
         
         window.shareOpportunity = function() {
-            if (!currentModalItem) return;
-            let url = new URL(window.location.href);
-            url.searchParams.set('id', currentModalItem.id);
-            
-            if (navigator.share) {
+            if (navigator.share && currentModalItem) {
+                let url = new URL(window.location.href);
+                url.searchParams.set('id', currentModalItem.id);
                 navigator.share({
                     title: 'تدريب تعاوني: ' + currentModalItem.t,
                     text: `شيك على فرصة التدريب في (${currentModalItem.t}) 💼\n\n📌 مقدمة من دليل الديوان الجامعي:\n`,
                     url: url.href
                 }).catch(err => console.log('خطأ في المشاركة', err));
             } else {
-                // إذا كان جالس على كمبيوتر أو متصفح ما يدعم الـ Share تطلع له رسالة للنسخ
-                navigator.clipboard.writeText(url.href).then(() => {
-                    alert("تم نسخ الرابط بنجاح! 🔗\nيمكنك الآن لصقه وإرساله لأي شخص وسيفتح معه نفس البطاقة.");
-                }).catch(err => {
-                    alert("انسخ هذا الرابط للمشاركة:\n" + url.href);
-                });
+                alert("ميزة المشاركة غير مدعومة في متصفحك الحالي، لكن يمكنك نسخ الرابط من الأعلى!");
             }
         };
 
