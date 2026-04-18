@@ -2,15 +2,13 @@ name: Auto Scrape Coop Jobs
 
 on:
   schedule:
-   # يشتغل الساعة 9 صباحاً و 5 عصراً بتوقيت السعودية
-    # (يقابلها 6 صباحاً و 2 ظهراً بتوقيت جرينتش UTC لأن قتهب يستخدم توقيت جرينتش)
     - cron: '0 6,14 * * *'
-  workflow_dispatch: # يسمح لك تشغله يدوياً متى ما بغيت بضغطة زر
+  workflow_dispatch:
 
 jobs:
   scrape-and-upload:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -23,12 +21,11 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install google-generativeai playwright firebase-admin beautifulsoup4 requests
+        pip install openai playwright firebase-admin beautifulsoup4 requests
         playwright install chromium
 
     - name: Run Scraper
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
-      run: |
-        python -u scraper.py
+      run: python -u scraper.py
