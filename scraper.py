@@ -1,7 +1,7 @@
 import json
 import re
 import os
-import time # ⏳ أضفنا مكتبة الوقت عشان نتحكم بسرعة الطلبات
+import time
 import requests
 from bs4 import BeautifulSoup
 import google.generativeai as genai
@@ -40,7 +40,8 @@ def scrape_and_upload():
         {"url": "https://t.me/s/nobthacv1", "type": "telegram"}
     ]
     
-    model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
+    # 🌟 التحديث السحري هنا: استخدمنا الموديل الأحدث gemini-2.0-flash بدل القديم اللي انحذف
+    model = genai.GenerativeModel('gemini-2.0-flash', generation_config={"response_mime_type": "application/json"})
     
     existing_companies = []
     max_id = 141
@@ -68,7 +69,6 @@ def scrape_and_upload():
                     soup = BeautifulSoup(res.text, 'html.parser')
                     messages = soup.find_all('div', class_='tgme_widget_message_text')
                     
-                    # قللنا العدد إلى آخر 15 رسالة عشان ما يطول السكربت ويخلص وقت قتهب
                     for msg in messages[-15:]: 
                         txt = msg.get_text(separator='\n').strip()
                         if len(txt) > 50: 
@@ -133,7 +133,6 @@ def scrape_and_upload():
                     لو وظيفة للمحترفين، أرجع [].
                     """
                     
-                    # ⏳ إعطاء الذكاء الاصطناعي فترة راحة 4 ثواني لتجنب الحظر (Rate Limit)
                     time.sleep(4) 
                     
                     try:
