@@ -40,8 +40,8 @@ def scrape_and_upload():
         {"url": "https://t.me/s/nobthacv1", "type": "telegram"}
     ]
     
-    # 🌟 التحديث السحري هنا: الموديل الأسرع والأخف لتفادي حظر جوجل المجاني
-    model = genai.GenerativeModel('gemini-1.5-flash-8b', generation_config={"response_mime_type": "application/json"})
+    # رجعنا للموديل المستقر
+    model = genai.GenerativeModel('gemini-2.0-flash', generation_config={"response_mime_type": "application/json"})
     
     existing_companies = []
     max_id = 141
@@ -97,7 +97,7 @@ def scrape_and_upload():
                 if source["type"] == "site":
                     unique_content = unique_content[:10]
 
-                print(f"📊 النتيجة: تم العثور على ({len(unique_content)}) عنصر. جاري تحليلها بالذكاء الاصطناعي...")
+                print(f"📊 النتيجة: تم العثور على ({len(unique_content)}) عنصر. جاري تحليلها...")
 
                 for item in unique_content:
                     raw_content = ""
@@ -116,9 +116,10 @@ def scrape_and_upload():
                     else:
                         raw_content = item["text"]
 
+                    # قللنا النص إلى 1500 حرف عشان ما نستهلك باقة جوجل بسرعة
                     prompt = f"""
                     أنت خبير توظيف. اقرأ هذا المحتوى بدقة:
-                    {raw_content[:3500]}
+                    {raw_content[:1500]}
                     
                     إذا كان يخص "تدريب تعاوني" أو "تمهير" للطلاب، استخرج JSON:
                     {{
@@ -133,73 +134,83 @@ def scrape_and_upload():
                     لو وظيفة للمحترفين، أرجع [].
                     """
                     
-                    # ⏳ التحديث السحري الثاني: زودنا الراحة لـ 7 ثواني عشان نضمن عدم حظر جوجل أبداً
-                    time.sleep(7) 
+                    ai_data = None
                     
-                    try:
-                        response = model.generate_content(prompt)
-                        clean_txt = response.text.replace("```json", "").replace("```", "").strip()
-                        ai_data = json.loads(clean_txt)
-                    except Exception as ai_error:
-                        print(f"⚠️ خطأ في معالجة الفرصة (تم التخطي): {ai_error}")
+                    # نظام المحاولة الذكي: يجرب 3 مرات، وإذا في زحمة ينتظر 60 ثانية!
+                    for attempt in range(3):
+                        time.sleep(5)
+                        try:
+                            response = model.generate_content(prompt)
+                            clean_txt = response.text.replace("```json", "").replace("```", "").strip()
+                            ai_data = json.loads(clean_txt)
+                            break # نجحنا! نطلع من حلقة المحاولة
+                        except Exception as ai_error:
+                            err_str = str(ai_error)
+                            if "429" in err_str or "Quota" in err_str:
+                                print(f"⏳ جوجل تقول فيه زحمة (محاولة {attempt+1}/3). جاري الانتظار 60 ثانية...")
+                                time.sleep(60) # راحة إجبارية عشان يرضى علينا جوجل
+                            else:
+                                print(f"⚠️ خطأ وتخطي: {err_str}")
+                                break
+                    
+                    if not isinstance(ai_data, dict) or "t" not in ai_data:
+                        continue
+                        
+                    new_name = ai_data["t"]
+                    email_ext = ai_data.get("email", "")
+                    if email_ext and "@" not in email_ext: email_ext = ""
+                    ai_link = ai_data.get("link", "")
+                    
+                    final_link = apply_link
+                    if not item.get("is_link") and ai_link and ai_link.startswith("http"):
+                        final_link = ai_link
+                    elif ai_link and ai_link.startswith("http") and ("ewdifh" not in apply_link and "3atabah" not in apply_link):
+                        final_link = ai_link
+                    
+                    matched_ex = None
+                    new_clean = re.sub(r'[^\w\s]', '', new_name).replace('أ','ا').replace('إ','ا').replace('ة','ه')
+                    for ex in existing_companies:
+                        ex_clean = re.sub(r'[^\w\s]', '', ex.get('t','')).replace('أ','ا').replace('إ','ا').replace('ة','ه')
+                        if new_clean in ex_clean or ex_clean in new_clean:
+                            matched_ex = ex
+                            break
+                    
+                    if matched_ex:
+                        updates = {}
+                        if not matched_ex.get("email") and email_ext:
+                            updates["email"] = email_ext
+                        if (not matched_ex.get("e") or matched_ex.get("e") == "#" or "t.me" in matched_ex.get("e")) and final_link and final_link.startswith("http") and "t.me" not in final_link:
+                            updates["e"] = final_link
+                        if not matched_ex.get("b") and ai_data.get("b"):
+                            updates["b"] = ai_data.get("b")
+                            
+                        if updates:
+                            db.collection('companies').document(str(matched_ex['id'])).update(updates)
+                            print(f"🔄 تم تحديث (إكمال نواقص): {new_name}")
+                            matched_ex.update(updates) 
+                        else:
+                            print(f"⏩ تخطي (مكتملة 100%): {new_name}")
                         continue
                     
-                    if isinstance(ai_data, dict) and "t" in ai_data:
-                        new_name = ai_data["t"]
-                        email_ext = ai_data.get("email", "")
-                        if email_ext and "@" not in email_ext: email_ext = ""
-                        ai_link = ai_data.get("link", "")
-                        
-                        final_link = apply_link
-                        if not item.get("is_link") and ai_link and ai_link.startswith("http"):
-                            final_link = ai_link
-                        elif ai_link and ai_link.startswith("http") and ("ewdifh" not in apply_link and "3atabah" not in apply_link):
-                            final_link = ai_link
-                        
-                        matched_ex = None
-                        new_clean = re.sub(r'[^\w\s]', '', new_name).replace('أ','ا').replace('إ','ا').replace('ة','ه')
-                        for ex in existing_companies:
-                            ex_clean = re.sub(r'[^\w\s]', '', ex.get('t','')).replace('أ','ا').replace('إ','ا').replace('ة','ه')
-                            if new_clean in ex_clean or ex_clean in new_clean:
-                                matched_ex = ex
-                                break
-                        
-                        if matched_ex:
-                            updates = {}
-                            if not matched_ex.get("email") and email_ext:
-                                updates["email"] = email_ext
-                            if (not matched_ex.get("e") or matched_ex.get("e") == "#" or "t.me" in matched_ex.get("e")) and final_link and final_link.startswith("http") and "t.me" not in final_link:
-                                updates["e"] = final_link
-                            if not matched_ex.get("b") and ai_data.get("b"):
-                                updates["b"] = ai_data.get("b")
-                                
-                            if updates:
-                                db.collection('companies').document(str(matched_ex['id'])).update(updates)
-                                print(f"🔄 تم تحديث (إكمال نواقص): {new_name}")
-                                matched_ex.update(updates) 
-                            else:
-                                print(f"⏩ تخطي (مكتملة 100%): {new_name}")
-                            continue
-                        
-                        new_doc = {
-                            "id": next_id,
-                            "t": new_name,
-                            "c": "live",
-                            "l": "السعودية",
-                            "e": final_link,
-                            "email": email_ext,
-                            "m": ai_data.get("m", ""),
-                            "b": ai_data.get("b", ""),
-                            "a": ai_data.get("a", ""),
-                            "s": ai_data.get("s", ""),
-                            "isLive": True,
-                            "i": "fa-bolt"
-                        }
-                        
-                        db.collection('companies').document(str(next_id)).set(new_doc)
-                        print(f"☁️ تم الرفع للسحابة بنجاح: {new_name}")
-                        existing_companies.append(new_doc)
-                        next_id += 1
+                    new_doc = {
+                        "id": next_id,
+                        "t": new_name,
+                        "c": "live",
+                        "l": "السعودية",
+                        "e": final_link,
+                        "email": email_ext,
+                        "m": ai_data.get("m", ""),
+                        "b": ai_data.get("b", ""),
+                        "a": ai_data.get("a", ""),
+                        "s": ai_data.get("s", ""),
+                        "isLive": True,
+                        "i": "fa-bolt"
+                    }
+                    
+                    db.collection('companies').document(str(next_id)).set(new_doc)
+                    print(f"☁️ تم الرفع للسحابة بنجاح: {new_name}")
+                    existing_companies.append(new_doc)
+                    next_id += 1
 
             except Exception as e:
                 print(f"⚠️ خطأ في فحص المصدر: {e}")
