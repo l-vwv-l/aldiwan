@@ -357,53 +357,31 @@
         let isAdmin = false;
         let currentModalItem = null;
 
+        // دالة تحميل البيانات المخففة جداً!
         async function loadDatabase() {
             try {
                 const querySnapshot = await getDocs(collection(firestoreDB, "companies"));
+                db = []; // تفريغ الذاكرة
                 querySnapshot.forEach((docSnap) => db.push(docSnap.data()));
+                
                 if (db.length > 0) nextId = Math.max(...db.map(o => o.id)) + 1;
-                await fetchLiveData();
+                
+                allData = [...db]; 
+                sortData(); 
+                render('all');
+
                 document.getElementById('loadingIndicator').style.display = 'none';
                 document.getElementById('dataGrid').style.display = 'grid';
-            } catch (error) { console.error(error); }
-        }
 
-        async function fetchLiveData() {
-            try {
-                const response = await fetch('live_data.json?v=' + new Date().getTime());
-                if(response.ok) {
-                    const liveData = await response.json();
-                    liveData.forEach(function(liveItem) {
-                        let existingIndex = db.findIndex(item => item.t.includes(liveItem.t) || liveItem.t.includes(item.t));
-                        if (existingIndex !== -1) {
-                            let exItem = db[existingIndex];
-                            if (liveItem.e && liveItem.e.startsWith('http')) exItem.e = liveItem.e;
-                            if (liveItem.email) exItem.email = liveItem.email;
-                            if (liveItem.m) exItem.m = liveItem.m; 
-                            if (liveItem.b) exItem.b = liveItem.b; 
-                            if (liveItem.a) exItem.a = liveItem.a; 
-                            if (liveItem.s) exItem.s = liveItem.s; 
-                            exItem.isLive = true;     
-                        } else {
-                            if (!liveItem.s) liveItem.s = "مفتوح";
-                            liveItem.id = nextId++;
-                            liveItem.isLive = true;
-                            if(!liveItem.c) liveItem.c = 'live';
-                            db.push(liveItem);
-                        }
-                    });
+                const urlParams = new URLSearchParams(window.location.search);
+                const sharedId = urlParams.get('id');
+                if (sharedId) {
+                    const itemToOpen = allData.find(item => item.id == sharedId);
+                    if (itemToOpen) setTimeout(() => openModal(itemToOpen), 500);
                 }
-            } catch (e) { console.log("لا يوجد تحديثات ذكاء اصطناعي."); }
-            
-            allData = [...db]; 
-            sortData(); 
-            render('all');
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedId = urlParams.get('id');
-            if (sharedId) {
-                const itemToOpen = allData.find(item => item.id == sharedId);
-                if (itemToOpen) setTimeout(() => openModal(itemToOpen), 500);
+            } catch (error) { 
+                console.error("Firebase Error:", error); 
+                document.getElementById('loadingIndicator').innerText = "حدث خطأ في الاتصال بقاعدة البيانات. الرجاء تحديث الصفحة.";
             }
         }
 
@@ -507,11 +485,11 @@
             } catch(e) { alert("حدث خطأ أثناء الحذف!"); }
         };
 
+        // دالة فحص الحالة (تخفي مفتوح/مغلق لو كان إيميل)
         function getStatusHtml(item) {
             let hasLink = item.e && item.e.startsWith('http');
             let hasEmail = item.email || (item.e && item.e.includes('@'));
 
-            // إذا كان التقديم عبر الإيميل فقط، لا تظهر أي حالة (تخفي مفتوح/مغلق)
             if ((hasEmail && !hasLink) || (item.s === "")) {
                 return ''; 
             }
@@ -526,6 +504,16 @@
 
         function sortData() { allData.sort((a, b) => { let sA = getSortScore(a), sB = getSortScore(b); return sA !== sB ? sA - sB : (a.isLive && !b.isLive ? -1 : (!a.isLive && b.isLive ? 1 : (a.t > b.t ? 1 : -1))); }); }
 
+        function getSortScore(item) {
+            let hasLink = item.e && item.e.startsWith('http');
+            let hasEmail = item.email || (item.e && item.e.includes('@'));
+            if (!hasLink && !hasEmail && !item.isLive) return 4; 
+            let s = item.s || "مفتوح";
+            if (s.includes("مفتوح")) return 1;
+            if (s.includes("قريبا") || s.includes("ينتهي")) return 2;
+            if (s.includes("مغلق")) return 3; return 4; 
+        }
+
         function render(filter) {
             const grid = document.getElementById('dataGrid'); grid.innerHTML = '';
             const filteredData = allData.filter(x => filter === 'all' ? true : (filter === 'live' ? (x.isLive || x.c === 'live') : (filter === 'email' ? (x.email || (x.e && x.e.includes('@'))) : x.c === filter)));
@@ -536,7 +524,7 @@
                 card.onclick = (e) => { if(!e.target.closest('.admin-edit-btn')) openModal(item); };
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
                 
-                let statusHtml = getStatusHtml(item); // <--- هنا التعديل السحري
+                let statusHtml = getStatusHtml(item); // يتم استدعاء دالة الحالة هنا
                 
                 card.innerHTML = `<div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div><div class="opp-number">رقم ${item.id}</div>${statusHtml}<div class="company-icon" style="color:${iconColor}"><i class="fa-solid ${item.i}"></i></div><div class="company-name">${item.t}</div><div class="company-tag">${item.l}</div>`;
                 grid.appendChild(card);
