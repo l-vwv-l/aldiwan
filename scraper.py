@@ -4,18 +4,22 @@ import os
 import time
 import requests
 from bs4 import BeautifulSoup
-import google.generativeai as genai
+from openai import OpenAI
 from playwright.sync_api import sync_playwright
 import firebase_admin
 from firebase_admin import credentials, firestore
 
 # 1. إعداد المفاتيح
-API_KEY = os.environ.get("GEMINI_API_KEY")
+API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not API_KEY:
-    print("❌ خطأ: لم يتم العثور على مفتاح الذكاء الاصطناعي!")
+    print("❌ خطأ: لم يتم العثور على مفتاح OpenRouter! تأكد من إضافته في Secrets.")
     exit()
 
-genai.configure(api_key=API_KEY)
+# 🌟 إعداد عميل OpenRouter
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key=API_KEY,
+)
 
 firebase_secret = os.environ.get("FIREBASE_CREDENTIALS")
 if not firebase_secret:
@@ -39,9 +43,6 @@ def scrape_and_upload():
         {"url": "https://t.me/s/cooptraning_inksa", "type": "telegram"},
         {"url": "https://t.me/s/nobthacv1", "type": "telegram"}
     ]
-    
-    # تم التعديل هنا إلى الموديل الأساسي المستقر
-    model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
     
     existing_companies = []
     max_id = 141
@@ -130,27 +131,31 @@ def scrape_and_upload():
                         "email": "الإيميل إن وجد",
                         "link": "رابط التقديم المباشر إن وجد"
                     }}
-                    لو وظيفة للمحترفين، أرجع [].
+                    لو وظيفة للمحترفين، أرجع {{}}.
+                    أرجع النتيجة بصيغة JSON فقط وبدون أي نص إضافي.
                     """
                     
-                    time.sleep(7) 
+                    ai_data = None
                     
-                    try:
-                        response = model.generate_content(prompt)
-                        clean_txt = response.text.replace("```json", "").replace("```", "").strip()
-                        ai_data = json.loads(clean_txt)
-                    except Exception as ai_error:
-                        err_str = str(ai_error)
-                        # هنا غيرنا الاستراتيجية: إذا الرصيد خلص، نوقف السكربت بكرامته!
-                        if "429" in err_str or "Quota" in err_str:
-                            print("\n🛑 لقد استنفدت باقة جوجل المجانية اليومية! سيتم إيقاف السحب التلقائي، حاول غداً.")
-                            browser.close()
-                            exit()
-                        else:
-                            print(f"⚠️ خطأ وتخطي: {err_str}")
-                            continue
+                    # نظام محاولة ذكي مع OpenRouter
+                    for attempt in range(3):
+                        time.sleep(3) # راحة خفيفة جداً لأن سيرفراتهم تتحمل
+                        try:
+                            response = client.chat.completions.create(
+                                model="google/gemini-2.0-flash:free",
+                                messages=[
+                                    {"role": "user", "content": prompt}
+                                ],
+                                response_format={"type": "json_object"}
+                            )
+                            clean_txt = response.choices[0].message.content.strip()
+                            ai_data = json.loads(clean_txt)
+                            break # نجحنا! نطلع من حلقة المحاولات
+                        except Exception as ai_error:
+                            print(f"⏳ خطأ في اتصال OpenRouter (محاولة {attempt+1}/3): {ai_error}")
+                            time.sleep(5)
                     
-                    if not isinstance(ai_data, dict) or "t" not in ai_data:
+                    if not ai_data or not isinstance(ai_data, dict) or "t" not in ai_data:
                         continue
                         
                     new_name = ai_data["t"]
