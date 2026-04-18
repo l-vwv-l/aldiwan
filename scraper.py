@@ -6,18 +6,16 @@ from playwright.sync_api import sync_playwright
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# 1. إعداد مفاتيح الذكاء الاصطناعي
 API_KEY = os.environ.get("GEMINI_API_KEY")
 if not API_KEY:
-    print("❌ خطأ: لم يتم العثور على مفتاح الذكاء الاصطناعي Gemini!")
+    print("❌ خطأ: لم يتم العثور على مفتاح الذكاء الاصطناعي!")
     exit()
 
 genai.configure(api_key=API_KEY)
 
-# 2. إعداد الاتصال بـ Firebase (عن طريق خزنة قتهب الآمنة)
 firebase_secret = os.environ.get("FIREBASE_CREDENTIALS")
 if not firebase_secret:
-    print("❌ خطأ: لم يتم العثور على مفتاح فايربيس السري في قتهب (Secrets)!")
+    print("❌ خطأ: لم يتم العثور على مفتاح فايربيس السري!")
     exit()
 
 try:
@@ -38,7 +36,6 @@ def scrape_and_upload():
     
     model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
     
-    # جلب الشركات الحالية لمعرفة آخر ID ولتجنب التكرار
     existing_companies = []
     max_id = 141
     companies_ref = db.collection('companies').stream()
@@ -102,21 +99,22 @@ def scrape_and_upload():
                             apply_link = hrf
                             break
 
+                # العقل الجديد: يكمل النواقص من معرفته ويخفي حالة الإيميل
                 prompt = f"""
-                أنت خبير توظيف لطلاب الجامعات فقط. اقرأ الإعلان التالي بدقة:
+                أنت خبير توظيف لطلاب الجامعات ولديك معرفة واسعة بالشركات. اقرأ هذا الإعلان بدقة:
                 {content[:3500]}
                 
-                هل يحتوي الإعلان على فرص "تدريب تعاوني" أو "تدريب ميداني" أو "تمهير" مخصصة للطلاب؟ 
-                إذا كانت الإجابة نعم، استخرج البيانات بدقة كـ JSON بالصيغة التالية:
+                هل يحتوي الإعلان على فرص "تدريب تعاوني" أو "تدريب ميداني" أو "تمهير" للطلاب؟ 
+                إذا نعم، استخرج البيانات كـ JSON بالصيغة التالية:
                 {{
-                    "t": "اسم الجهة",
-                    "m": "التخصصات المستهدفة",
-                    "b": "المزايا",
-                    "a": "نبذة عن البرنامج",
-                    "s": "مفتوح أو ينتهي قريباً",
+                    "t": "اسم الجهة بدقة",
+                    "m": "التخصصات المستهدفة (إذا لم تذكر، استنتجها من طبيعة الشركة)",
+                    "b": "المزايا (إذا لم تذكر، اكتب: تطبق سياسة الشركة للتدريب الميداني)",
+                    "a": "نبذة عن البرنامج والشركة (استخدم معرفتك العامة بالشركة لكتابة نبذة تعريفية احترافية من سطرين إذا لم يكن الإعلان واضحاً)",
+                    "s": "مفتوح أو ينتهي قريباً (هام جداً: إذا كانت وسيلة التقديم عبر الإيميل فقط ولا يوجد موقع، اترك هذه الخانة فارغة تماماً هكذا '')",
                     "email": "الإيميل إن وجد"
                 }}
-                إذا كان لوظائف المحترفين فقط، أرجع مصفوفة فارغة [].
+                إذا كان لوظائف المحترفين فقط، أرجع [].
                 """
                 
                 response = model.generate_content(prompt)
@@ -151,13 +149,13 @@ def scrape_and_upload():
                         "m": ai_data.get("m", ""),
                         "b": ai_data.get("b", ""),
                         "a": ai_data.get("a", ""),
-                        "s": ai_data.get("s", "مفتوح"),
+                        "s": ai_data.get("s", ""), # سيأخذ القيمة الفارغة إذا كان إيميل
                         "isLive": True,
                         "i": "fa-bolt"
                     }
                     
                     db.collection('companies').document(str(next_id)).set(new_doc)
-                    print(f"☁️ تم رفع الفرصة للسحابة بنجاح: {new_name} (ID: {next_id})")
+                    print(f"☁️ تم رفع الفرصة للسحابة بنجاح: {new_name}")
                     
                     existing_companies.append(new_doc)
                     next_id += 1
