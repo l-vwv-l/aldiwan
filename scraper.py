@@ -1,6 +1,8 @@
 import json
 import re
 import os
+import requests
+from bs4 import BeautifulSoup
 import google.generativeai as genai
 from playwright.sync_api import sync_playwright
 import firebase_admin
@@ -55,21 +57,25 @@ def scrape_and_upload():
         page = browser.new_page()
         
         for source in sources:
-            print(f"🔍 جاري فحص المصدر: {source['url']}")
+            print(f"\n🔍 جاري فحص المصدر: {source['url']}")
             try:
-                page.goto(source["url"], timeout=60000)
-                page.wait_for_timeout(5000)
-                
                 content_list = []
                 
                 if source["type"] == "telegram":
-                    # التعديل الأول: سحب آخر 50 رسالة من القناة
-                    messages = page.locator('.tgme_widget_message_text').all()
+                    # استخدام Requests للتليجرام لتخطي حظر المتصفحات
+                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+                    res = requests.get(source["url"], headers=headers, timeout=15)
+                    soup = BeautifulSoup(res.text, 'html.parser')
+                    messages = soup.find_all('div', class_='tgme_widget_message_text')
+                    
                     for msg in messages[-50:]: 
-                        txt = msg.inner_text().strip()
+                        txt = msg.get_text(separator='\n').strip()
                         if len(txt) > 50: 
                             content_list.append({"text": txt, "is_link": False, "url": source["url"]})
                 else:
+                    # المواقع العادية
+                    page.goto(source["url"], timeout=60000)
+                    page.wait_for_timeout(5000)
                     links = page.locator('a').all()
                     for link in links:
                         text = link.inner_text().strip()
@@ -78,7 +84,7 @@ def scrape_and_upload():
                             final_link = href if href.startswith('http') else f"https://www.ewdifh.com{href}"
                             content_list.append({"url": final_link, "is_link": True})
 
-                # تصفية الروابط للمواقع العادية لتخفيف الضغط
+                # تصفية الروابط
                 unique_content = []
                 seen_urls = set()
                 for item in content_list:
@@ -91,6 +97,9 @@ def scrape_and_upload():
                         
                 if source["type"] == "site":
                     unique_content = unique_content[:10]
+
+                # الكشاف اللي بيعلمك كم فرصة لقى في الموقع أو القناة
+                print(f"📊 النتيجة: تم العثور على ({len(unique_content)}) عنصر للتحليل في هذا المصدر.")
 
                 for item in unique_content:
                     raw_content = ""
@@ -145,7 +154,6 @@ def scrape_and_upload():
                         elif ai_link and ai_link.startswith("http") and ("ewdifh" not in apply_link and "3atabah" not in apply_link):
                             final_link = ai_link
                         
-                        # التعديل الجبار: التحديث الذكي بدل التخطي الأعمى
                         matched_ex = None
                         new_clean = re.sub(r'[^\w\s]', '', new_name).replace('أ','ا').replace('إ','ا').replace('ة','ه')
                         for ex in existing_companies:
@@ -156,25 +164,21 @@ def scrape_and_upload():
                         
                         if matched_ex:
                             updates = {}
-                            # إذا الإيميل كان مفقود ولقيناه، ضفه!
                             if not matched_ex.get("email") and email_ext:
                                 updates["email"] = email_ext
-                            # إذا الرابط مفقود أو مجرد رابط تليجرام عام ولقينا رابط حقيقي، حدثه!
                             if (not matched_ex.get("e") or matched_ex.get("e") == "#" or "t.me" in matched_ex.get("e")) and final_link and final_link.startswith("http") and "t.me" not in final_link:
                                 updates["e"] = final_link
-                            # إذا المزايا فاضية ولقينا مزايا، ضفها!
                             if not matched_ex.get("b") and ai_data.get("b"):
                                 updates["b"] = ai_data.get("b")
                                 
                             if updates:
                                 db.collection('companies').document(str(matched_ex['id'])).update(updates)
-                                print(f"🔄 تم تحديث بيانات الشركة (إكمال النواقص): {new_name}")
-                                matched_ex.update(updates) # تحديث الذاكرة عشان ما يعيدها
+                                print(f"🔄 تم تحديث (إكمال نواقص): {new_name}")
+                                matched_ex.update(updates) 
                             else:
-                                print(f"⏩ تخطي (موجودة ومكتملة 100%): {new_name}")
+                                print(f"⏩ تخطي (مكتملة 100%): {new_name}")
                             continue
                         
-                        # إذا الشركة مو موجودة نهائياً، يضيفها كفرصة جديدة
                         new_doc = {
                             "id": next_id,
                             "t": new_name,
@@ -200,7 +204,7 @@ def scrape_and_upload():
                 continue
                 
         browser.close()
-        print("✅ اكتملت المهمة وصارت قاعدة بياناتك محدثة وذكية!")
+        print("\n✅ اكتملت المهمة وصارت قاعدة بياناتك محدثة وذكية!")
 
 if __name__ == "__main__":
     scrape_and_upload()
