@@ -142,7 +142,7 @@ def scrape_and_upload():
                         time.sleep(3) # راحة خفيفة جداً لأن سيرفراتهم تتحمل
                         try:
                             response = client.chat.completions.create(
-                                model="google/gemini-2.0-flash:free",
+                                model="google/gemini-2.0-flash-exp:free",
                                 messages=[
                                     {"role": "user", "content": prompt}
                                 ],
