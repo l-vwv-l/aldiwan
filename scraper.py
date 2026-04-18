@@ -40,8 +40,7 @@ def scrape_and_upload():
         {"url": "https://t.me/s/nobthacv1", "type": "telegram"}
     ]
     
-    # رجعنا للموديل المستقر
-    model = genai.GenerativeModel('gemini-2.0-flash', generation_config={"response_mime_type": "application/json"})
+    model = genai.GenerativeModel('gemini-1.5-flash-8b', generation_config={"response_mime_type": "application/json"})
     
     existing_companies = []
     max_id = 141
@@ -116,7 +115,6 @@ def scrape_and_upload():
                     else:
                         raw_content = item["text"]
 
-                    # قللنا النص إلى 1500 حرف عشان ما نستهلك باقة جوجل بسرعة
                     prompt = f"""
                     أنت خبير توظيف. اقرأ هذا المحتوى بدقة:
                     {raw_content[:1500]}
@@ -134,24 +132,22 @@ def scrape_and_upload():
                     لو وظيفة للمحترفين، أرجع [].
                     """
                     
-                    ai_data = None
+                    time.sleep(7) 
                     
-                    # نظام المحاولة الذكي: يجرب 3 مرات، وإذا في زحمة ينتظر 60 ثانية!
-                    for attempt in range(3):
-                        time.sleep(5)
-                        try:
-                            response = model.generate_content(prompt)
-                            clean_txt = response.text.replace("```json", "").replace("```", "").strip()
-                            ai_data = json.loads(clean_txt)
-                            break # نجحنا! نطلع من حلقة المحاولة
-                        except Exception as ai_error:
-                            err_str = str(ai_error)
-                            if "429" in err_str or "Quota" in err_str:
-                                print(f"⏳ جوجل تقول فيه زحمة (محاولة {attempt+1}/3). جاري الانتظار 60 ثانية...")
-                                time.sleep(60) # راحة إجبارية عشان يرضى علينا جوجل
-                            else:
-                                print(f"⚠️ خطأ وتخطي: {err_str}")
-                                break
+                    try:
+                        response = model.generate_content(prompt)
+                        clean_txt = response.text.replace("```json", "").replace("```", "").strip()
+                        ai_data = json.loads(clean_txt)
+                    except Exception as ai_error:
+                        err_str = str(ai_error)
+                        # هنا غيرنا الاستراتيجية: إذا الرصيد خلص، نوقف السكربت بكرامته!
+                        if "429" in err_str or "Quota" in err_str:
+                            print("\n🛑 لقد استنفدت باقة جوجل المجانية اليومية! سيتم إيقاف السحب التلقائي، حاول غداً.")
+                            browser.close()
+                            exit()
+                        else:
+                            print(f"⚠️ خطأ وتخطي: {err_str}")
+                            continue
                     
                     if not isinstance(ai_data, dict) or "t" not in ai_data:
                         continue
