@@ -145,31 +145,32 @@ def scrape_and_upload():
                         "qwen/qwen-2.5-7b-instruct:free"
                     ]
                     
-                    # نظام التجربة الذكي: يمشي على القائمة، إذا واحد خربان يروح للثاني!
+                    # وقت راحة 10 ثواني لتفادي حظر OpenRouter (10 طلبات بالدقيقة)
+                    time.sleep(10)
+                    
                     for current_model in models_to_try:
-                        time.sleep(3) 
                         try:
+                            # 🌟 حذفنا أمر response_format المزعج اللي يسبب الأخطاء
                             response = client.chat.completions.create(
                                 model=current_model,
                                 messages=[
                                     {"role": "user", "content": prompt}
                                 ]
                             )
-                            # تنظيف النص واستخراج الـ JSON
+                            # تنظيف النص واستخراج الـ JSON بالقوة
                             raw_text = response.choices[0].message.content.strip()
                             clean_txt = raw_text.replace("```json", "").replace("```", "").strip()
                             
-                            # استخراج الـ JSON بالقوة في حال الموديل تفلسف بكلمات إضافية
                             match = re.search(r'\{.*\}', clean_txt, re.DOTALL)
                             if match:
                                 clean_txt = match.group(0)
                                 
                             ai_data = json.loads(clean_txt)
                             print(f"✅ تم التحليل بنجاح باستخدام: {current_model.split('/')[1]}")
-                            break # نجحنا! نطلع من حلقة المحاولات
+                            break # نجحنا! نطلع من المحاولات
                         except Exception as ai_error:
-                            print(f"⏳ الموديل {current_model.split('/')[1]} زحمة أو فيه خطأ، جاري تجربة البديل...")
-                            time.sleep(2)
+                            print(f"⏳ الموديل {current_model.split('/')[1]} واجه خطأ: {ai_error}")
+                            time.sleep(5) # راحة قبل تجربة الموديل اللي بعده
                     
                     if not ai_data or not isinstance(ai_data, dict) or "t" not in ai_data:
                         continue
