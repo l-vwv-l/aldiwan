@@ -485,14 +485,14 @@
             } catch(e) { alert("حدث خطأ أثناء الحذف!"); }
         };
 
-        // دالة فحص الحالة (تخفي مفتوح/مغلق لو كان إيميل)
+        // دالة فحص الحالة المحدثة (تخفي الحالة إذا لم يكن هناك طريقة تقديم أو إذا كان إيميل فقط)
         function getStatusHtml(item) {
-            let hasLink = item.e && item.e.startsWith('http');
+            let hasLink = item.e && item.e.startsWith('http') && item.e.length > 5;
             let hasEmail = item.email || (item.e && item.e.includes('@'));
 
-            if ((hasEmail && !hasLink) || (item.s === "")) {
-                return ''; 
-            }
+            if (!hasLink && !hasEmail) return ''; 
+            if (hasEmail && !hasLink) return ''; 
+            if (item.s === "") return ''; 
 
             let s = item.s || "مفتوح";
             if (s.includes("مفتوح")) return '<div class="status-badge status-open">مفتوح 🟢</div>';
@@ -502,16 +502,27 @@
             return '<div class="status-badge status-open">مفتوح 🟢</div>';
         }
 
-        function sortData() { allData.sort((a, b) => { let sA = getSortScore(a), sB = getSortScore(b); return sA !== sB ? sA - sB : (a.isLive && !b.isLive ? -1 : (!a.isLive && b.isLive ? 1 : (a.t > b.t ? 1 : -1))); }); }
-
+        // دالة تحديد درجة الترتيب المحدثة
         function getSortScore(item) {
-            let hasLink = item.e && item.e.startsWith('http');
-            let hasEmail = item.email || (item.e && item.e.includes('@'));
-            if (!hasLink && !hasEmail && !item.isLive) return 4; 
-            let s = item.s || "مفتوح";
+            let s = item.s || "";
             if (s.includes("مفتوح")) return 1;
             if (s.includes("قريبا") || s.includes("ينتهي")) return 2;
-            if (s.includes("مغلق")) return 3; return 4; 
+            if (s.includes("مغلق")) return 3;
+            return 4; // للفرص بدون حالة
+        }
+
+        // دالة ترتيب البيانات المحدثة
+        function sortData() { 
+            allData.sort((a, b) => { 
+                let sA = getSortScore(a), sB = getSortScore(b); 
+                if (sA !== sB) return sA - sB; 
+                
+                let aHasContact = (a.e && a.e.startsWith('http') && a.e.length > 5) || a.email ? 1 : 0;
+                let bHasContact = (b.e && b.e.startsWith('http') && b.e.length > 5) || b.email ? 1 : 0;
+                if (aHasContact !== bHasContact) return bHasContact - aHasContact;
+
+                return a.t > b.t ? 1 : -1; 
+            }); 
         }
 
         function render(filter) {
@@ -520,11 +531,11 @@
             document.getElementById('totalCountSpan').innerText = filteredData.length;
             filteredData.forEach(item => {
                 const card = document.createElement('div'); card.className = 'company-card';
-                if(item.isLive) card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)';
+                if(item.isLive) card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)'; // التوهج البنفسجي
                 card.onclick = (e) => { if(!e.target.closest('.admin-edit-btn')) openModal(item); };
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
                 
-                let statusHtml = getStatusHtml(item); // يتم استدعاء دالة الحالة هنا
+                let statusHtml = getStatusHtml(item); 
                 
                 card.innerHTML = `<div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div><div class="opp-number">رقم ${item.id}</div>${statusHtml}<div class="company-icon" style="color:${iconColor}"><i class="fa-solid ${item.i}"></i></div><div class="company-name">${item.t}</div><div class="company-tag">${item.l}</div>`;
                 grid.appendChild(card);
@@ -539,7 +550,7 @@
             let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
             document.getElementById('mTopIcon').innerHTML = `<i class="fa-solid ${item.i}"></i>`; document.getElementById('mTopIcon').style.background = iconColor;
             document.getElementById('mTitle').innerText = item.t; document.getElementById('mLoc').innerText = item.l;
-            let actualEmail = item.email || (item.e && item.e.includes('@') ? item.e : null); let hasLink = item.e && item.e.startsWith('http');
+            let actualEmail = item.email || (item.e && item.e.includes('@') ? item.e : null); let hasLink = item.e && item.e.startsWith('http') && item.e.length > 5;
             document.getElementById('mEmailVal').innerText = actualEmail || ''; document.getElementById('emailRow').style.display = actualEmail ? 'flex' : 'none';
             let appMethodText = "عبر الموقع / غير محدد", linkHref = "#", btnText = "", btnDisplay = "none";
             if (hasLink && actualEmail) { appMethodText = "رابط إلكتروني + إيميل للشركة"; linkHref = item.e; btnText = "بوابة التقديم"; btnDisplay = "block"; }
