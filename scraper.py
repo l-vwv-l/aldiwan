@@ -12,7 +12,7 @@ from firebase_admin import credentials, firestore
 # 1. إعداد المفاتيح
 API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not API_KEY:
-    print("❌ خطأ: لم يتم العثور على مفتاح OpenRouter! تأكد من إضافته في Secrets.")
+    print("❌ خطأ: لم يتم العثور على مفتاح OpenRouter!")
     exit()
 
 # 🌟 إعداد عميل OpenRouter
@@ -137,23 +137,39 @@ def scrape_and_upload():
                     
                     ai_data = None
                     
-                    # نظام محاولة ذكي مع OpenRouter
-                    for attempt in range(3):
-                        time.sleep(3) # راحة خفيفة جداً لأن سيرفراتهم تتحمل
+                    # 🌟 القائمة الاحتياطية (أقوى الموديلات المجانية)
+                    models_to_try = [
+                        "meta-llama/llama-3.3-70b-instruct:free",
+                        "google/gemma-2-9b-it:free",
+                        "mistralai/mistral-7b-instruct:free",
+                        "qwen/qwen-2.5-7b-instruct:free"
+                    ]
+                    
+                    # نظام التجربة الذكي: يمشي على القائمة، إذا واحد خربان يروح للثاني!
+                    for current_model in models_to_try:
+                        time.sleep(3) 
                         try:
                             response = client.chat.completions.create(
-                                model="meta-llama/llama-3.3-70b-instruct:free", # 🌟 استخدمنا موديل ميتا الخارق والمجاني والمستقر
+                                model=current_model,
                                 messages=[
                                     {"role": "user", "content": prompt}
-                                ],
-                                response_format={"type": "json_object"}
+                                ]
                             )
-                            clean_txt = response.choices[0].message.content.strip()
+                            # تنظيف النص واستخراج الـ JSON
+                            raw_text = response.choices[0].message.content.strip()
+                            clean_txt = raw_text.replace("```json", "").replace("```", "").strip()
+                            
+                            # استخراج الـ JSON بالقوة في حال الموديل تفلسف بكلمات إضافية
+                            match = re.search(r'\{.*\}', clean_txt, re.DOTALL)
+                            if match:
+                                clean_txt = match.group(0)
+                                
                             ai_data = json.loads(clean_txt)
+                            print(f"✅ تم التحليل بنجاح باستخدام: {current_model.split('/')[1]}")
                             break # نجحنا! نطلع من حلقة المحاولات
                         except Exception as ai_error:
-                            print(f"⏳ خطأ في اتصال OpenRouter (محاولة {attempt+1}/3): {ai_error}")
-                            time.sleep(5)
+                            print(f"⏳ الموديل {current_model.split('/')[1]} زحمة أو فيه خطأ، جاري تجربة البديل...")
+                            time.sleep(2)
                     
                     if not ai_data or not isinstance(ai_data, dict) or "t" not in ai_data:
                         continue
