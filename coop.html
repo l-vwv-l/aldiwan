@@ -512,14 +512,21 @@
             } catch(e) { alert("حدث خطأ أثناء الحذف!"); }
         };
 
-        function getSortScore(item) {
+        function getStatusHtml(item) {
             let hasLink = item.e && item.e.startsWith('http');
             let hasEmail = item.email || (item.e && item.e.includes('@'));
-            if (!hasLink && !hasEmail && !item.isLive) return 4; 
+
+            // إذا كان التقديم عبر الإيميل فقط، لا تظهر أي حالة (تخفي مفتوح/مغلق)
+            if ((hasEmail && !hasLink) || (item.s === "")) {
+                return ''; 
+            }
+
             let s = item.s || "مفتوح";
-            if (s.includes("مفتوح")) return 1;
-            if (s.includes("قريبا") || s.includes("ينتهي")) return 2;
-            if (s.includes("مغلق")) return 3; return 4; 
+            if (s.includes("مفتوح")) return '<div class="status-badge status-open">مفتوح 🟢</div>';
+            if (s.includes("مغلق")) return '<div class="status-badge status-closed">مغلق 🔴</div>';
+            if (s.includes("قريبا") || s.includes("ينتهي")) return '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>';
+            
+            return '<div class="status-badge status-open">مفتوح 🟢</div>';
         }
 
         function sortData() { allData.sort((a, b) => { let sA = getSortScore(a), sB = getSortScore(b); return sA !== sB ? sA - sB : (a.isLive && !b.isLive ? -1 : (!a.isLive && b.isLive ? 1 : (a.t > b.t ? 1 : -1))); }); }
