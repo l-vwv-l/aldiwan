@@ -40,7 +40,8 @@ def scrape_and_upload():
         {"url": "https://t.me/s/nobthacv1", "type": "telegram"}
     ]
     
-    model = genai.GenerativeModel('gemini-1.5-flash-8b', generation_config={"response_mime_type": "application/json"})
+    # تم التعديل هنا إلى الموديل الأساسي المستقر
+    model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
     
     existing_companies = []
     max_id = 141
