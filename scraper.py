@@ -40,8 +40,8 @@ def scrape_and_upload():
         {"url": "https://t.me/s/nobthacv1", "type": "telegram"}
     ]
     
-    # 🌟 التحديث السحري هنا: استخدمنا الموديل الأحدث gemini-2.0-flash بدل القديم اللي انحذف
-    model = genai.GenerativeModel('gemini-2.0-flash', generation_config={"response_mime_type": "application/json"})
+    # 🌟 التحديث السحري هنا: الموديل الأسرع والأخف لتفادي حظر جوجل المجاني
+    model = genai.GenerativeModel('gemini-1.5-flash-8b', generation_config={"response_mime_type": "application/json"})
     
     existing_companies = []
     max_id = 141
@@ -133,7 +133,8 @@ def scrape_and_upload():
                     لو وظيفة للمحترفين، أرجع [].
                     """
                     
-                    time.sleep(4) 
+                    # ⏳ التحديث السحري الثاني: زودنا الراحة لـ 7 ثواني عشان نضمن عدم حظر جوجل أبداً
+                    time.sleep(7) 
                     
                     try:
                         response = model.generate_content(prompt)
