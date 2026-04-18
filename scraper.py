@@ -1,6 +1,7 @@
 import json
 import re
 import os
+import time # ⏳ أضفنا مكتبة الوقت عشان نتحكم بسرعة الطلبات
 import requests
 from bs4 import BeautifulSoup
 import google.generativeai as genai
@@ -62,18 +63,17 @@ def scrape_and_upload():
                 content_list = []
                 
                 if source["type"] == "telegram":
-                    # استخدام Requests للتليجرام لتخطي حظر المتصفحات
-                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
                     res = requests.get(source["url"], headers=headers, timeout=15)
                     soup = BeautifulSoup(res.text, 'html.parser')
                     messages = soup.find_all('div', class_='tgme_widget_message_text')
                     
-                    for msg in messages[-50:]: 
+                    # قللنا العدد إلى آخر 15 رسالة عشان ما يطول السكربت ويخلص وقت قتهب
+                    for msg in messages[-15:]: 
                         txt = msg.get_text(separator='\n').strip()
                         if len(txt) > 50: 
                             content_list.append({"text": txt, "is_link": False, "url": source["url"]})
                 else:
-                    # المواقع العادية
                     page.goto(source["url"], timeout=60000)
                     page.wait_for_timeout(5000)
                     links = page.locator('a').all()
@@ -84,7 +84,6 @@ def scrape_and_upload():
                             final_link = href if href.startswith('http') else f"https://www.ewdifh.com{href}"
                             content_list.append({"url": final_link, "is_link": True})
 
-                # تصفية الروابط
                 unique_content = []
                 seen_urls = set()
                 for item in content_list:
@@ -98,8 +97,7 @@ def scrape_and_upload():
                 if source["type"] == "site":
                     unique_content = unique_content[:10]
 
-                # الكشاف اللي بيعلمك كم فرصة لقى في الموقع أو القناة
-                print(f"📊 النتيجة: تم العثور على ({len(unique_content)}) عنصر للتحليل في هذا المصدر.")
+                print(f"📊 النتيجة: تم العثور على ({len(unique_content)}) عنصر. جاري تحليلها بالذكاء الاصطناعي...")
 
                 for item in unique_content:
                     raw_content = ""
@@ -135,11 +133,15 @@ def scrape_and_upload():
                     لو وظيفة للمحترفين، أرجع [].
                     """
                     
+                    # ⏳ إعطاء الذكاء الاصطناعي فترة راحة 4 ثواني لتجنب الحظر (Rate Limit)
+                    time.sleep(4) 
+                    
                     try:
                         response = model.generate_content(prompt)
                         clean_txt = response.text.replace("```json", "").replace("```", "").strip()
                         ai_data = json.loads(clean_txt)
-                    except:
+                    except Exception as ai_error:
+                        print(f"⚠️ خطأ في معالجة الفرصة (تم التخطي): {ai_error}")
                         continue
                     
                     if isinstance(ai_data, dict) and "t" in ai_data:
@@ -195,7 +197,7 @@ def scrape_and_upload():
                         }
                         
                         db.collection('companies').document(str(next_id)).set(new_doc)
-                        print(f"☁️ تم الرفع للسحابة: {new_name}")
+                        print(f"☁️ تم الرفع للسحابة بنجاح: {new_name}")
                         existing_companies.append(new_doc)
                         next_id += 1
 
