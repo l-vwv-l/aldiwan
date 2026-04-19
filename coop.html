@@ -535,7 +535,7 @@
             
             if (!hasLink && !hasEmail && (!item.endDate || item.endDate === "null")) return { html: '', score: 4 };
 
-            // إذا كان هناك تاريخ فعلي مسجل
+            // 1. إذا كان هناك تاريخ فعلي مسجل (حتى لو إيميل، نمشي على التاريخ)
             if (item.endDate && item.endDate !== "null" && item.endDate !== "") {
                 let today = new Date();
                 today.setHours(0,0,0,0);
@@ -547,6 +547,21 @@
                 if (diffDays <= 3) return { html: '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>', score: 2 };
                 return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
             }
+
+            // 2. إذا كان إيميل فقط (وبدون تاريخ انتهاء) -> نخفي الحالة تماماً 🚫
+            if (hasEmail && !hasLink) return { html: '', score: 4 };
+
+            // 3. إذا كانت الحالة فارغة من الذكاء الاصطناعي -> نخفيها
+            if (item.s === "") return { html: '', score: 4 };
+
+            // 4. الرجوع للحالة القديمة (للتوافق مع البيانات السابقة)
+            let s = item.s || "مفتوح";
+            if (s.includes("مفتوح")) return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
+            if (s.includes("مغلق")) return { html: '<div class="status-badge status-closed">مغلق 🔴</div>', score: 3 };
+            if (s.includes("قريبا") || s.includes("ينتهي")) return { html: '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>', score: 2 };
+            
+            return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
+        }
 
             // الرجوع للحالة القديمة إذا لم يوجد تاريخ (للتوافقية)
             let s = item.s || "مفتوح";
