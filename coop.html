@@ -422,7 +422,7 @@
 
         let db = []; 
         let allData = [];
-        let nextId = 1; 
+        let nextId = 1; // 🌟 بدأنا العد من 1
         let isAdmin = false;
         let currentModalItem = null;
         let currentPage = 1;
@@ -438,7 +438,23 @@
             try {
                 const querySnapshot = await getDocs(collection(firestoreDB, "companies"));
                 db = []; 
-                querySnapshot.forEach((docSnap) => db.push(docSnap.data()));
+                const now = Math.floor(Date.now() / 1000); // الوقت الحالي بالثواني
+
+                querySnapshot.forEach((docSnap) => {
+                    let data = docSnap.data();
+                    
+                    // 🌟 نظام الـ 3 أيام للون البنفسجي!
+                    if (data.timestamp) {
+                        // إذا مر أقل من 3 أيام (259200 ثانية) تصير بنفسجية
+                        data.isLive = (now - data.timestamp) < 259200;
+                    } else {
+                        data.isLive = false; // أي فرصة قديمة بدون وقت ترجع زرقاء طبيعية
+                    }
+                    // تنظيف التصنيف القديم لو كان معلق
+                    if (data.c === 'live') data.c = 'company';
+
+                    db.push(data);
+                });
                 
                 if (db.length > 0) nextId = Math.max(...db.map(o => parseInt(o.id) || 0)) + 1;
                 
@@ -471,7 +487,6 @@
             }
         };
 
-        // --- دوال الاستيراد الذكي (نظام التقطيع والتنظيف) 🪄 ---
         window.openSmartImportModal = function() {
             document.getElementById('smartImportModal').style.display = 'flex';
         };
@@ -479,16 +494,11 @@
         window.closeSmartImportModal = function(event, isButton) {
             if (isButton || !event || event.target.classList.contains('admin-panel') === false) {
                 if(event && event.target.closest('.admin-panel')) return;
-                
-                // إغلاق النافذة
                 document.getElementById('smartImportModal').style.display = 'none';
-                
-                // 🌟 تنظيف الحقول للعملية القادمة
                 document.getElementById('smartFile').value = '';
                 document.getElementById('smartText').value = '';
                 document.getElementById('aiLog').style.display = 'none';
                 
-                // إرجاع الزر لشكله الطبيعي
                 let btn = document.getElementById('smartImportBtn');
                 btn.innerText = 'تحليل وإضافة للبيانات 🚀';
                 btn.style.opacity = '1';
@@ -520,7 +530,6 @@
             if(!apiKey) return alert("أدخل مفتاح Groq API أولاً!");
             if(!fileInput.files[0] && !textInput) return alert("الرجاء إرفاق ملف أو لصق نص!");
 
-            // 🌟 إغلاق الزر مؤقتاً عشان ما ينضغط مرتين
             btn.disabled = true;
             btn.style.opacity = '0.7';
             btn.innerText = 'جاري المعالجة... ⏳';
@@ -543,7 +552,6 @@
                     sourceText = textInput;
                 }
 
-                // 🌟 نظام التقطيع (Chunking)
                 const chunkSize = 12000; 
                 let chunks = [];
                 for (let i = 0; i < sourceText.length; i += chunkSize) {
@@ -552,7 +560,6 @@
 
                 let allExtractedCompanies = []; 
 
-                // إرسال الدفعات للذكاء الاصطناعي
                 for (let i = 0; i < chunks.length; i++) {
                     logText.innerHTML = `الذكاء الاصطناعي يحلل الدفعة (${i + 1} من ${chunks.length})... 🤖⏳`;
 
@@ -615,7 +622,6 @@
                     return;
                 }
 
-                // 🌟 مرحلة الفلترة وبناء البطاقات
                 logText.innerHTML = `تم تجميع إجمالي ${allExtractedCompanies.length} فرصة! جاري المعالجة وبناء البطاقات... ⚙️`;
                 
                 let logDetails = [];
@@ -655,7 +661,8 @@
                             email: comp.email || "",
                             e: comp.link || "",
                             i: comp.i || "fa-building",
-                            isLive: true
+                            isLive: true,
+                            timestamp: Math.floor(Date.now() / 1000) // ⏳ أضفناها للذكاء الاصطناعي
                         };
                         await setDoc(doc(firestoreDB, "companies", newDoc.id.toString()), newDoc);
                         db.push(newDoc);
@@ -670,7 +677,6 @@
                 
                 allData = [...db]; sortData(); render(currentFilter, 1);
 
-                // 🌟 تغيير الزر لإنهاء العملية
                 btn.disabled = false;
                 btn.style.opacity = '1';
                 btn.innerText = 'تم الإنجاز ✅ (إغلاق النافذة)';
@@ -684,7 +690,6 @@
             }
         };
 
-        // --- دوال الإدارة والواجهة الأساسية ---
         window.switchAdminTab = function(tabId, btn) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
@@ -757,6 +762,13 @@
             try {
                 let finalId = id ? id : nextId.toString();
                 compData.id = id ? parseInt(id) : nextId++;
+                
+                // 🌟 إضافة الوقت إذا كانت الفرصة جديدة يدوياً
+                if(!id) {
+                    compData.timestamp = Math.floor(Date.now() / 1000);
+                    compData.isLive = true;
+                }
+
                 if(id) { let idx = db.findIndex(x => x.id == id); if(idx !== -1) db[idx] = { ...db[idx], ...compData }; }
                 else db.push(compData);
 
