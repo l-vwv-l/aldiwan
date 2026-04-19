@@ -44,10 +44,15 @@ def clean_company_name(name):
 
 def scrape_and_upload():
     sources = [
-        {"url": "https://go.3atabah.com/dl/a400f7", "type": "site"},
-        {"url": "https://www.ewdifh.com/category/corporate-jobs", "type": "site"},
-        {"url": "https://t.me/s/cooptraning_inksa", "type": "telegram"},
-        {"url": "https://t.me/s/nobthacv1", "type": "telegram"}
+        # --- المواقع الإلكترونية ---
+        {"url": "https://www.wadhefa.com/", "type": "site"}, # وظيفة.كوم (منجم التمهير والتدريب)
+        {"url": "https://www.ewdifh.com/category/corporate-jobs", "type": "site"}, # أي وظيفة
+        {"url": "https://linksjob.net/", "type": "site"}, # وظيفة المستقبل
+        
+        # --- قنوات التليجرام ---
+        {"url": "https://t.me/s/cooptraning_inksa", "type": "telegram"}, # القناة الحالية 1
+        {"url": "https://t.me/s/nobthacv1", "type": "telegram"}, # القناة الحالية 2
+        {"url": "https://t.me/s/ewdifh", "type": "telegram"} # قناة أي وظيفة الرسمية (سريعة جداً)
     ]
     
     existing_companies = []
