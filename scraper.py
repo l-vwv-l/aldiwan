@@ -9,13 +9,11 @@ from playwright.sync_api import sync_playwright
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# 1. إعداد المفاتيح
 API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not API_KEY:
     print("❌ خطأ: لم يتم العثور على مفتاح OpenRouter!")
     exit()
 
-# 🌟 إعداد عميل OpenRouter
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
   api_key=API_KEY,
@@ -35,6 +33,14 @@ try:
 except Exception as e:
     print(f"❌ خطأ في الاتصال بـ Firebase: {e}")
     exit()
+
+# دالة ذكية لتنظيف أسماء الشركات لمنع التكرار
+def clean_company_name(name):
+    name = re.sub(r'[^\w\s]', '', name).replace('أ','ا').replace('إ','ا').replace('ة','ه')
+    words_to_remove = ['شركة', 'مؤسسة', 'السعودية', 'الوطنية', 'لتقنية', 'المحدودة', 'مجموعة']
+    for word in words_to_remove:
+        name = name.replace(word, '')
+    return name.strip()
 
 def scrape_and_upload():
     sources = [
@@ -69,7 +75,6 @@ def scrape_and_upload():
                     res = requests.get(source["url"], headers=headers, timeout=15)
                     soup = BeautifulSoup(res.text, 'html.parser')
                     messages = soup.find_all('div', class_='tgme_widget_message_text')
-                    
                     for msg in messages[-15:]: 
                         txt = msg.get_text(separator='\n').strip()
                         if len(txt) > 50: 
@@ -118,59 +123,45 @@ def scrape_and_upload():
                         raw_content = item["text"]
 
                     prompt = f"""
-                    أنت خبير توظيف. اقرأ هذا المحتوى بدقة:
+                    أنت خبير توظيف. اقرأ الإعلان التالي:
                     {raw_content[:1500]}
                     
-                    إذا كان يخص "تدريب تعاوني" أو "تمهير" للطلاب، استخرج JSON:
+                    استخرج البيانات كـ JSON فقط:
                     {{
-                        "t": "اسم الشركة",
-                        "m": "التخصصات المستهدفة (استنتجها من نشاط الشركة لو لم تذكر)",
+                        "t": "اسم الشركة فقط",
+                        "m": "التخصصات المستهدفة",
                         "b": "المزايا",
-                        "a": "نبذة عن الشركة ومجال عملها (اكتبها من معرفتك العامة إذا لم يذكر الإعلان)",
-                        "s": "مفتوح أو ينتهي قريباً (فارغة إذا التقديم إيميل فقط)",
+                        "a": "نبذة قصيرة عن الشركة",
+                        "endDate": "تاريخ انتهاء التقديم بصيغة YYYY-MM-DD. إذا لم يُذكر اكتب null",
                         "email": "الإيميل إن وجد",
-                        "link": "رابط التقديم المباشر إن وجد"
+                        "link": "رابط التقديم إن وجد",
+                        "icon": "اسم أيقونة FontAwesome (مثال: fa-building للشركات، fa-hospital للطب، fa-laptop-code للتقنية، fa-oil-well للبترول، fa-money-bill للبنوك)"
                     }}
-                    لو وظيفة للمحترفين، أرجع {{}}.
-                    أرجع النتيجة بصيغة JSON فقط وبدون أي نص إضافي.
                     """
                     
                     ai_data = None
-                    
-                    # 🌟 القائمة الاحتياطية (أقوى الموديلات المجانية)
                     models_to_try = [
                         "nvidia/nemotron-3-super-120b-a12b:free",
-                        "google/gemma-4-26b-a4b-it:free",
-                        "arcee-ai/trinity-large-preview:free",
-                        "qwen/qwen3-coder:free"
+                        "google/gemma-2-9b-it:free"
                     ]
                     
-                    # وقت راحة 10 ثواني لتفادي حظر OpenRouter (10 طلبات بالدقيقة)
-                    time.sleep(10)
+                    time.sleep(5)
                     
                     for current_model in models_to_try:
                         try:
-                            # 🌟 حذفنا أمر response_format المزعج اللي يسبب الأخطاء
                             response = client.chat.completions.create(
                                 model=current_model,
-                                messages=[
-                                    {"role": "user", "content": prompt}
-                                ]
+                                messages=[{"role": "user", "content": prompt}]
                             )
-                            # تنظيف النص واستخراج الـ JSON بالقوة
                             raw_text = response.choices[0].message.content.strip()
                             clean_txt = raw_text.replace("```json", "").replace("```", "").strip()
-                            
                             match = re.search(r'\{.*\}', clean_txt, re.DOTALL)
-                            if match:
-                                clean_txt = match.group(0)
+                            if match: clean_txt = match.group(0)
                                 
                             ai_data = json.loads(clean_txt)
-                            print(f"✅ تم التحليل بنجاح باستخدام: {current_model.split('/')[1]}")
-                            break # نجحنا! نطلع من المحاولات
+                            break 
                         except Exception as ai_error:
-                            print(f"⏳ الموديل {current_model.split('/')[1]} واجه خطأ: {ai_error}")
-                            time.sleep(5) # راحة قبل تجربة الموديل اللي بعده
+                            time.sleep(2)
                     
                     if not ai_data or not isinstance(ai_data, dict) or "t" not in ai_data:
                         continue
@@ -181,34 +172,32 @@ def scrape_and_upload():
                     ai_link = ai_data.get("link", "")
                     
                     final_link = apply_link
-                    if not item.get("is_link") and ai_link and ai_link.startswith("http"):
-                        final_link = ai_link
-                    elif ai_link and ai_link.startswith("http") and ("ewdifh" not in apply_link and "3atabah" not in apply_link):
-                        final_link = ai_link
+                    if not item.get("is_link") and ai_link and ai_link.startswith("http"): final_link = ai_link
                     
+                    # نظام فلترة قوي جداً لمنع التكرار
                     matched_ex = None
-                    new_clean = re.sub(r'[^\w\s]', '', new_name).replace('أ','ا').replace('إ','ا').replace('ة','ه')
+                    new_clean = clean_company_name(new_name)
                     for ex in existing_companies:
-                        ex_clean = re.sub(r'[^\w\s]', '', ex.get('t','')).replace('أ','ا').replace('إ','ا').replace('ة','ه')
-                        if new_clean in ex_clean or ex_clean in new_clean:
+                        ex_clean = clean_company_name(ex.get('t',''))
+                        # مقارنة ذكية (لو تشابهوا بنسبة كبيرة يتجاهلها)
+                        if new_clean and ex_clean and (new_clean in ex_clean or ex_clean in new_clean):
                             matched_ex = ex
                             break
                     
                     if matched_ex:
                         updates = {}
-                        if not matched_ex.get("email") and email_ext:
-                            updates["email"] = email_ext
-                        if (not matched_ex.get("e") or matched_ex.get("e") == "#" or "t.me" in matched_ex.get("e")) and final_link and final_link.startswith("http") and "t.me" not in final_link:
-                            updates["e"] = final_link
-                        if not matched_ex.get("b") and ai_data.get("b"):
-                            updates["b"] = ai_data.get("b")
+                        if not matched_ex.get("email") and email_ext: updates["email"] = email_ext
+                        if (not matched_ex.get("e") or matched_ex.get("e") == "#") and final_link and final_link.startswith("http"): updates["e"] = final_link
+                        
+                        # تحديث التاريخ لو كان موجود في الجديد
+                        if ai_data.get("endDate") and ai_data.get("endDate") != "null":
+                            updates["endDate"] = ai_data.get("endDate")
                             
                         if updates:
                             db.collection('companies').document(str(matched_ex['id'])).update(updates)
-                            print(f"🔄 تم تحديث (إكمال نواقص): {new_name}")
-                            matched_ex.update(updates) 
+                            print(f"🔄 تم تحديث: {new_name}")
                         else:
-                            print(f"⏩ تخطي (مكتملة 100%): {new_name}")
+                            print(f"⏩ مكرر/مكتمل: {new_name}")
                         continue
                     
                     new_doc = {
@@ -221,22 +210,21 @@ def scrape_and_upload():
                         "m": ai_data.get("m", ""),
                         "b": ai_data.get("b", ""),
                         "a": ai_data.get("a", ""),
-                        "s": ai_data.get("s", ""),
+                        "endDate": ai_data.get("endDate", "null"),
                         "isLive": True,
-                        "i": "fa-bolt"
+                        "i": ai_data.get("icon", "fa-building") # الأيقونة الذكية
                     }
                     
                     db.collection('companies').document(str(next_id)).set(new_doc)
-                    print(f"☁️ تم الرفع للسحابة بنجاح: {new_name}")
+                    print(f"☁️ تم إضافة شركة جديدة: {new_name} | {ai_data.get('icon')}")
                     existing_companies.append(new_doc)
                     next_id += 1
 
             except Exception as e:
-                print(f"⚠️ خطأ في فحص المصدر: {e}")
                 continue
                 
         browser.close()
-        print("\n✅ اكتملت المهمة وصارت قاعدة بياناتك محدثة وذكية!")
+        print("\n✅ تم التحديث بنجاح!")
 
 if __name__ == "__main__":
     scrape_and_upload()
