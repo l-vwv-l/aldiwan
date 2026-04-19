@@ -59,11 +59,17 @@
         .company-name { color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.05rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .company-tag { color: var(--text-gray); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
 
+        /* ستايل نظام الصفحات (Pagination) */
+        .pagination { display: flex; justify-content: center; gap: 8px; margin: 30px 0; flex-wrap: wrap; }
+        .page-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: white; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; transition: 0.3s; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
+        .page-btn:hover { background: rgba(255, 255, 255, 0.15); }
+        .page-btn.active { background: var(--accent); border-color: var(--accent); }
+
         .admin-edit-btn { position: absolute; top: -15px; left: -15px; width: 35px; height: 35px; background: #eab308; color: #000; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; border: 3px solid #1a1a1a; z-index: 5; box-shadow: 0 5px 15px rgba(234, 179, 8, 0.4); transition: 0.3s; }
         .admin-edit-btn:hover { transform: scale(1.1); background: #facc15; }
         body.admin-mode .admin-edit-btn { display: flex; }
 
-        .footer-info { margin-top: 30px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .footer-info { margin-top: 10px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
         .footer-copyright { color: var(--text-gray); font-size: 0.75rem; opacity: 0.8; }
 
@@ -152,12 +158,12 @@
     <div class="main-container">
         <div class="header-section">
             <a href="index.html" class="back-btn" title="العودة للرئيسية"><i class="fa-solid fa-arrow-right"></i></a>
-            <h1> دليل التدريب التعاوني ( تحت التطوير )</h1>
+            <h1>دليل التدريب التعاوني ( تحت التطوير )</h1>
             <p>دليل شامل للجهات الحكومية والخاصة لطلاب التدريب الميداني 💼</p>
             <div class="total-badge" id="totalBadge">إجمالي الفرص المتاحة: <span id="totalCountSpan">0</span></div>
         </div>
 
-        <div class="filters-container">
+        <div class="filters-container" id="filtersBlock">
             <button class="filter-btn active" onclick="filterData(this, 'all')">الكل</button>
             <button class="filter-btn live-btn" onclick="filterData(this, 'live')"><i class="fa-solid fa-bolt"></i> فرص مباشرة</button>
             <button class="filter-btn email-btn" onclick="filterData(this, 'email')"><i class="fa-solid fa-envelope"></i> إيميلات</button>
@@ -170,6 +176,8 @@
         <div id="loadingIndicator" style="text-align:center; color:var(--accent); font-size:1.2rem; margin: 20px 0;"><i class="fa-solid fa-spinner fa-spin"></i> جاري مزامنة الفرص من السحابة...</div>
         
         <div class="companies-grid" id="dataGrid" style="display: none;"></div>
+        
+        <div class="pagination" id="paginationContainer"></div>
 
         <div class="footer-info">
             <div class="footer-logo-text">
@@ -277,17 +285,12 @@
                 </div>
 
                 <div id="tab-apply" class="admin-tab-content">
+                    <label>تاريخ انتهاء التقديم:</label>
+                    <input type="date" id="a_endDate" style="color: #fff; direction: ltr;">
                     <label>رابط التقديم (e):</label>
                     <input type="text" id="a_link" placeholder="http://... أو عبر الموقع" dir="ltr">
                     <label>الإيميل الرسمي (اختياري):</label>
                     <input type="text" id="a_email" placeholder="email@company.com" dir="ltr">
-                    <label>حالة التقديم:</label>
-                    <select id="a_status">
-                        <option value="مفتوح">مفتوح 🟢</option>
-                        <option value="ينتهي قريبا">ينتهي قريباً 🟠</option>
-                        <option value="مغلق">مغلق 🔴</option>
-                        <option value="">غير محدد (عبر الموقع)</option>
-                    </select>
                 </div>
             </div>
 
@@ -307,6 +310,7 @@
                     <h3 class="modal-title" id="mTitle">اسم الشركة</h3>
                     <div style="flex: 1;">
                         <div class="info-row"><i class="fa-solid fa-location-dot info-icon"></i><div class="info-text"><span class="info-label">المقر / الفروع</span><span class="info-val" id="mLoc"></span></div></div>
+                        <div class="info-row" id="dateRow"><i class="fa-regular fa-calendar-xmark info-icon" style="color:#ef4444;"></i><div class="info-text"><span class="info-label">تاريخ إغلاق التقديم</span><span class="info-val" id="mEndDate"></span></div></div>
                         <div class="info-row"><i class="fa-solid fa-graduation-cap info-icon"></i><div class="info-text"><span class="info-label">التخصصات المستهدفة</span><span class="info-val" id="mMajors"></span></div></div>
                         <div class="info-row" id="benefitsRow"><i class="fa-solid fa-gift info-icon" style="color: #10b981;"></i><div class="info-text"><span class="info-label">المزايا (إن وجدت)</span><span class="info-val" id="mBenefits"></span></div></div>
                         <div class="info-row" id="emailRow"><i class="fa-solid fa-at info-icon"></i><div class="info-text"><span class="info-label">الإيميل الرسمي</span><span class="info-val" id="mEmailVal" style="font-family: Arial, sans-serif; direction: ltr; display: inline-block;"></span></div></div>
@@ -333,6 +337,37 @@
         </div>
     </div>
 
+    <script>
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let stars = [];
+
+        function initStars() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 120; i++) {
+                stars.push({ x: Math.random() * width, y: Math.random() * height, radius: Math.random() * 1.5, speed: Math.random() * 0.8 + 0.2 });
+            }
+        }
+        function drawStars() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+                star.y += star.speed;
+                if (star.y > height) { star.y = 0; star.x = Math.random() * width; }
+            });
+            requestAnimationFrame(drawStars);
+        }
+        window.addEventListener('resize', initStars);
+        initStars();
+        drawStars();
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -357,18 +392,22 @@
         let isAdmin = false;
         let currentModalItem = null;
 
-        // دالة تحميل البيانات المخففة جداً!
+        // متغيرات الصفحات (Pagination)
+        let currentPage = 1;
+        const itemsPerPage = 30;
+        let currentFilter = 'all';
+
         async function loadDatabase() {
             try {
                 const querySnapshot = await getDocs(collection(firestoreDB, "companies"));
-                db = []; // تفريغ الذاكرة
+                db = []; 
                 querySnapshot.forEach((docSnap) => db.push(docSnap.data()));
                 
-                if (db.length > 0) nextId = Math.max(...db.map(o => o.id)) + 1;
+                if (db.length > 0) nextId = Math.max(...db.map(o => parseInt(o.id) || 0)) + 1;
                 
                 allData = [...db]; 
                 sortData(); 
-                render('all');
+                render('all', 1);
 
                 document.getElementById('loadingIndicator').style.display = 'none';
                 document.getElementById('dataGrid').style.display = 'grid';
@@ -391,7 +430,7 @@
             if (pwd) {
                 try {
                     await signInWithEmailAndPassword(auth, "university.diwan@gmail.com", pwd);
-                    isAdmin = true; document.body.classList.add('admin-mode'); render('all');
+                    isAdmin = true; document.body.classList.add('admin-mode'); render(currentFilter, currentPage);
                 } catch(e) { alert("الرقم السري غير صحيح!"); }
             }
         };
@@ -419,7 +458,9 @@
                 document.getElementById('a_about').value = item.a || "";
                 document.getElementById('a_link').value = item.e || "";
                 document.getElementById('a_email').value = item.email || "";
-                document.getElementById('a_status').value = item.s || "مفتوح";
+                // تنظيف التاريخ لو كان null عشان حقل الـ date يقرأه
+                let eDate = item.endDate;
+                document.getElementById('a_endDate').value = (eDate && eDate !== "null") ? eDate : "";
                 document.getElementById('deleteBtn').style.display = 'block';
             } else {
                 document.getElementById('adminTitle').innerText = "إضافة فرصة جديدة";
@@ -433,7 +474,7 @@
                 document.getElementById('a_about').value = "";
                 document.getElementById('a_link').value = "";
                 document.getElementById('a_email').value = "";
-                document.getElementById('a_status').value = "مفتوح";
+                document.getElementById('a_endDate').value = "";
                 document.getElementById('deleteBtn').style.display = 'none';
             }
         };
@@ -460,7 +501,9 @@
             let b = document.getElementById('a_benefits').value.trim(); if(b) compData.b = b;
             let a = document.getElementById('a_about').value.trim(); if(a) compData.a = a;
             let email = document.getElementById('a_email').value.trim(); if(email) compData.email = email;
-            let s = document.getElementById('a_status').value; if(s) compData.s = s;
+            
+            let eDate = document.getElementById('a_endDate').value;
+            compData.endDate = eDate ? eDate : "null";
 
             try {
                 let finalId = id ? id : nextId.toString();
@@ -470,7 +513,7 @@
 
                 await setDoc(doc(firestoreDB, "companies", finalId.toString()), compData);
                 document.getElementById('adminModal').style.display = 'none';
-                allData = [...db]; sortData(); render('all');
+                allData = [...db]; sortData(); render(currentFilter, currentPage);
             } catch(e) { alert("حدث خطأ! تأكد أنك مسؤول."); }
         };
 
@@ -481,75 +524,130 @@
                 await deleteDoc(doc(firestoreDB, "companies", id.toString()));
                 db = db.filter(x => x.id != id);
                 document.getElementById('adminModal').style.display = 'none';
-                allData = [...db]; sortData(); render('all');
+                allData = [...db]; sortData(); render(currentFilter, currentPage);
             } catch(e) { alert("حدث خطأ أثناء الحذف!"); }
         };
 
-        // دالة فحص الحالة المحدثة (تخفي الحالة إذا لم يكن هناك طريقة تقديم أو إذا كان إيميل فقط)
-        function getStatusHtml(item) {
+        // دالة فحص الحالة الذكية المعتمدة على التاريخ! ⏳
+        function getStatusInfo(item) {
             let hasLink = item.e && item.e.startsWith('http') && item.e.length > 5;
             let hasEmail = item.email || (item.e && item.e.includes('@'));
-
-            if (!hasLink && !hasEmail) return ''; 
-            if (hasEmail && !hasLink) return ''; 
-            if (item.s === "") return ''; 
-
-            let s = item.s || "مفتوح";
-            if (s.includes("مفتوح")) return '<div class="status-badge status-open">مفتوح 🟢</div>';
-            if (s.includes("مغلق")) return '<div class="status-badge status-closed">مغلق 🔴</div>';
-            if (s.includes("قريبا") || s.includes("ينتهي")) return '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>';
             
-            return '<div class="status-badge status-open">مفتوح 🟢</div>';
+            if (!hasLink && !hasEmail && (!item.endDate || item.endDate === "null")) return { html: '', score: 4 };
+
+            // إذا كان هناك تاريخ فعلي مسجل
+            if (item.endDate && item.endDate !== "null" && item.endDate !== "") {
+                let today = new Date();
+                today.setHours(0,0,0,0);
+                let end = new Date(item.endDate);
+                let diffTime = end - today;
+                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays < 0) return { html: '<div class="status-badge status-closed">مغلق 🔴</div>', score: 3 };
+                if (diffDays <= 3) return { html: '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>', score: 2 };
+                return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
+            }
+
+            // الرجوع للحالة القديمة إذا لم يوجد تاريخ (للتوافقية)
+            let s = item.s || "مفتوح";
+            if (s.includes("مفتوح")) return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
+            if (s.includes("مغلق")) return { html: '<div class="status-badge status-closed">مغلق 🔴</div>', score: 3 };
+            if (s.includes("قريبا") || s.includes("ينتهي")) return { html: '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>', score: 2 };
+            
+            return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
         }
 
-        // دالة تحديد درجة الترتيب المحدثة
-        function getSortScore(item) {
-            let s = item.s || "";
-            if (s.includes("مفتوح")) return 1;
-            if (s.includes("قريبا") || s.includes("ينتهي")) return 2;
-            if (s.includes("مغلق")) return 3;
-            return 4; // للفرص بدون حالة
-        }
-
-        // دالة ترتيب البيانات المحدثة
         function sortData() { 
             allData.sort((a, b) => { 
-                let sA = getSortScore(a), sB = getSortScore(b); 
+                let sA = getStatusInfo(a).score, sB = getStatusInfo(b).score; 
                 if (sA !== sB) return sA - sB; 
                 
                 let aHasContact = (a.e && a.e.startsWith('http') && a.e.length > 5) || a.email ? 1 : 0;
                 let bHasContact = (b.e && b.e.startsWith('http') && b.e.length > 5) || b.email ? 1 : 0;
                 if (aHasContact !== bHasContact) return bHasContact - aHasContact;
 
-                return a.t > b.t ? 1 : -1; 
+                return (a.t || "") > (b.t || "") ? 1 : -1; 
             }); 
         }
 
-        function render(filter) {
-            const grid = document.getElementById('dataGrid'); grid.innerHTML = '';
-            const filteredData = allData.filter(x => filter === 'all' ? true : (filter === 'live' ? (x.isLive || x.c === 'live') : (filter === 'email' ? (x.email || (x.e && x.e.includes('@'))) : x.c === filter)));
+        window.render = function(filter, page = 1) {
+            currentFilter = filter;
+            currentPage = page;
+            const grid = document.getElementById('dataGrid'); 
+            grid.innerHTML = '';
+            
+            let filteredData = allData.filter(x => filter === 'all' ? true : (filter === 'live' ? (x.isLive || x.c === 'live') : (filter === 'email' ? (x.email || (x.e && x.e.includes('@'))) : x.c === filter)));
+            
             document.getElementById('totalCountSpan').innerText = filteredData.length;
-            filteredData.forEach(item => {
+
+            // حساب الصفحات
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            pageData.forEach(item => {
                 const card = document.createElement('div'); card.className = 'company-card';
-                if(item.isLive) card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)'; // التوهج البنفسجي
+                if(item.isLive) card.style.boxShadow = '0 0 15px rgba(217, 70, 239, 0.2)'; 
                 card.onclick = (e) => { if(!e.target.closest('.admin-edit-btn')) openModal(item); };
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
                 
-                let statusHtml = getStatusHtml(item); 
+                let statusObj = getStatusInfo(item);
+                let actualIcon = item.i ? item.i : "fa-building"; // أيقونة الشركة الافتراضية
                 
-                card.innerHTML = `<div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div><div class="opp-number">رقم ${item.id}</div>${statusHtml}<div class="company-icon" style="color:${iconColor}"><i class="fa-solid ${item.i}"></i></div><div class="company-name">${item.t}</div><div class="company-tag">${item.l}</div>`;
+                card.innerHTML = `<div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div><div class="opp-number">رقم ${item.id}</div>${statusObj.html}<div class="company-icon" style="color:${iconColor}"><i class="fa-solid ${actualIcon}"></i></div><div class="company-name">${item.t}</div><div class="company-tag">${item.l || "غير محدد"}</div>`;
                 grid.appendChild(card);
             });
+
+            renderPagination(totalPages);
+        };
+
+        // دالة توليد أزرار الصفحات السفلية
+        function renderPagination(totalPages) {
+            const container = document.getElementById('paginationContainer');
+            container.innerHTML = '';
+            
+            if (totalPages <= 1) return;
+
+            for (let i = 1; i <= totalPages; i++) {
+                let btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => {
+                    render(currentFilter, i);
+                    // رفع الشاشة برفق لأول بطاقة
+                    window.scrollTo({ top: document.getElementById('filtersBlock').offsetTop - 20, behavior: 'smooth' });
+                };
+                container.appendChild(btn);
+            }
         }
         
-        window.filterData = function(btn, cat) { document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active')); btn.classList.add('active'); render(cat); };
+        window.filterData = function(btn, cat) { 
+            document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active')); 
+            btn.classList.add('active'); 
+            render(cat, 1); // دايماً يرجع للصفحة الأولى عند تغيير الفلتر
+        };
+        
         window.toggleFlip = function() { document.getElementById('flipContainer').classList.toggle('flipped'); };
         
         window.openModal = function(item) {
             currentModalItem = item;
             let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
-            document.getElementById('mTopIcon').innerHTML = `<i class="fa-solid ${item.i}"></i>`; document.getElementById('mTopIcon').style.background = iconColor;
-            document.getElementById('mTitle').innerText = item.t; document.getElementById('mLoc').innerText = item.l;
+            let actualIcon = item.i ? item.i : "fa-building";
+            
+            document.getElementById('mTopIcon').innerHTML = `<i class="fa-solid ${actualIcon}"></i>`; document.getElementById('mTopIcon').style.background = iconColor;
+            document.getElementById('mTitle').innerText = item.t; document.getElementById('mLoc').innerText = item.l || "غير محدد";
+            
+            // عرض التاريخ إذا وجد
+            if(item.endDate && item.endDate !== "null") {
+                document.getElementById('mEndDate').innerText = item.endDate;
+                document.getElementById('dateRow').style.display = 'flex';
+            } else {
+                document.getElementById('dateRow').style.display = 'none';
+            }
+
             let actualEmail = item.email || (item.e && item.e.includes('@') ? item.e : null); let hasLink = item.e && item.e.startsWith('http') && item.e.length > 5;
             document.getElementById('mEmailVal').innerText = actualEmail || ''; document.getElementById('emailRow').style.display = actualEmail ? 'flex' : 'none';
             let appMethodText = "عبر الموقع / غير محدد", linkHref = "#", btnText = "", btnDisplay = "none";
@@ -557,10 +655,12 @@
             else if (hasLink) { appMethodText = "رابط بوابة إلكترونية"; linkHref = item.e; btnText = "الذهاب للتقديم"; btnDisplay = "block"; }
             else if (actualEmail) { appMethodText = "إرسال السيرة الذاتية عبر الإيميل"; linkHref = 'mailto:' + actualEmail; btnText = "إرسال إيميل"; btnDisplay = "block"; }
             else { appMethodText = "ابحث عن التقديم في الموقع الرسمي"; linkHref = 'https://www.google.com/search?q=التدريب+التعاوني+' + item.t; btnText = "البحث في جوجل"; btnDisplay = "block"; }
+            
             document.getElementById('mContact').innerText = appMethodText;
             document.getElementById('mMajors').innerText = item.m || 'حسب الشواغر المتاحة للشركة';
             document.getElementById('mBenefits').innerText = item.b || 'تخضع لسياسة الجهة المحددة';
             document.getElementById('mAbout').innerText = item.a || 'برنامج تدريب ميداني صُمم لتطوير وصقل مهارات الطلاب وتجهيزهم لدخول سوق العمل من خلال بيئة مهنية متكاملة.';
+            
             const btn = document.getElementById('mBtn'); btn.href = linkHref; btn.innerText = btnText; btn.style.background = iconColor; btn.style.display = btnDisplay;
             document.getElementById('flipContainer').classList.remove('flipped'); document.getElementById('infoModal').style.display = 'flex'; document.body.style.overflow = 'hidden';
         };
