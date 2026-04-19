@@ -159,11 +159,15 @@ def scrape_and_upload():
                             if match: clean_txt = match.group(0)
                                 
                             ai_data = json.loads(clean_txt)
+                            print(f"🤖 نجح الذكاء الاصطناعي ({current_model.split('/')[1]}) في قراءة النص.")
                             break 
                         except Exception as ai_error:
-                            time.sleep(2)
+                            print(f"⏳ خطأ من الموديل {current_model.split('/')[1]}: {ai_error}")
+                            time.sleep(3)
                     
-                    if not ai_data or not isinstance(ai_data, dict) or "t" not in ai_data:
+                    # 🌟 هنا نظام الحماية والفضح!
+                    if not ai_data or not isinstance(ai_data, dict) or "t" not in ai_data or not ai_data["t"] or ai_data["t"] == "غير محدد":
+                        print(f"⚠️ تم تخطي هذا العنصر لأن الذكاء الاصطناعي لم يجد بيانات شركة صالحة فيه.")
                         continue
                         
                     new_name = ai_data["t"]
@@ -195,15 +199,15 @@ def scrape_and_upload():
                             
                         if updates:
                             db.collection('companies').document(str(matched_ex['id'])).update(updates)
-                            print(f"🔄 تم تحديث: {new_name}")
+                            print(f"🔄 تم تحديث وإكمال نواقص: {new_name}")
                         else:
-                            print(f"⏩ مكرر/مكتمل: {new_name}")
+                            print(f"⏩ مكرر/مكتمل فتجاهلناه: {new_name}")
                         continue
                     
                     new_doc = {
                         "id": next_id,
                         "t": new_name,
-                        "c": "company", # عدلناها عشان تتصنف كشركة بدل ما تعلق
+                        "c": "company",
                         "l": "السعودية",
                         "e": final_link,
                         "email": email_ext,
@@ -212,16 +216,17 @@ def scrape_and_upload():
                         "a": ai_data.get("a", ""),
                         "endDate": ai_data.get("endDate", "null"),
                         "isLive": True,
-                        "timestamp": int(time.time()), # ⏳ العداد الزمني (3 أيام)
+                        "timestamp": int(time.time()), # العداد الزمني (3 أيام)
                         "i": ai_data.get("icon", "fa-building")
                     }
                     
                     db.collection('companies').document(str(next_id)).set(new_doc)
-                    print(f"☁️ تم إضافة شركة جديدة: {new_name} | {ai_data.get('icon')}")
+                    print(f"✨ تم إضافة شركة جديدة للموقع: {new_name}")
                     existing_companies.append(new_doc)
                     next_id += 1
 
             except Exception as e:
+                print(f"❌ خطأ غير متوقع: {e}")
                 continue
                 
         browser.close()
