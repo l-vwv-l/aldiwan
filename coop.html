@@ -122,6 +122,7 @@
         .share-btn:hover { background: rgba(59, 130, 246, 0.2); }
         .apply-btn { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); cursor: pointer; flex: 1; min-width: 100px; text-align: center;}
         .apply-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .apply-btn:disabled { cursor: not-allowed; }
         .close-cross { position: absolute; top: 15px; left: 15px; background: none; border: none; color: #ef4444; font-size: 1.5rem; cursor: pointer; z-index: 10; }
         .prayer-text { font-size: 0.65rem; color: #555; text-align: center; margin-top: 15px; user-select: none; }
 
@@ -220,7 +221,7 @@
             </div>
 
             <div class="modal-actions" style="justify-content: center; margin-top: 20px;">
-                <button class="apply-btn" style="background: #8b5cf6; width: 100%;" onclick="processSmartImport()">تحليل وإضافة للبيانات 🚀</button>
+                <button id="smartImportBtn" class="apply-btn" style="background: #8b5cf6; width: 100%;" onclick="processSmartImport()">تحليل وإضافة للبيانات 🚀</button>
             </div>
         </div>
     </div>
@@ -470,7 +471,7 @@
             }
         };
 
-        // --- دوال الاستيراد الذكي (نظام التقطيع) 🪄 ---
+        // --- دوال الاستيراد الذكي (نظام التقطيع والتنظيف) 🪄 ---
         window.openSmartImportModal = function() {
             document.getElementById('smartImportModal').style.display = 'flex';
         };
@@ -478,7 +479,21 @@
         window.closeSmartImportModal = function(event, isButton) {
             if (isButton || !event || event.target.classList.contains('admin-panel') === false) {
                 if(event && event.target.closest('.admin-panel')) return;
+                
+                // إغلاق النافذة
                 document.getElementById('smartImportModal').style.display = 'none';
+                
+                // 🌟 تنظيف الحقول للعملية القادمة
+                document.getElementById('smartFile').value = '';
+                document.getElementById('smartText').value = '';
+                document.getElementById('aiLog').style.display = 'none';
+                
+                // إرجاع الزر لشكله الطبيعي
+                let btn = document.getElementById('smartImportBtn');
+                btn.innerText = 'تحليل وإضافة للبيانات 🚀';
+                btn.style.opacity = '1';
+                btn.disabled = false;
+                btn.onclick = processSmartImport;
             }
         };
 
@@ -500,9 +515,15 @@
             const textInput = document.getElementById('smartText').value.trim();
             const logDiv = document.getElementById('aiLog');
             const logText = document.getElementById('aiLogText');
+            const btn = document.getElementById('smartImportBtn');
 
             if(!apiKey) return alert("أدخل مفتاح Groq API أولاً!");
             if(!fileInput.files[0] && !textInput) return alert("الرجاء إرفاق ملف أو لصق نص!");
+
+            // 🌟 إغلاق الزر مؤقتاً عشان ما ينضغط مرتين
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            btn.innerText = 'جاري المعالجة... ⏳';
 
             localStorage.setItem('groqSmartKey', apiKey);
             logDiv.style.display = 'block';
@@ -588,6 +609,9 @@
 
                 if(allExtractedCompanies.length === 0) {
                     logText.innerHTML = "لم يتم العثور على أي فرص في جميع أجزاء الملف أو النص.";
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.innerText = 'إعادة المحاولة 🔄';
                     return;
                 }
 
@@ -646,8 +670,17 @@
                 
                 allData = [...db]; sortData(); render(currentFilter, 1);
 
+                // 🌟 تغيير الزر لإنهاء العملية
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.innerText = 'تم الإنجاز ✅ (إغلاق النافذة)';
+                btn.onclick = function() { closeSmartImportModal(null, true); };
+
             } catch(e) {
                 logText.innerHTML = "❌ حدث خطأ: " + e.message;
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.innerText = 'إعادة المحاولة 🔄';
             }
         };
 
