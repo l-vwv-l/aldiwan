@@ -203,7 +203,7 @@ def scrape_and_upload():
                     new_doc = {
                         "id": next_id,
                         "t": new_name,
-                        "c": "live",
+                        "c": "company", # عدلناها عشان تتصنف كشركة بدل ما تعلق
                         "l": "السعودية",
                         "e": final_link,
                         "email": email_ext,
@@ -212,7 +212,8 @@ def scrape_and_upload():
                         "a": ai_data.get("a", ""),
                         "endDate": ai_data.get("endDate", "null"),
                         "isLive": True,
-                        "i": ai_data.get("icon", "fa-building") # الأيقونة الذكية
+                        "timestamp": int(time.time()), # ⏳ العداد الزمني (3 أيام)
+                        "i": ai_data.get("icon", "fa-building")
                     }
                     
                     db.collection('companies').document(str(next_id)).set(new_doc)
