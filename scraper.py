@@ -139,10 +139,10 @@ def scrape_and_upload():
                     
                     # 🌟 القائمة الاحتياطية (أقوى الموديلات المجانية)
                     models_to_try = [
-                        "meta-llama/llama-3.3-70b-instruct:free",
-                        "google/gemma-2-9b-it:free",
-                        "mistralai/mistral-7b-instruct:free",
-                        "qwen/qwen-2.5-7b-instruct:free"
+                        "nvidia/nemotron-3-super-120b-a12b:free",
+                        "google/gemma-4-26b-a4b-it:free",
+                        "arcee-ai/trinity-large-preview:free",
+                        "qwen/qwen3-coder:free"
                     ]
                     
                     # وقت راحة 10 ثواني لتفادي حظر OpenRouter (10 طلبات بالدقيقة)
