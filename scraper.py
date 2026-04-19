@@ -146,7 +146,7 @@ def scrape_and_upload():
                     
                     ai_data = None
                     models_to_try = [
-                        "meta-llama/llama-3.1-8b-instruct:free",
+                        "google/gemini-embedding-2-preview",
                         "google/gemma-2-9b-it:free",
                         "mistralai/mistral-7b-instruct:free",
                         "microsoft/phi-3-mini-128k-instruct:free",
