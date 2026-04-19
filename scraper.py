@@ -51,7 +51,7 @@ def scrape_and_upload():
     ]
     
     existing_companies = []
-    max_id = 141
+    max_id = 0
     companies_ref = db.collection('companies').stream()
     for doc in companies_ref:
         comp = doc.to_dict()
