@@ -146,12 +146,13 @@ def scrape_and_upload():
                     
                     ai_data = None
                     models_to_try = [
-                        "google/gemini-embedding-2-preview",
-                        "google/gemma-2-9b-it:free",
-                        "mistralai/mistral-7b-instruct:free",
-                        "microsoft/phi-3-mini-128k-instruct:free",
-                        "qwen/qwen-2-7b-instruct:free",
-                        "nvidia/nemotron-3-super-120b-a12b:free"
+                        "google/gemma-4-31b-it:free",
+                        "minimax/minimax-m2.5:free",
+                        "nvidia/nemotron-3-nano-30b-a3b:free",
+                        "qwen/qwen3-next-80b-a3b-instruct:free",
+                        "google/gemma-3-4b-it:free",
+                        "meta-llama/llama-3.3-70b-instruct:free"
+                         "openai/gpt-oss-120b:free"
                     ]
                     
                     time.sleep(5)
