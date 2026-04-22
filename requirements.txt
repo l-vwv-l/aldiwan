@@ -1,0 +1,8 @@
+openai
+playwright
+playwright-stealth
+firebase-admin
+beautifulsoup4
+aiohttp
+thefuzz
+python-Levenshtein
