@@ -3,6 +3,7 @@ import re
 import os
 import time
 import requests
+import datetime
 from bs4 import BeautifulSoup
 from openai import OpenAI
 from playwright.sync_api import sync_playwright
@@ -127,20 +128,38 @@ def scrape_and_upload():
                     else:
                         raw_content = item["text"]
 
+                    # تعريف تاريخ اليوم كمرجع زمني
+                    today_date = datetime.date.today().strftime("%Y-%m-%d")
+
                     prompt = f"""
-                    أنت خبير توظيف. اقرأ الإعلان التالي:
+                    أنت نظام ذكاء اصطناعي خبير في الموارد البشرية وتحليل البيانات.
+                    تاريخ اليوم كمرجع زمني هو: {today_date}.
+
+                    المهمة: اقرأ الإعلان أدناه، واستخرج البيانات بدقة، وصغ النبذة بالأسلوب المطلوب.
+
+                    الأسلوب المطلوب لصياغة النبذة:
+                    (لغة عربية فصحى مبسطة، عملية، ومحفزة للطلاب والشباب الجامعي)
+
+                    قواعد الاستخراج الصارمة (System Directives):
+                    1. المخرجات يجب أن تكون بصيغة JSON صالح (Valid JSON) حصراً.
+                    2. يُمنع منعاً باتاً كتابة أي حرف، أو مقدمة، أو خاتمة خارج كائن الـ JSON.
+                    3. يُمنع استخدام علامات تنسيق Markdown المخصصة للأكواد (مثل ```json).
+                    4. إذا لم تجد المعلومة في النص، استخدم القيمة null (بدون علامات تنصيص).
+                    5. استنتج تواريخ الانتهاء بذكاء بناءً على تاريخ اليوم المذكور أعلاه.
+
+                    النص المراد تحليله:
                     {raw_content[:1500]}
-                    
-                    استخرج البيانات كـ JSON فقط:
+
+                    الهيكل المطلوب للمخرجات:
                     {{
-                        "t": "اسم الشركة فقط",
-                        "m": "التخصصات المستهدفة",
-                        "b": "المزايا",
-                        "a": "نبذة قصيرة عن الشركة",
-                        "endDate": "تاريخ انتهاء التقديم بصيغة YYYY-MM-DD. إذا لم يُذكر اكتب null",
-                        "email": "الإيميل إن وجد",
-                        "link": "رابط التقديم إن وجد",
-                        "icon": "اسم أيقونة FontAwesome (مثال: fa-building للشركات، fa-hospital للطب، fa-laptop-code للتقنية، fa-oil-well للبترول، fa-money-bill للبنوك)"
+                        "t": "اسم الشركة أو الجهة المعلنة (نص نقي ومختصر جداً)",
+                        "m": "التخصصات المستهدفة مفصولة بفواصل (إذا كانت تقبل الكل اكتب 'كافة التخصصات'، وإلا null)",
+                        "b": "المزايا الوظيفية أو الأكاديمية مفصولة بفواصل (أو null)",
+                        "a": "نبذة ذكية وجذابة عن الجهة أو الفرصة بالأسلوب المطلوب. إذا لم تتوفر معلومات، اكتب نبذة عامة تناسب المجال.",
+                        "endDate": "تاريخ انتهاء التقديم بصيغة YYYY-MM-DD (أو null)",
+                        "email": "البريد الإلكتروني للتقديم (أو null)",
+                        "link": "رابط التقديم الإلكتروني (أو null)",
+                        "icon": "اسم أيقونة FontAwesome 6 الأنسب لمجال الإعلان (مثال: fa-building للشركات، fa-hospital للطب، fa-laptop-code للتقنية، fa-oil-well للطاقة، fa-graduation-cap للتعليم)"
                     }}
                     """
                     
@@ -151,8 +170,8 @@ def scrape_and_upload():
                         "nvidia/nemotron-3-nano-30b-a3b:free",
                         "qwen/qwen3-next-80b-a3b-instruct:free",
                         "google/gemma-3-4b-it:free",
-                        "meta-llama/llama-3.3-70b-instruct:free"
-                         "openai/gpt-oss-120b:free"
+                        "meta-llama/llama-3.3-70b-instruct:free",
+                        "openai/gpt-oss-120b:free"
                     ]
                     
                     time.sleep(5)
