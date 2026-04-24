@@ -1,59 +1,144 @@
+import asyncio
 import json
 import re
 import os
 import time
-import requests
-import datetime
+import logging
+import aiohttp
 from bs4 import BeautifulSoup
-from openai import OpenAI
-from playwright.sync_api import sync_playwright
+from openai import AsyncOpenAI
+from playwright.async_api import async_playwright
+from playwright_stealth import stealth_async
 import firebase_admin
 from firebase_admin import credentials, firestore
+from thefuzz import fuzz
 
+# إعداد نظام المراقبة (Logging)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
+# إعداد مفاتيح الـ API
 API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not API_KEY:
-    print("❌ خطأ: لم يتم العثور على مفتاح OpenRouter!")
+    logger.error("لم يتم العثور على مفتاح OpenRouter!")
     exit()
 
-client = OpenAI(
+client = AsyncOpenAI(
   base_url="https://openrouter.ai/api/v1",
   api_key=API_KEY,
 )
 
 firebase_secret = os.environ.get("FIREBASE_CREDENTIALS")
 if not firebase_secret:
-    print("❌ خطأ: لم يتم العثور على مفتاح فايربيس!")
+    logger.error("لم يتم العثور على مفتاح فايربيس!")
     exit()
 
 try:
     cred_dict = json.loads(firebase_secret)
     cred = credentials.Certificate(cred_dict)
-    firebase_admin.initialize_app(cred)
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
     db = firestore.client()
-    print("✅ تم الاتصال بـ Firebase بنجاح!")
+    logger.info("تم الاتصال بـ Firebase بنجاح! 🔥")
 except Exception as e:
-    print(f"❌ خطأ في الاتصال بـ Firebase: {e}")
+    logger.error(f"خطأ في الاتصال بـ Firebase: {e}")
     exit()
 
-# دالة ذكية لتنظيف أسماء الشركات لمنع التكرار
+# تنظيف الأسماء والمقارنة (Fuzzy Matching)
 def clean_company_name(name):
+    if not name: return ""
     name = re.sub(r'[^\w\s]', '', name).replace('أ','ا').replace('إ','ا').replace('ة','ه')
     words_to_remove = ['شركة', 'مؤسسة', 'السعودية', 'الوطنية', 'لتقنية', 'المحدودة', 'مجموعة']
     for word in words_to_remove:
         name = name.replace(word, '')
     return name.strip()
 
-def scrape_and_upload():
-    sources = [
-        # --- المواقع الإلكترونية ---
-        {"url": "https://www.wadhefa.com/", "type": "site"}, # وظيفة.كوم (منجم التمهير والتدريب)
-        {"url": "https://www.ewdifh.com/category/corporate-jobs", "type": "site"}, # أي وظيفة
-        {"url": "https://linksjob.net/", "type": "site"}, # وظيفة المستقبل
+def is_duplicate(new_name, existing_companies):
+    new_clean = clean_company_name(new_name)
+    if not new_clean: return None
+    
+    for ex in existing_companies:
+        ex_clean = clean_company_name(ex.get('t',''))
+        # تشابه بنسبة 85% يعتبر نفس الشركة
+        if ex_clean and fuzz.partial_ratio(new_clean, ex_clean) > 85:
+            return ex
+    return None
+
+# 🌟 دالة الاستخراج بنظام التجميع (Batching)
+async def extract_batch_data_with_ai(batch_items):
+    combined_text = ""
+    for item in batch_items:
+        combined_text += f"\n--- إعلان رقم {item['id']} (الرابط: {item['url']}) ---\n{item['text'][:1200]}\n"
         
-        # --- قنوات التليجرام ---
-        {"url": "https://t.me/s/cooptraning_inksa", "type": "telegram"}, # القناة الحالية 1
-        {"url": "https://t.me/s/nobthacv1", "type": "telegram"}, # القناة الحالية 2
-        {"url": "https://t.me/s/ewdifh", "type": "telegram"} # قناة أي وظيفة الرسمية (سريعة جداً)
+    prompt = f"""
+    أنت خبير توظيف. اقرأ مجموعة الإعلانات التالية واستخرج البيانات كـ JSON.
+    {combined_text}
+    
+    يجب أن يكون الرد بتنسيق JSON حصراً يحتوي على مفتاح "companies" وقيمته مصفوفة (Array):
+    {{
+        "companies": [
+            {{
+                "t": "اسم الشركة",
+                "m": "التخصصات المستهدفة",
+                "category": "صنف الوظيفة (تقنية، إدارية، هندسية، طبية، أخرى)",
+                "b": "المزايا",
+                "a": "نبذة قصيرة",
+                "endDate": "تاريخ الانتهاء YYYY-MM-DD أو null",
+                "email": "الإيميل إن وجد",
+                "link": "استخدم (الرابط) المرفق مع عنوان الإعلان، أو استخرجه من النص إن اختلف",
+                "icon": "اسم أيقونة FontAwesome"
+            }}
+        ]
+    }}
+    إذا لم تجد شركات صالحة، أرجع مصفوفة فارغة [].
+    """
+    
+    models = [
+        "meta-llama/llama-3.1-8b-instruct:free",
+        "google/gemma-2-9b-it:free",
+        "microsoft/phi-3-mini-128k-instruct:free"
+    ]
+    
+    for model in models:
+        try:
+            response = await client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"} 
+            )
+            raw_text = response.choices[0].message.content.strip()
+            return json.loads(raw_text).get("companies", [])
+        except Exception as e:
+            logger.warning(f"فشل الموديل {model.split('/')[1]}, جاري تجربة آخر... الخطأ: {str(e)[:50]}")
+            await asyncio.sleep(2)
+    return []
+
+# سحب التليجرام
+async def fetch_telegram(url):
+    async with aiohttp.ClientSession() as session:
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        try:
+            async with session.get(url, headers=headers, timeout=15) as res:
+                text = await res.text()
+                soup = BeautifulSoup(text, 'html.parser')
+                messages = soup.find_all('div', class_='tgme_widget_message_text')
+                return [{"text": msg.get_text(separator='\n').strip(), "is_link": False, "url": url} 
+                        for msg in messages[-10:] if len(msg.get_text(separator='\n').strip()) > 50]
+        except Exception as e:
+            logger.error(f"خطأ في سحب التليجرام {url}: {e}")
+            return []
+
+# الدالة الرئيسية
+async def main_scraper():
+    sources = [
+        {"url": "https://www.wadhefa.com/", "type": "site"},
+        {"url": "https://www.ewdifh.com/category/corporate-jobs", "type": "site"},
+        {"url": "https://t.me/s/cooptraning_inksa", "type": "telegram"},
+        {"url": "https://t.me/s/ewdifh", "type": "telegram"}
     ]
     
     existing_companies = []
@@ -62,204 +147,120 @@ def scrape_and_upload():
     for doc in companies_ref:
         comp = doc.to_dict()
         existing_companies.append(comp)
-        if int(comp.get('id', 0)) > max_id:
-            max_id = int(comp.get('id', 0))
+        max_id = max(max_id, int(comp.get('id', 0)))
             
     next_id = max_id + 1
+    content_list = []
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+    tg_tasks = [fetch_telegram(s['url']) for s in sources if s['type'] == 'telegram']
+    tg_results = await asyncio.gather(*tg_tasks)
+    for res in tg_results: content_list.extend(res)
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
         
-        for source in sources:
-            print(f"\n🔍 جاري فحص المصدر: {source['url']}")
+        for source in [s for s in sources if s['type'] == 'site']:
+            logger.info(f"فحص الموقع: {source['url']}")
+            page = await context.new_page()
+            await stealth_async(page) # تفعيل التخفي للمواقع
             try:
-                content_list = []
+                await page.goto(source['url'], timeout=60000)
+                await page.wait_for_timeout(3000)
+                links = await page.locator('a').all()
+                for link in links:
+                    text = await link.inner_text()
+                    href = await link.get_attribute('href')
+                    if text and href and any(vw in text.lower() for vw in ['تدريب', 'تعاوني', 'coop', 'تمهير']):
+                        final_link = href if href.startswith('http') else f"https://www.ewdifh.com{href}"
+                        content_list.append({"url": final_link, "is_link": True})
+            except Exception as e:
+                logger.error(f"خطأ في الموقع {source['url']}: {e}")
+            finally:
+                await page.close()
+
+        unique_content = list({v['url']:v for v in content_list if 'url' in v}.values())
+        logger.info(f"تم العثور على ({len(unique_content)}) رابط/رسالة. جاري جمع النصوص...")
+
+        raw_items = []
+        item_counter = 1
+        for item in unique_content:
+            raw_content = ""
+            apply_link = item.get("url", "")
+            
+            if item.get("is_link"):
+                page = await context.new_page()
+                await stealth_async(page)
+                try:
+                    await page.goto(item["url"], timeout=60000)
+                    raw_content = await page.inner_text('body')
+                    for l in await page.locator('a').all():
+                        hrf = await l.get_attribute('href')
+                        txt = await l.inner_text()
+                        if hrf and hrf.startswith('http') and not any(x in hrf for x in ['ewdifh', 'twitter']):
+                            if any(k in txt for k in ['تقديم', 'رابط', 'Apply']):
+                                apply_link = hrf; break
+                except Exception:
+                    pass
+                finally:
+                    await page.close()
+            else:
+                raw_content = item.get("text", "")
+
+            if len(raw_content) > 50:
+                raw_items.append({"id": item_counter, "url": apply_link, "text": raw_content})
+                item_counter += 1
+
+        logger.info("جاري تحليل النصوص بالذكاء الاصطناعي (نظام الدفعات)... 🤖")
+        
+        batch_size = 5
+        for i in range(0, len(raw_items), batch_size):
+            batch = raw_items[i:i+batch_size]
+            logger.info(f"إرسال الدفعة ({i//batch_size + 1}) للذكاء الاصطناعي...")
+            
+            extracted_companies = await extract_batch_data_with_ai(batch)
+            
+            for comp in extracted_companies:
+                if not comp.get("t") or comp.get("t") == "غير محدد": continue
                 
-                if source["type"] == "telegram":
-                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-                    res = requests.get(source["url"], headers=headers, timeout=15)
-                    soup = BeautifulSoup(res.text, 'html.parser')
-                    messages = soup.find_all('div', class_='tgme_widget_message_text')
-                    for msg in messages[-15:]: 
-                        txt = msg.get_text(separator='\n').strip()
-                        if len(txt) > 50: 
-                            content_list.append({"text": txt, "is_link": False, "url": source["url"]})
+                new_name = comp["t"]
+                matched_ex = is_duplicate(new_name, existing_companies)
+                
+                if matched_ex:
+                    updates = {}
+                    if comp.get("email") and not matched_ex.get("email"): updates["email"] = comp["email"]
+                    if comp.get("endDate") and comp["endDate"] != "null": updates["endDate"] = comp["endDate"]
+                    if comp.get("link") and matched_ex.get("e") == "#": updates["e"] = comp["link"]
+                    
+                    if updates:
+                        db.collection('companies').document(str(matched_ex['id'])).update(updates)
+                        logger.info(f"🔄 تم تحديث: {new_name}")
                 else:
-                    page.goto(source["url"], timeout=60000)
-                    page.wait_for_timeout(5000)
-                    links = page.locator('a').all()
-                    for link in links:
-                        text = link.inner_text().strip()
-                        href = link.get_attribute('href')
-                        if text and href and any(vw in text.lower() for vw in ['تدريب', 'تعاوني', 'coop', 'تمهير']):
-                            final_link = href if href.startswith('http') else f"https://www.ewdifh.com{href}"
-                            content_list.append({"url": final_link, "is_link": True})
-
-                unique_content = []
-                seen_urls = set()
-                for item in content_list:
-                    if item.get("is_link"):
-                        if item["url"] not in seen_urls:
-                            unique_content.append(item)
-                            seen_urls.add(item["url"])
-                    else:
-                        unique_content.append(item)
-                        
-                if source["type"] == "site":
-                    unique_content = unique_content[:10]
-
-                print(f"📊 النتيجة: تم العثور على ({len(unique_content)}) عنصر. جاري تحليلها...")
-
-                for item in unique_content:
-                    raw_content = ""
-                    apply_link = item.get("url", "")
-                    
-                    if item.get("is_link"):
-                        page.goto(item["url"], timeout=60000)
-                        page.wait_for_timeout(3000)
-                        raw_content = page.inner_text('body')
-                        for l in page.locator('a').all():
-                            hrf = l.get_attribute('href')
-                            txt = l.inner_text()
-                            if hrf and hrf.startswith('http') and not any(x in hrf for x in ['ewdifh', '3atabah', 'twitter']):
-                                if any(k in txt for k in ['تقديم', 'اضغط', 'رابط', 'Apply', 'careers']):
-                                    apply_link = hrf; break
-                    else:
-                        raw_content = item["text"]
-
-                    # تعريف تاريخ اليوم كمرجع زمني
-                    today_date = datetime.date.today().strftime("%Y-%m-%d")
-
-                    prompt = f"""
-                    أنت نظام ذكاء اصطناعي خبير في الموارد البشرية وتحليل البيانات.
-                    تاريخ اليوم كمرجع زمني هو: {today_date}.
-
-                    المهمة: اقرأ الإعلان أدناه، واستخرج البيانات بدقة، وصغ النبذة بالأسلوب المطلوب.
-
-                    الأسلوب المطلوب لصياغة النبذة:
-                    (لغة عربية فصحى مبسطة، عملية، ومحفزة للطلاب والشباب الجامعي)
-
-                    قواعد الاستخراج الصارمة (System Directives):
-                    1. المخرجات يجب أن تكون بصيغة JSON صالح (Valid JSON) حصراً.
-                    2. يُمنع منعاً باتاً كتابة أي حرف، أو مقدمة، أو خاتمة خارج كائن الـ JSON.
-                    3. يُمنع استخدام علامات تنسيق Markdown المخصصة للأكواد (مثل ```json).
-                    4. إذا لم تجد المعلومة في النص، استخدم القيمة null (بدون علامات تنصيص).
-                    5. استنتج تواريخ الانتهاء بذكاء بناءً على تاريخ اليوم المذكور أعلاه.
-
-                    النص المراد تحليله:
-                    {raw_content[:1500]}
-
-                    الهيكل المطلوب للمخرجات:
-                    {{
-                        "t": "اسم الشركة أو الجهة المعلنة (نص نقي ومختصر جداً)",
-                        "m": "التخصصات المستهدفة مفصولة بفواصل (إذا كانت تقبل الكل اكتب 'كافة التخصصات'، وإلا null)",
-                        "b": "المزايا الوظيفية أو الأكاديمية مفصولة بفواصل (أو null)",
-                        "a": "نبذة ذكية وجذابة عن الجهة أو الفرصة بالأسلوب المطلوب. إذا لم تتوفر معلومات، اكتب نبذة عامة تناسب المجال.",
-                        "endDate": "تاريخ انتهاء التقديم بصيغة YYYY-MM-DD (أو null)",
-                        "email": "البريد الإلكتروني للتقديم (أو null)",
-                        "link": "رابط التقديم الإلكتروني (أو null)",
-                        "icon": "اسم أيقونة FontAwesome 6 الأنسب لمجال الإعلان (مثال: fa-building للشركات، fa-hospital للطب، fa-laptop-code للتقنية، fa-oil-well للطاقة، fa-graduation-cap للتعليم)"
-                    }}
-                    """
-                    
-                    ai_data = None
-                    models_to_try = [
-                        "google/gemma-4-31b-it:free",
-                        "minimax/minimax-m2.5:free",
-                        "nvidia/nemotron-3-nano-30b-a3b:free",
-                        "qwen/qwen3-next-80b-a3b-instruct:free",
-                        "google/gemma-3-4b-it:free",
-                        "meta-llama/llama-3.3-70b-instruct:free",
-                        "openai/gpt-oss-120b:free"
-                    ]
-                    
-                    time.sleep(5)
-                    
-                    for current_model in models_to_try:
-                        try:
-                            response = client.chat.completions.create(
-                                model=current_model,
-                                messages=[{"role": "user", "content": prompt}]
-                            )
-                            raw_text = response.choices[0].message.content.strip()
-                            clean_txt = raw_text.replace("```json", "").replace("```", "").strip()
-                            match = re.search(r'\{.*\}', clean_txt, re.DOTALL)
-                            if match: clean_txt = match.group(0)
-                                
-                            ai_data = json.loads(clean_txt)
-                            print(f"🤖 نجح الذكاء الاصطناعي ({current_model.split('/')[1]}) في قراءة النص.")
-                            break 
-                        except Exception as ai_error:
-                            print(f"⏳ خطأ من الموديل {current_model.split('/')[1]}: {ai_error}")
-                            time.sleep(3)
-                    
-                    # 🌟 هنا نظام الحماية والفضح!
-                    if not ai_data or not isinstance(ai_data, dict) or "t" not in ai_data or not ai_data["t"] or ai_data["t"] == "غير محدد":
-                        print(f"⚠️ تم تخطي هذا العنصر لأن الذكاء الاصطناعي لم يجد بيانات شركة صالحة فيه.")
-                        continue
-                        
-                    new_name = ai_data["t"]
-                    email_ext = ai_data.get("email", "")
-                    if email_ext and "@" not in email_ext: email_ext = ""
-                    ai_link = ai_data.get("link", "")
-                    
-                    final_link = apply_link
-                    if not item.get("is_link") and ai_link and ai_link.startswith("http"): final_link = ai_link
-                    
-                    # نظام فلترة قوي جداً لمنع التكرار
-                    matched_ex = None
-                    new_clean = clean_company_name(new_name)
-                    for ex in existing_companies:
-                        ex_clean = clean_company_name(ex.get('t',''))
-                        # مقارنة ذكية (لو تشابهوا بنسبة كبيرة يتجاهلها)
-                        if new_clean and ex_clean and (new_clean in ex_clean or ex_clean in new_clean):
-                            matched_ex = ex
-                            break
-                    
-                    if matched_ex:
-                        updates = {}
-                        if not matched_ex.get("email") and email_ext: updates["email"] = email_ext
-                        if (not matched_ex.get("e") or matched_ex.get("e") == "#") and final_link and final_link.startswith("http"): updates["e"] = final_link
-                        
-                        # تحديث التاريخ لو كان موجود في الجديد
-                        if ai_data.get("endDate") and ai_data.get("endDate") != "null":
-                            updates["endDate"] = ai_data.get("endDate")
-                            
-                        if updates:
-                            db.collection('companies').document(str(matched_ex['id'])).update(updates)
-                            print(f"🔄 تم تحديث وإكمال نواقص: {new_name}")
-                        else:
-                            print(f"⏩ مكرر/مكتمل فتجاهلناه: {new_name}")
-                        continue
-                    
                     new_doc = {
                         "id": next_id,
                         "t": new_name,
                         "c": "company",
                         "l": "السعودية",
-                        "e": final_link,
-                        "email": email_ext,
-                        "m": ai_data.get("m", ""),
-                        "b": ai_data.get("b", ""),
-                        "a": ai_data.get("a", ""),
-                        "endDate": ai_data.get("endDate", "null"),
+                        "tags": comp.get("category", "أخرى"),
+                        "e": comp.get("link", "#"),
+                        "email": comp.get("email", ""),
+                        "m": comp.get("m", ""),
+                        "b": comp.get("b", ""),
+                        "a": comp.get("a", ""),
+                        "endDate": comp.get("endDate", "null"),
                         "isLive": True,
-                        "timestamp": int(time.time()), # العداد الزمني (3 أيام)
-                        "i": ai_data.get("icon", "fa-building")
+                        "timestamp": int(time.time()),
+                        "i": comp.get("icon", "fa-building")
                     }
-                    
                     db.collection('companies').document(str(next_id)).set(new_doc)
-                    print(f"✨ تم إضافة شركة جديدة للموقع: {new_name}")
                     existing_companies.append(new_doc)
                     next_id += 1
+                    logger.info(f"✨ تم إضافة: {new_name}")
 
-            except Exception as e:
-                print(f"❌ خطأ غير متوقع: {e}")
-                continue
-                
-        browser.close()
-        print("\n✅ تم التحديث بنجاح!")
+        await browser.close()
+        logger.info("✅ اكتملت العملية بنجاح!")
 
 if __name__ == "__main__":
-    scrape_and_upload()
+    asyncio.run(main_scraper())
