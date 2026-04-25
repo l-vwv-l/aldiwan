@@ -8,8 +8,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 from openai import AsyncOpenAI
 from playwright.async_api import async_playwright
-import firebase_admin
-from firebase_admin import credentials, firestore
+from supabase import create_client, Client
 from thefuzz import fuzz
 
 # إعداد نظام المراقبة (Logging)
@@ -31,20 +30,18 @@ client = AsyncOpenAI(
   api_key=API_KEY,
 )
 
-firebase_secret = os.environ.get("FIREBASE_CREDENTIALS")
-if not firebase_secret:
-    logger.error("لم يتم العثور على مفتاح فايربيس!")
+# 🚀 إعداد الاتصال بـ Supabase
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+if not SUPABASE_URL or not SUPABASE_KEY:
+    logger.error("لم يتم العثور على مفاتيح Supabase!")
     exit()
 
 try:
-    cred_dict = json.loads(firebase_secret)
-    cred = credentials.Certificate(cred_dict)
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app(cred)
-    db = firestore.client()
-    logger.info("تم الاتصال بـ Firebase بنجاح! 🔥")
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    logger.info("تم الاتصال بـ Supabase بنجاح! 🚀")
 except Exception as e:
-    logger.error(f"خطأ في الاتصال بـ Firebase: {e}")
+    logger.error(f"خطأ في الاتصال بـ Supabase: {e}")
     exit()
 
 # تنظيف الأسماء والمقارنة (Fuzzy Matching)
@@ -140,14 +137,17 @@ async def main_scraper():
         {"url": "https://t.me/s/ewdifh", "type": "telegram"}
     ]
     
+    # 📥 جلب الشركات الموجودة مسبقاً من Supabase
     existing_companies = []
     max_id = 0
-    companies_ref = db.collection('companies').stream()
-    for doc in companies_ref:
-        comp = doc.to_dict()
-        existing_companies.append(comp)
-        max_id = max(max_id, int(comp.get('id', 0)))
-            
+    try:
+        response = supabase.table('companies').select('*').execute()
+        existing_companies = response.data
+        for comp in existing_companies:
+            max_id = max(max_id, int(comp.get('id', 0)))
+    except Exception as e:
+        logger.error(f"خطأ في جلب البيانات من Supabase: {e}")
+
     next_id = max_id + 1
     content_list = []
 
@@ -234,8 +234,12 @@ async def main_scraper():
                     if comp.get("link") and matched_ex.get("e") == "#": updates["e"] = comp["link"]
                     
                     if updates:
-                        db.collection('companies').document(str(matched_ex['id'])).update(updates)
-                        logger.info(f"🔄 تم تحديث: {new_name}")
+                        try:
+                            # 🔄 التحديث في Supabase
+                            supabase.table('companies').update(updates).eq('id', matched_ex['id']).execute()
+                            logger.info(f"🔄 تم تحديث: {new_name}")
+                        except Exception as e:
+                            logger.error(f"خطأ أثناء تحديث {new_name}: {e}")
                 else:
                     new_doc = {
                         "id": next_id,
@@ -253,10 +257,14 @@ async def main_scraper():
                         "timestamp": int(time.time()),
                         "i": comp.get("icon", "fa-building")
                     }
-                    db.collection('companies').document(str(next_id)).set(new_doc)
-                    existing_companies.append(new_doc)
-                    next_id += 1
-                    logger.info(f"✨ تم إضافة: {new_name}")
+                    try:
+                        # ✨ الإضافة في Supabase
+                        supabase.table('companies').insert(new_doc).execute()
+                        existing_companies.append(new_doc)
+                        next_id += 1
+                        logger.info(f"✨ تم إضافة: {new_name}")
+                    except Exception as e:
+                        logger.error(f"خطأ أثناء إضافة {new_name}: {e}")
 
         await browser.close()
         logger.info("✅ اكتملت العملية بنجاح!")
