@@ -1,4 +1,4 @@
-openai
+google-generativeai
 playwright
 supabase
 beautifulsoup4
