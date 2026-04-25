@@ -8,7 +8,6 @@ import aiohttp
 from bs4 import BeautifulSoup
 from openai import AsyncOpenAI
 from playwright.async_api import async_playwright
-from playwright_stealth import stealth_async
 import firebase_admin
 from firebase_admin import credentials, firestore
 from thefuzz import fuzz
@@ -120,7 +119,7 @@ async def extract_batch_data_with_ai(batch_items):
 # سحب التليجرام
 async def fetch_telegram(url):
     async with aiohttp.ClientSession() as session:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
         try:
             async with session.get(url, headers=headers, timeout=15) as res:
                 text = await res.text()
@@ -158,14 +157,15 @@ async def main_scraper():
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
+        # إعداد المتصفح ليكون أقرب للمتصفح الحقيقي
         context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080}
         )
         
         for source in [s for s in sources if s['type'] == 'site']:
             logger.info(f"فحص الموقع: {source['url']}")
             page = await context.new_page()
-            await stealth_async(page) # تفعيل التخفي للمواقع
             try:
                 await page.goto(source['url'], timeout=60000)
                 await page.wait_for_timeout(3000)
@@ -192,7 +192,6 @@ async def main_scraper():
             
             if item.get("is_link"):
                 page = await context.new_page()
-                await stealth_async(page)
                 try:
                     await page.goto(item["url"], timeout=60000)
                     raw_content = await page.inner_text('body')
