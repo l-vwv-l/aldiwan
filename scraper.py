@@ -6,9 +6,9 @@ import time
 import logging
 import aiohttp
 from bs4 import BeautifulSoup
-from openai import AsyncOpenAI
 from playwright.async_api import async_playwright
 from supabase import create_client, Client
+import google.generativeai as genai
 from thefuzz import fuzz
 
 # إعداد نظام المراقبة (Logging)
@@ -19,16 +19,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# إعداد مفاتيح الـ API
-API_KEY = os.environ.get("OPENROUTER_API_KEY")
-if not API_KEY:
-    logger.error("لم يتم العثور على مفتاح OpenRouter!")
+# 🚀 إعداد مفاتيح Gemini المباشرة
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    logger.error("لم يتم العثور على مفتاح Gemini!")
     exit()
 
-client = AsyncOpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=API_KEY,
-)
+genai.configure(api_key=GEMINI_API_KEY)
 
 # 🚀 إعداد الاتصال بـ Supabase
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -64,7 +61,7 @@ def is_duplicate(new_name, existing_companies):
             return ex
     return None
 
-# 🌟 دالة الاستخراج بنظام التجميع (Batching)
+# 🌟 دالة الاستخراج بنظام التجميع عبر Gemini المباشر
 async def extract_batch_data_with_ai(batch_items):
     combined_text = ""
     for item in batch_items:
@@ -93,26 +90,15 @@ async def extract_batch_data_with_ai(batch_items):
     إذا لم تجد شركات صالحة، أرجع مصفوفة فارغة [].
     """
     
-    models = [
-        "google/gemini-2.5-pro:free",
-        "google/gemini-2.5-flash:free",
-        "meta-llama/llama-3.1-8b-instruct:free",
-        "google/gemma-2-9b-it:free"
-    ]
-    
-    for model in models:
-        try:
-            response = await client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"} 
-            )
-            raw_text = response.choices[0].message.content.strip()
-            return json.loads(raw_text).get("companies", [])
-        except Exception as e:
-            logger.warning(f"فشل الموديل {model.split('/')[1]}, جاري تجربة آخر... الخطأ: {str(e)[:50]}")
-            await asyncio.sleep(2)
-    return []
+    try:
+        # استخدام موديل Gemini Flash السريع مع إجبار الرد بصيغة JSON
+        model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
+        response = await model.generate_content_async(prompt)
+        raw_text = response.text
+        return json.loads(raw_text).get("companies", [])
+    except Exception as e:
+        logger.error(f"خطأ في تحليل Gemini: {e}")
+        return []
 
 # سحب التليجرام
 async def fetch_telegram(url):
@@ -158,7 +144,6 @@ async def main_scraper():
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-        # إعداد المتصفح ليكون أقرب للمتصفح الحقيقي
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080}
@@ -213,7 +198,7 @@ async def main_scraper():
                 raw_items.append({"id": item_counter, "url": apply_link, "text": raw_content})
                 item_counter += 1
 
-        logger.info("جاري تحليل النصوص بالذكاء الاصطناعي (نظام الدفعات)... 🤖")
+        logger.info("جاري تحليل النصوص بالذكاء الاصطناعي المباشر (Gemini)... 🤖")
         
         batch_size = 5
         for i in range(0, len(raw_items), batch_size):
@@ -236,7 +221,6 @@ async def main_scraper():
                     
                     if updates:
                         try:
-                            # 🔄 التحديث في Supabase
                             supabase.table('companies').update(updates).eq('id', matched_ex['id']).execute()
                             logger.info(f"🔄 تم تحديث: {new_name}")
                         except Exception as e:
@@ -259,7 +243,6 @@ async def main_scraper():
                         "i": comp.get("icon", "fa-building")
                     }
                     try:
-                        # ✨ الإضافة في Supabase
                         supabase.table('companies').insert(new_doc).execute()
                         existing_companies.append(new_doc)
                         next_id += 1
