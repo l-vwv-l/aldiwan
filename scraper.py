@@ -8,7 +8,8 @@ import aiohttp
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 from supabase import create_client, Client
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from thefuzz import fuzz
 
 # إعداد نظام المراقبة (Logging)
@@ -25,7 +26,7 @@ if not GEMINI_API_KEY:
     logger.error("لم يتم العثور على مفتاح Gemini!")
     exit()
 
-genai.configure(api_key=GEMINI_API_KEY)
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # 🚀 إعداد الاتصال بـ Supabase
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -56,12 +57,11 @@ def is_duplicate(new_name, existing_companies):
     
     for ex in existing_companies:
         ex_clean = clean_company_name(ex.get('t',''))
-        # تشابه بنسبة 85% يعتبر نفس الشركة
         if ex_clean and fuzz.partial_ratio(new_clean, ex_clean) > 85:
             return ex
     return None
 
-# 🌟 دالة الاستخراج بنظام التجميع عبر Gemini المباشر
+# 🌟 دالة الاستخراج بنظام التجميع عبر Gemini (المكتبة الجديدة)
 async def extract_batch_data_with_ai(batch_items):
     combined_text = ""
     for item in batch_items:
@@ -91,9 +91,13 @@ async def extract_batch_data_with_ai(batch_items):
     """
     
     try:
-        # استخدام موديل Gemini Flash السريع مع إجبار الرد بصيغة JSON
-        model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
-        response = await model.generate_content_async(prompt)
+        response = await client.aio.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+            )
+        )
         raw_text = response.text
         return json.loads(raw_text).get("companies", [])
     except Exception as e:
@@ -124,7 +128,6 @@ async def main_scraper():
         {"url": "https://t.me/s/ewdifh", "type": "telegram"}
     ]
     
-    # 📥 جلب الشركات الموجودة مسبقاً من Supabase
     existing_companies = []
     max_id = 0
     try:
