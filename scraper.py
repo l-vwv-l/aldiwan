@@ -94,9 +94,10 @@ async def extract_batch_data_with_ai(batch_items):
     """
     
     models = [
+        "google/gemini-2.5-pro:free",
+        "google/gemini-2.5-flash:free",
         "meta-llama/llama-3.1-8b-instruct:free",
-        "google/gemma-2-9b-it:free",
-        "microsoft/phi-3-mini-128k-instruct:free"
+        "google/gemma-2-9b-it:free"
     ]
     
     for model in models:
