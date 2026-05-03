@@ -62,7 +62,6 @@
         .company-name { color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.05rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .company-tag { color: var(--text-gray); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 10px; }
 
-        /* تنسيق النجوم داخل البطاقة الأصلية */
         .company-rating { font-size: 0.85rem; color: #facc15; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(250, 204, 21, 0.1); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(250, 204, 21, 0.2); }
         .company-rating.no-rating { color: #a1a1aa; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); font-weight: normal; }
 
@@ -139,7 +138,6 @@
 
         #aiLog { font-size: 0.8rem; color: #10b981; margin-top: 10px; text-align: center; display: none; }
 
-        /* نافذة النجوم للتقييم */
         .stars-container { display: flex; justify-content: center; gap: 10px; direction: ltr; margin: 15px 0; }
         .stars-container i { font-size: 2.2rem; color: rgba(255,255,255,0.2); cursor: pointer; transition: 0.2s; }
         .stars-container i.active { color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); transform: scale(1.1); }
@@ -149,7 +147,6 @@
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 📱 ريسبونسف الموبايل: بطاقتين بالصف زي تصميمك القديم بالضبط */
         @media (max-width: 600px) {
             .header-section { padding: 20px; padding-top: 60px; }
             .header-section h1 { font-size: 1.4rem; }
@@ -238,7 +235,7 @@
         </div>
     </div>
 
-    <!-- نافذة الإدارة والإضافة اليدوية -->
+    <!-- نافذة الإدارة -->
     <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
         <div class="admin-panel" onclick="event.stopPropagation()">
             <button class="close-cross" onclick="closeAdminModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
@@ -327,8 +324,8 @@
                     <input type="text" id="a_majors" placeholder="مثال: هندسة، إدارة، تقنية معلومات...">
                     <label>المزايا (إن وجدت):</label>
                     <input type="text" id="a_benefits" placeholder="مثال: مكافأة مالية، تأمين طبي...">
-                    <label>نبذة عن البرنامج (تظهر خلف البطاقة):</label>
-                    <textarea id="a_about" rows="4" placeholder="اكتب تفاصيل البرنامج هنا..."></textarea>
+                    <label>نبذة عن البرنامج:</label>
+                    <textarea id="a_about" rows="4"></textarea>
                 </div>
 
                 <div id="tab-apply" class="admin-tab-content">
@@ -459,7 +456,7 @@
         let isAdmin = false;
         let currentModalItem = null;
         let currentPage = 1;
-        const itemsPerPage = 35; // 🌟 35 فرصة بالصفحة
+        const itemsPerPage = 35; 
         let currentFilter = 'all';
         let selectedRating = 0;
 
@@ -489,7 +486,7 @@
                     }
                     if (data.c === 'live') data.c = 'company';
 
-                    // حساب التقييم المعتمد فقط
+                    // حساب التقييم
                     let approvedReviews = data.reviews ? data.reviews.filter(r => r.status === 'approved') : [];
                     if (approvedReviews.length > 0) {
                         let sum = approvedReviews.reduce((acc, curr) => acc + curr.rating, 0);
@@ -693,9 +690,19 @@
 
         // تقييم الطلاب
         window.openReviewModal = function() {
-            if (!currentModalItem) return; document.getElementById('revCompanyName').innerText = currentModalItem.t;
+            if (!currentModalItem) return;
+            
+            // --- منع التقييم المتكرر بناءً على الذاكرة المحلية ---
+            let ratedCompanies = JSON.parse(localStorage.getItem('ratedCompanies') || '[]');
+            if (ratedCompanies.includes(currentModalItem.id)) {
+                alert("لقد قمت بتقييم هذه الجهة مسبقاً! شكراً لمشاركتك. 🤍");
+                return;
+            }
+            
+            document.getElementById('revCompanyName').innerText = currentModalItem.t;
             setRating(0); document.getElementById('revComment').value = ''; document.getElementById('infoModal').style.display = 'none'; document.getElementById('reviewModal').style.display = 'flex';
         };
+        
         window.closeReviewModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('reviewModal')) { document.getElementById('reviewModal').style.display = 'none'; if(currentModalItem) document.getElementById('infoModal').style.display = 'flex'; } };
         window.setRating = function(val) { selectedRating = val; let starsIcons = document.getElementById('starSelection').children; for(let i = 0; i < 5; i++) { if (i < val) { starsIcons[i].classList.add('active'); } else { starsIcons[i].classList.remove('active'); } } };
         
@@ -704,6 +711,12 @@
             let comment = document.getElementById('revComment').value.trim();
             try { 
                 await supabase.from('reviews').insert([{ company_id: currentModalItem.id, rating: selectedRating, comment: comment }]); 
+                
+                // --- حفظ أن المستخدم قام بالتقييم في الذاكرة المحلية ---
+                let ratedCompanies = JSON.parse(localStorage.getItem('ratedCompanies') || '[]');
+                ratedCompanies.push(currentModalItem.id);
+                localStorage.setItem('ratedCompanies', JSON.stringify(ratedCompanies));
+                
                 alert("تم إرسال تقييمك بنجاح! سيظهر في الموقع مباشرة 🤍"); 
                 
                 // تحديث التقييم في الواجهة محلياً بدون ما ننتظر ريفرش الصفحة
