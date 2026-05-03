@@ -46,30 +46,46 @@
         .filter-btn.email-btn { border-color: #10b981; color: #10b981; }
         .filter-btn.email-btn:hover, .filter-btn.email-btn.active { background: #10b981; color: white; }
 
-        .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        /* =========================================
+           تعديل البطاقات لشكل البوسترات السينمائية
+        ========================================= */
+        .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
 
-        .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 40px 15px 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
+        .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
-        .opp-number { position: absolute; top: 12px; right: 15px; background: rgba(255,255,255,0.08); color: #a1a1aa; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
-        .status-badge { position: absolute; top: 12px; left: 15px; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; }
-        
-        .status-open { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .status-closing { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .status-closed { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .poster-container { position: relative; width: 100%; aspect-ratio: 2 / 3; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.5); }
+        .company-poster { width: 100%; height: 100%; object-fit: cover; transition: 0.4s; }
+        .company-card:hover .company-poster { opacity: 0.7; transform: scale(1.05); }
 
-        .company-icon { font-size: 2.2rem; color: var(--accent); margin-bottom: 12px; }
-        .company-name { color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.05rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .company-tag { color: var(--text-gray); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        /* الأرقام وحالة الفرصة فوق البوستر (تصميمك الأصلي) */
+        .opp-number { position: absolute; top: 8px; right: 8px; background: rgba(20,20,20,0.8); color: #a1a1aa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); z-index: 5; backdrop-filter: blur(5px); }
+        .status-badge { position: absolute; top: 8px; left: 8px; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; z-index: 5; backdrop-filter: blur(5px); }
+        
+        .status-open { background: rgba(16, 185, 129, 0.85); color: #fff; border: 1px solid rgba(16, 185, 129, 0.5); }
+        .status-closing { background: rgba(245, 158, 11, 0.85); color: #fff; border: 1px solid rgba(245, 158, 11, 0.5); }
+        .status-closed { background: rgba(239, 68, 68, 0.85); color: #fff; border: 1px solid rgba(239, 68, 68, 0.5); }
+
+        /* الأيقونة فوق البوستر */
+        .company-icon-overlay { position: absolute; bottom: 8px; right: 8px; width: 35px; height: 35px; background: rgba(20,20,20,0.85); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+
+        .company-name { color: white; font-weight: 600; margin: 10px 0 2px 0; font-size: 0.95rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .company-tag { color: var(--text-gray); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 6px; }
+
+        /* النجوم للتقييم */
+        .company-rating { font-size: 0.8rem; color: #facc15; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(250, 204, 21, 0.1); padding: 4px 0; border-radius: 8px; border: 1px solid rgba(250, 204, 21, 0.2); width: 100%; }
+        .company-rating.no-rating { color: #a1a1aa; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); font-weight: normal; }
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin: 30px 0; flex-wrap: wrap; }
         .page-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: white; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; transition: 0.3s; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
         .page-btn:hover { background: rgba(255, 255, 255, 0.15); }
         .page-btn.active { background: var(--accent); border-color: var(--accent); }
 
-        .admin-edit-btn { position: absolute; top: -15px; left: -15px; width: 35px; height: 35px; background: #eab308; color: #000; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; border: 3px solid #1a1a1a; z-index: 5; box-shadow: 0 5px 15px rgba(234, 179, 8, 0.4); transition: 0.3s; }
+        .admin-edit-btn { position: absolute; top: -10px; left: -10px; width: 35px; height: 35px; background: #eab308; color: #000; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; border: 3px solid #1a1a1a; z-index: 10; box-shadow: 0 5px 15px rgba(234, 179, 8, 0.4); transition: 0.3s; }
         .admin-edit-btn:hover { transform: scale(1.1); background: #facc15; }
         body.admin-mode .admin-edit-btn { display: flex; }
+
+        /* ========================================= */
 
         .footer-info { margin-top: 10px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
@@ -120,6 +136,8 @@
         .flip-btn:hover { background: rgba(255,255,255,0.2); }
         .share-btn { color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
         .share-btn:hover { background: rgba(59, 130, 246, 0.2); }
+        .rate-btn { color: #facc15; border-color: rgba(250, 204, 21, 0.3); }
+        .rate-btn:hover { background: rgba(250, 204, 21, 0.2); }
         .apply-btn { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); cursor: pointer; flex: 1; min-width: 100px; text-align: center;}
         .apply-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
         .apply-btn:disabled { cursor: not-allowed; }
@@ -133,23 +151,34 @@
 
         #aiLog { font-size: 0.8rem; color: #10b981; margin-top: 10px; text-align: center; display: none; }
 
+        /* نافذة النجوم للتقييم */
+        .stars-container { display: flex; justify-content: center; gap: 10px; direction: ltr; margin: 15px 0; }
+        .stars-container i { font-size: 2.2rem; color: rgba(255,255,255,0.2); cursor: pointer; transition: 0.2s; }
+        .stars-container i.active { color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); transform: scale(1.1); }
+
         @-webkit-keyframes fadeInUp { from { opacity: 0; -webkit-transform: translateY(15px); } to { opacity: 1; -webkit-transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* 📱 ريسبونسف الموبايل: 3 بطاقات بالصف */
         @media (max-width: 600px) {
             .header-section { padding: 20px; padding-top: 60px; }
             .header-section h1 { font-size: 1.4rem; }
             .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 0.9rem; }
-            .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .company-card { padding: 35px 8px 12px 8px; border-radius: 14px; }
-            .opp-number { font-size: 0.55rem; padding: 2px 6px; top: 6px; right: 6px; border-radius: 4px; }
-            .status-badge { font-size: 0.55rem; padding: 2px 6px; top: 6px; left: 6px; border-radius: 4px; }
-            .company-icon { font-size: 1.5rem; margin-bottom: 8px; }
-            .company-name { font-size: 0.85rem; margin-bottom: 3px; }
-            .company-tag { font-size: 0.65rem; }
-            .main-container { width: 94%; margin: 20px 0; }
+            
+            .companies-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .company-card { padding: 6px; border-radius: 10px; }
+            
+            .opp-number { font-size: 0.55rem; padding: 2px 4px; top: 4px; right: 4px; border-radius: 4px; }
+            .status-badge { font-size: 0.55rem; padding: 2px 4px; top: 4px; left: 4px; border-radius: 4px; }
+            .company-icon-overlay { width: 22px; height: 22px; font-size: 0.7rem; bottom: 4px; right: 4px; }
+            
+            .company-name { font-size: 0.75rem; margin: 6px 0 2px 0; }
+            .company-tag { font-size: 0.6rem; }
+            .company-rating { font-size: 0.65rem; padding: 2px 0; border-radius: 6px; }
+
+            .main-container { width: 96%; margin: 20px 0; }
             .filters-container { gap: 6px; }
             .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
             .footer-info { flex-direction: column; text-align: center; justify-content: center; }
@@ -196,11 +225,13 @@
         </div>
     </div>
 
+    <!-- أزرار الإدارة -->
     <div class="admin-fab-container">
         <button class="admin-fab fab-ai" onclick="openSmartImportModal()" title="الاستيراد الذكي بالذكاء الاصطناعي 🪄"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
         <button class="admin-fab fab-add" onclick="openAdminModal()" title="إضافة فرصة يدوية"><i class="fa-solid fa-plus"></i></button>
     </div>
 
+    <!-- نافذة الذكاء الاصطناعي -->
     <div class="modal-overlay" id="smartImportModal" onclick="closeSmartImportModal(event)">
         <div class="admin-panel" onclick="event.stopPropagation()">
             <button class="close-cross" onclick="closeSmartImportModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
@@ -210,13 +241,10 @@
             <div class="admin-form">
                 <label>مفتاح API للذكاء الاصطناعي (Groq):</label>
                 <input type="password" id="smartApiKey" placeholder="gsk_..." dir="ltr">
-                
                 <label>رفع ملف (PDF, TXT):</label>
                 <input type="file" id="smartFile" accept="application/pdf, text/plain">
-                
                 <label>أو لصق النص مباشرة:</label>
                 <textarea id="smartText" rows="5" placeholder="انسخ محتوى الإعلان أو الجدول هنا..."></textarea>
-                
                 <div id="aiLog"><i class="fa-solid fa-spinner fa-spin"></i> <span id="aiLogText">جاري المعالجة...</span></div>
             </div>
 
@@ -226,6 +254,7 @@
         </div>
     </div>
 
+    <!-- نافذة الإدارة والإضافة اليدوية -->
     <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
         <div class="admin-panel" onclick="event.stopPropagation()">
             <button class="close-cross" onclick="closeAdminModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
@@ -335,6 +364,32 @@
         </div>
     </div>
 
+    <!-- نافذة تقييم الطلاب ⭐️ -->
+    <div class="modal-overlay" id="reviewModal" onclick="closeReviewModal(event)">
+        <div class="admin-panel" onclick="event.stopPropagation()">
+            <button class="close-cross" onclick="closeReviewModal(null, true)"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-top-icon" style="background: #facc15;"><i class="fa-solid fa-star"></i></div>
+            <h3 class="modal-title">تقييم <span id="revCompanyName" style="color:#facc15;">الجهة</span></h3>
+            
+            <div class="admin-form" style="text-align: center;">
+                <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 5px;">كيف كانت تجربتك في التدريب معهم؟</p>
+                <div class="stars-container" id="starSelection">
+                    <i class="fa-solid fa-star" data-val="1" onclick="setRating(1)"></i>
+                    <i class="fa-solid fa-star" data-val="2" onclick="setRating(2)"></i>
+                    <i class="fa-solid fa-star" data-val="3" onclick="setRating(3)"></i>
+                    <i class="fa-solid fa-star" data-val="4" onclick="setRating(4)"></i>
+                    <i class="fa-solid fa-star" data-val="5" onclick="setRating(5)"></i>
+                </div>
+                <textarea id="revComment" rows="3" placeholder="شارك زملاءك تجربتك (اختياري)..." style="margin-top: 15px;"></textarea>
+            </div>
+
+            <div class="modal-actions" style="justify-content: center; margin-top: 20px;">
+                <button class="apply-btn" style="background: #facc15; color: #000; width: 100%;" onclick="submitReview()">إرسال التقييم 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة البطاقة ذات الوجهين -->
     <div class="modal-overlay" id="infoModal" onclick="closeModal(event)">
         <div class="flip-container" id="flipContainer" onclick="event.stopPropagation()">
             <div class="flipper">
@@ -352,6 +407,7 @@
                     </div>
                     <div class="modal-actions">
                         <button class="flip-btn" onclick="toggleFlip()">النبذة <i class="fa-solid fa-rotate"></i></button>
+                        <button class="flip-btn rate-btn" onclick="openReviewModal()"><i class="fa-solid fa-star"></i> التقييم</button>
                         <button class="flip-btn share-btn" onclick="shareOpportunity()"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                         <a href="#" id="mBtn" target="_blank" class="apply-btn" style="display: none;">التقديم</a>
                     </div>
@@ -371,6 +427,7 @@
         </div>
     </div>
 
+    <!-- رسوميات النجوم -->
     <script>
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
@@ -402,32 +459,25 @@
         drawStars();
     </script>
 
+    <!-- مكتبة Supabase -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAn5gpGJU6yzeRcn3_L93M1LSDlxzD0Yos",
-            authDomain: "aldiwan-coop.firebaseapp.com",
-            projectId: "aldiwan-coop",
-            storageBucket: "aldiwan-coop.firebasestorage.app",
-            messagingSenderId: "841757171667",
-            appId: "1:841757171667:web:628187d7961101bfee5926"
-        };
+        const SUPABASE_URL = 'https://imvwcrrhaisnjjwfjify.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltdndjcnJoYWlzbmpqd2ZqaWZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwOTg5MTgsImV4cCI6MjA5MjY3NDkxOH0.4p1nkL34qiSF1oqixW4FxFc8SA_TuhUGaYVAEzJ3xsU';
 
-        const app = initializeApp(firebaseConfig);
-        const firestoreDB = getFirestore(app);
-        const auth = getAuth(app); 
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabaseAdmin = null;
 
         let db = []; 
         let allData = [];
-        let nextId = 1; // 🌟 بدأنا العد من 1
+        let nextId = 1; 
         let isAdmin = false;
         let currentModalItem = null;
         let currentPage = 1;
-        const itemsPerPage = 30;
+        const itemsPerPage = 35; // 🌟 35 فرصة بالصفحة
         let currentFilter = 'all';
+        let selectedRating = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             let savedKey = localStorage.getItem('groqSmartKey');
@@ -436,22 +486,35 @@
 
         async function loadDatabase() {
             try {
-                const querySnapshot = await getDocs(collection(firestoreDB, "companies"));
-                db = []; 
-                const now = Math.floor(Date.now() / 1000); // الوقت الحالي بالثواني
+                const { data: companies, error } = await supabase
+                    .from('companies')
+                    .select('*, reviews(rating, status)')
+                    .order('id', { ascending: false });
 
-                querySnapshot.forEach((docSnap) => {
-                    let data = docSnap.data();
-                    
-                    // 🌟 نظام الـ 3 أيام للون البنفسجي!
+                if (error) throw error;
+
+                db = []; 
+                const now = Math.floor(Date.now() / 1000);
+
+                companies.forEach((comp) => {
+                    let data = { ...comp };
                     if (data.timestamp) {
-                        // إذا مر أقل من 3 أيام (259200 ثانية) تصير بنفسجية
                         data.isLive = (now - data.timestamp) < 259200;
                     } else {
-                        data.isLive = false; // أي فرصة قديمة بدون وقت ترجع زرقاء طبيعية
+                        data.isLive = false;
                     }
-                    // تنظيف التصنيف القديم لو كان معلق
                     if (data.c === 'live') data.c = 'company';
+
+                    // حساب متوسط التقييم للشركة
+                    let approvedReviews = data.reviews ? data.reviews.filter(r => r.status === 'approved') : [];
+                    if (approvedReviews.length > 0) {
+                        let sum = approvedReviews.reduce((acc, curr) => acc + curr.rating, 0);
+                        data.avgRating = (sum / approvedReviews.length).toFixed(1);
+                        data.reviewCount = approvedReviews.length;
+                    } else {
+                        data.avgRating = 0;
+                        data.reviewCount = 0;
+                    }
 
                     db.push(data);
                 });
@@ -472,25 +535,26 @@
                     if (itemToOpen) setTimeout(() => openModal(itemToOpen), 500);
                 }
             } catch (error) { 
-                document.getElementById('loadingIndicator').innerText = "حدث خطأ في الاتصال بقاعدة البيانات. الرجاء تحديث الصفحة.";
+                document.getElementById('loadingIndicator').innerText = "حدث خطأ في الاتصال بالسحابة. الرجاء تحديث الصفحة.";
             }
         }
 
         window.unlockAdmin = async function() {
             if(isAdmin) return;
-            let pwd = prompt("أدخل الرقم السري للإدارة:");
-            if (pwd) {
-                try {
-                    await signInWithEmailAndPassword(auth, "university.diwan@gmail.com", pwd);
-                    isAdmin = true; document.body.classList.add('admin-mode'); render(currentFilter, currentPage);
-                } catch(e) { alert("الرقم السري غير صحيح!"); }
+            let pwd = prompt("أدخل مفتاح الإدارة السري (Service Role Key):");
+            if (pwd && pwd.length > 50) {
+                supabaseAdmin = createClient(SUPABASE_URL, pwd);
+                isAdmin = true; 
+                document.body.classList.add('admin-mode'); 
+                alert("تم تسجيل الدخول كمدير بنجاح! 🛡️");
+                render(currentFilter, currentPage);
+            } else if(pwd) {
+                alert("المفتاح غير صحيح!");
             }
         };
 
-        window.openSmartImportModal = function() {
-            document.getElementById('smartImportModal').style.display = 'flex';
-        };
-
+        // نوافذ الذكاء الاصطناعي والإدارة
+        window.openSmartImportModal = function() { document.getElementById('smartImportModal').style.display = 'flex'; };
         window.closeSmartImportModal = function(event, isButton) {
             if (isButton || !event || event.target.classList.contains('admin-panel') === false) {
                 if(event && event.target.closest('.admin-panel')) return;
@@ -520,6 +584,7 @@
         }
 
         window.processSmartImport = async function() {
+            if (!isAdmin || !supabaseAdmin) return alert("يجب تسجيل الدخول كمدير أولاً لإضافة البيانات!");
             const apiKey = document.getElementById('smartApiKey').value.trim();
             const fileInput = document.getElementById('smartFile');
             const textInput = document.getElementById('smartText').value.trim();
@@ -530,109 +595,50 @@
             if(!apiKey) return alert("أدخل مفتاح Groq API أولاً!");
             if(!fileInput.files[0] && !textInput) return alert("الرجاء إرفاق ملف أو لصق نص!");
 
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            btn.innerText = 'جاري المعالجة... ⏳';
-
-            localStorage.setItem('groqSmartKey', apiKey);
-            logDiv.style.display = 'block';
-            
+            btn.disabled = true; btn.style.opacity = '0.7'; btn.innerText = 'جاري المعالجة... ⏳';
+            localStorage.setItem('groqSmartKey', apiKey); logDiv.style.display = 'block';
             let sourceText = "";
-
             try {
                 if (fileInput.files[0]) {
                     const file = fileInput.files[0];
                     if (file.type === "application/pdf") {
                         logText.innerHTML = "جاري قراءة ملف הـ PDF... ⏳";
                         sourceText = await extractTextFromPDF(file);
-                    } else {
-                        sourceText = await file.text();
-                    }
-                } else {
-                    sourceText = textInput;
-                }
+                    } else { sourceText = await file.text(); }
+                } else { sourceText = textInput; }
 
-                const chunkSize = 12000; 
-                let chunks = [];
-                for (let i = 0; i < sourceText.length; i += chunkSize) {
-                    chunks.push(sourceText.substring(i, i + chunkSize));
-                }
+                const chunkSize = 12000; let chunks = [];
+                for (let i = 0; i < sourceText.length; i += chunkSize) { chunks.push(sourceText.substring(i, i + chunkSize)); }
 
                 let allExtractedCompanies = []; 
-
                 for (let i = 0; i < chunks.length; i++) {
                     logText.innerHTML = `الذكاء الاصطناعي يحلل الدفعة (${i + 1} من ${chunks.length})... 🤖⏳`;
-
-                    const prompt = `أنت خبير موارد بشرية. اقرأ هذا الجزء من المستند:
-                    ---
-                    ${chunks[i]}
-                    ---
-                    المطلوب:
-                    1. استخرج **جميع** جهات التدريب التعاوني المذكورة في هذا الجزء فقط.
-                    2. اكتب لكل جهة نبذة تعريفية ممتازة من معلوماتك العامة.
-                    أرجع كائن JSON يحتوي على مفتاح "companies" وقيمته مصفوفة (Array).
-                    (ملاحظة: إذا لم تجد أي شركات في هذا الجزء، أرجع مصفوفة فارغة [])
-                    صيغة الكائن الواحد:
-                    {
-                        "t": "اسم الجهة",
-                        "c": "التصنيف (company أو agency أو bank أو ministry)",
-                        "l": "المقر/المدينة",
-                        "m": "التخصصات المستهدفة",
-                        "b": "المزايا",
-                        "a": "النبذة التعريفية",
-                        "endDate": "YYYY-MM-DD أو null",
-                        "email": "الايميل الرسمي",
-                        "link": "رابط التقديم",
-                        "i": "اسم أيقونة fontawesome"
-                    }`;
-
+                    const prompt = `أنت خبير موارد بشرية. اقرأ هذا الجزء من المستند:\n---\n${chunks[i]}\n---\nالمطلوب:\n1. استخرج **جميع** جهات التدريب التعاوني المذكورة في هذا الجزء فقط.\n2. اكتب لكل جهة نبذة تعريفية ممتازة من معلوماتك العامة.\nأرجع كائن JSON يحتوي على مفتاح "companies" وقيمته مصفوفة (Array).\nصيغة الكائن الواحد:\n{ "t": "اسم الجهة", "c": "التصنيف (company أو agency أو bank أو ministry)", "l": "المقر/المدينة", "m": "التخصصات المستهدفة", "b": "المزايا", "a": "النبذة التعريفية", "endDate": "YYYY-MM-DD أو null", "email": "الايميل الرسمي", "link": "رابط التقديم", "i": "اسم أيقونة fontawesome" }`;
                     for (let attempt = 0; attempt < 3; attempt++) {
                         try {
                             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                                method: "POST",
-                                headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    model: "llama-3.3-70b-versatile",
-                                    messages: [{role: "user", content: prompt}],
-                                    response_format: { type: "json_object" }
-                                })
+                                method: "POST", headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+                                body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{role: "user", content: prompt}], response_format: { type: "json_object" } })
                             });
-
                             if(!response.ok) throw new Error("خطأ في الاتصال بـ Groq");
-
-                            const resData = await response.json();
-                            const aiResult = JSON.parse(resData.choices[0].message.content);
-                            
-                            if (aiResult.companies && aiResult.companies.length > 0) {
-                                allExtractedCompanies.push(...aiResult.companies);
-                            }
+                            const resData = await response.json(); const aiResult = JSON.parse(resData.choices[0].message.content);
+                            if (aiResult.companies && aiResult.companies.length > 0) allExtractedCompanies.push(...aiResult.companies);
                             break; 
-                        } catch (err) {
-                            if (attempt === 2) console.error(`فشل في تحليل الدفعة ${i+1}`);
-                            await new Promise(r => setTimeout(r, 2000)); 
-                        }
+                        } catch (err) { if (attempt === 2) console.error(`فشل في تحليل الدفعة ${i+1}`); await new Promise(r => setTimeout(r, 2000)); }
                     }
                 }
 
                 if(allExtractedCompanies.length === 0) {
                     logText.innerHTML = "لم يتم العثور على أي فرص في جميع أجزاء الملف أو النص.";
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.innerText = 'إعادة المحاولة 🔄';
-                    return;
+                    btn.disabled = false; btn.style.opacity = '1'; btn.innerText = 'إعادة المحاولة 🔄'; return;
                 }
 
                 logText.innerHTML = `تم تجميع إجمالي ${allExtractedCompanies.length} فرصة! جاري المعالجة وبناء البطاقات... ⚙️`;
-                
                 let logDetails = [];
 
                 for(let comp of allExtractedCompanies) {
                     let cleanNew = (comp.t||"").replace(/[^\w\sأ-ي]/gi, '').replace(/أ/g,'ا').replace(/إ/g,'ا').replace(/ة/g,'ه').replace('شركة','').replace('مؤسسة','').replace('السعودية','').trim();
-                    
-                    let existingDoc = db.find(x => {
-                        let cleanEx = (x.t||"").replace(/[^\w\sأ-ي]/gi, '').replace(/أ/g,'ا').replace(/إ/g,'ا').replace(/ة/g,'ه').replace('شركة','').replace('مؤسسة','').replace('السعودية','').trim();
-                        return cleanEx && cleanNew && (cleanNew.includes(cleanEx) || cleanEx.includes(cleanNew));
-                    });
+                    let existingDoc = db.find(x => { let cleanEx = (x.t||"").replace(/[^\w\sأ-ي]/gi, '').replace(/أ/g,'ا').replace(/إ/g,'ا').replace(/ة/g,'ه').replace('شركة','').replace('مؤسسة','').replace('السعودية','').trim(); return cleanEx && cleanNew && (cleanNew.includes(cleanEx) || cleanEx.includes(cleanNew)); });
 
                     if(existingDoc) {
                         let updates = {};
@@ -640,172 +646,92 @@
                         if ((!existingDoc.e || existingDoc.e === "#") && comp.link) updates.e = comp.link;
                         if ((!existingDoc.endDate || existingDoc.endDate === "null") && comp.endDate && comp.endDate !== "null") updates.endDate = comp.endDate;
                         if ((!existingDoc.a || existingDoc.a.includes("برنامج تدريب ميداني")) && comp.a) updates.a = comp.a;
-                        
                         if (Object.keys(updates).length > 0) {
-                            await setDoc(doc(firestoreDB, "companies", existingDoc.id.toString()), updates, { merge: true });
+                            await supabaseAdmin.from('companies').update(updates).eq('id', existingDoc.id);
                             Object.assign(existingDoc, updates);
-                            logDetails.push(`🔄 <span style="color:#3b82f6;">تم التحديث (إكمال نواقص):</span> ${existingDoc.t}`);
-                        } else {
-                            logDetails.push(`⏩ <span style="color:#a1a1aa;">تم التخطي (مكتملة مسبقاً):</span> ${existingDoc.t}`);
-                        }
+                            logDetails.push(`🔄 <span style="color:#3b82f6;">تم التحديث:</span> ${existingDoc.t}`);
+                        } else { logDetails.push(`⏩ <span style="color:#a1a1aa;">تم التخطي (مكتملة مسبقاً):</span> ${existingDoc.t}`); }
                     } else {
-                        let newDoc = {
-                            id: nextId++,
-                            t: comp.t || "غير محدد",
-                            c: comp.c || "company",
-                            l: comp.l || "",
-                            m: comp.m || "",
-                            b: comp.b || "",
-                            a: comp.a || "برنامج تدريب تعاوني يهدف لتطوير مهارات الطلاب.",
-                            endDate: comp.endDate || "null",
-                            email: comp.email || "",
-                            e: comp.link || "",
-                            i: comp.i || "fa-building",
-                            isLive: true,
-                            timestamp: Math.floor(Date.now() / 1000) // ⏳ أضفناها للذكاء الاصطناعي
-                        };
-                        await setDoc(doc(firestoreDB, "companies", newDoc.id.toString()), newDoc);
-                        db.push(newDoc);
+                        let newDoc = { id: nextId++, t: comp.t || "غير محدد", c: comp.c || "company", l: comp.l || "", m: comp.m || "", b: comp.b || "", a: comp.a || "برنامج تدريب تعاوني يهدف لتطوير مهارات الطلاب.", endDate: comp.endDate || "null", email: comp.email || "", e: comp.link || "", i: comp.i || "fa-building", isLive: true, timestamp: Math.floor(Date.now() / 1000) };
+                        await supabaseAdmin.from('companies').insert([newDoc]); db.push(newDoc);
                         logDetails.push(`✨ <span style="color:#10b981;">تمت الإضافة بنجاح:</span> ${newDoc.t}`);
                     }
                 }
 
-                logText.innerHTML = `<strong>✅ انتهت العملية! التفاصيل:</strong><br>
-                <div style="text-align:right; font-size:0.8rem; margin-top:10px; max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; line-height:1.8;">
-                    ${logDetails.join('<br>')}
-                </div>`;
-                
+                logText.innerHTML = `<strong>✅ انتهت العملية! التفاصيل:</strong><br><div style="text-align:right; font-size:0.8rem; margin-top:10px; max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; line-height:1.8;">${logDetails.join('<br>')}</div>`;
                 allData = [...db]; sortData(); render(currentFilter, 1);
-
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.innerText = 'تم الإنجاز ✅ (إغلاق النافذة)';
-                btn.onclick = function() { closeSmartImportModal(null, true); };
-
-            } catch(e) {
-                logText.innerHTML = "❌ حدث خطأ: " + e.message;
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.innerText = 'إعادة المحاولة 🔄';
-            }
+                btn.disabled = false; btn.style.opacity = '1'; btn.innerText = 'تم الإنجاز ✅ (إغلاق النافذة)'; btn.onclick = function() { closeSmartImportModal(null, true); };
+            } catch(e) { logText.innerHTML = "❌ حدث خطأ: " + e.message; btn.disabled = false; btn.style.opacity = '1'; btn.innerText = 'إعادة المحاولة 🔄'; }
         };
 
-        window.switchAdminTab = function(tabId, btn) {
-            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
-        };
+        window.switchAdminTab = function(tabId, btn) { document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active')); document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active')); document.getElementById(tabId).classList.add('active'); btn.classList.add('active'); };
 
         window.openAdminModal = function(item = null) {
-            document.getElementById('adminModal').style.display = 'flex';
-            switchAdminTab('tab-basic', document.querySelector('.admin-tab-btn'));
-            
+            document.getElementById('adminModal').style.display = 'flex'; switchAdminTab('tab-basic', document.querySelector('.admin-tab-btn'));
             if (item) {
-                document.getElementById('adminTitle').innerText = "تعديل الفرصة";
-                document.getElementById('a_id').value = item.id;
-                document.getElementById('a_name').value = item.t;
-                document.getElementById('a_cat').value = item.c || "company";
-                document.getElementById('a_loc').value = item.l || "";
-                document.getElementById('a_icon').value = item.i || "fa-building";
-                document.getElementById('a_majors').value = item.m || "";
-                document.getElementById('a_benefits').value = item.b || "";
-                document.getElementById('a_about').value = item.a || "";
-                document.getElementById('a_link').value = item.e || "";
-                document.getElementById('a_email').value = item.email || "";
-                let eDate = item.endDate;
-                document.getElementById('a_endDate').value = (eDate && eDate !== "null") ? eDate : "";
-                document.getElementById('deleteBtn').style.display = 'block';
+                document.getElementById('adminTitle').innerText = "تعديل الفرصة"; document.getElementById('a_id').value = item.id; document.getElementById('a_name').value = item.t; document.getElementById('a_cat').value = item.c || "company"; document.getElementById('a_loc').value = item.l || ""; document.getElementById('a_icon').value = item.i || "fa-building"; document.getElementById('a_majors').value = item.m || ""; document.getElementById('a_benefits').value = item.b || ""; document.getElementById('a_about').value = item.a || ""; document.getElementById('a_link').value = item.e || ""; document.getElementById('a_email').value = item.email || "";
+                let eDate = item.endDate; document.getElementById('a_endDate').value = (eDate && eDate !== "null") ? eDate : ""; document.getElementById('deleteBtn').style.display = 'block';
             } else {
-                document.getElementById('adminTitle').innerText = "إضافة فرصة جديدة";
-                document.getElementById('a_id').value = "";
-                document.getElementById('a_name').value = "";
-                document.getElementById('a_cat').value = "company";
-                document.getElementById('a_loc').value = "";
-                document.getElementById('a_icon').value = "fa-building";
-                document.getElementById('a_majors').value = "";
-                document.getElementById('a_benefits').value = "";
-                document.getElementById('a_about').value = "";
-                document.getElementById('a_link').value = "";
-                document.getElementById('a_email').value = "";
-                document.getElementById('a_endDate').value = "";
-                document.getElementById('deleteBtn').style.display = 'none';
+                document.getElementById('adminTitle').innerText = "إضافة فرصة جديدة"; document.getElementById('a_id').value = ""; document.getElementById('a_name').value = ""; document.getElementById('a_cat').value = "company"; document.getElementById('a_loc').value = ""; document.getElementById('a_icon').value = "fa-building"; document.getElementById('a_majors').value = ""; document.getElementById('a_benefits').value = ""; document.getElementById('a_about').value = ""; document.getElementById('a_link').value = ""; document.getElementById('a_email').value = ""; document.getElementById('a_endDate').value = ""; document.getElementById('deleteBtn').style.display = 'none';
             }
         };
 
-        window.closeAdminModal = function(event, isButton) {
-            if (isButton || !event || event.target.classList.contains('admin-panel') === false) {
-                if(event && event.target.closest('.admin-panel')) return;
-                document.getElementById('adminModal').style.display = 'none';
-            }
-        };
+        window.closeAdminModal = function(event, isButton) { if (isButton || !event || event.target.classList.contains('admin-panel') === false) { if(event && event.target.closest('.admin-panel')) return; document.getElementById('adminModal').style.display = 'none'; } };
 
         window.saveCompanyToFirebase = async function() {
+            if (!isAdmin || !supabaseAdmin) return alert("يجب تسجيل الدخول كمدير أولاً!");
             let id = document.getElementById('a_id').value;
-            let compData = {
-                t: document.getElementById('a_name').value.trim(),
-                c: document.getElementById('a_cat').value,
-                l: document.getElementById('a_loc').value.trim(),
-                i: document.getElementById('a_icon').value,
-                e: document.getElementById('a_link').value.trim(),
-            };
+            let compData = { t: document.getElementById('a_name').value.trim(), c: document.getElementById('a_cat').value, l: document.getElementById('a_loc').value.trim(), i: document.getElementById('a_icon').value, e: document.getElementById('a_link').value.trim(), };
             if(!compData.t || !compData.e) { alert("أدخل اسم الجهة ورابط التقديم!"); return; }
 
             let m = document.getElementById('a_majors').value.trim(); if(m) compData.m = m;
             let b = document.getElementById('a_benefits').value.trim(); if(b) compData.b = b;
             let a = document.getElementById('a_about').value.trim(); if(a) compData.a = a;
             let email = document.getElementById('a_email').value.trim(); if(email) compData.email = email;
-            
-            let eDate = document.getElementById('a_endDate').value;
-            compData.endDate = eDate ? eDate : "null";
+            let eDate = document.getElementById('a_endDate').value; compData.endDate = eDate ? eDate : "null";
 
             try {
-                let finalId = id ? id : nextId.toString();
-                compData.id = id ? parseInt(id) : nextId++;
-                
-                // 🌟 إضافة الوقت إذا كانت الفرصة جديدة يدوياً
-                if(!id) {
-                    compData.timestamp = Math.floor(Date.now() / 1000);
-                    compData.isLive = true;
-                }
-
-                if(id) { let idx = db.findIndex(x => x.id == id); if(idx !== -1) db[idx] = { ...db[idx], ...compData }; }
-                else db.push(compData);
-
-                await setDoc(doc(firestoreDB, "companies", finalId.toString()), compData, { merge: true });
-                document.getElementById('adminModal').style.display = 'none';
-                allData = [...db]; sortData(); render(currentFilter, currentPage);
+                let finalId = id ? parseInt(id) : nextId++; compData.id = finalId;
+                if(!id) { compData.timestamp = Math.floor(Date.now() / 1000); compData.isLive = true; }
+                if(id) { await supabaseAdmin.from('companies').update(compData).eq('id', finalId); let idx = db.findIndex(x => x.id == finalId); if(idx !== -1) db[idx] = { ...db[idx], ...compData }; } 
+                else { await supabaseAdmin.from('companies').insert([compData]); db.push(compData); }
+                document.getElementById('adminModal').style.display = 'none'; allData = [...db]; sortData(); render(currentFilter, currentPage);
             } catch(e) { alert("حدث خطأ! تأكد أنك مسؤول."); }
         };
 
         window.deleteCompanyFromFirebase = async function() {
+            if (!isAdmin || !supabaseAdmin) return alert("يجب تسجيل الدخول كمدير أولاً!");
             let id = document.getElementById('a_id').value;
             if (!id || !confirm("متأكد من مسح هذه الفرصة نهائياً؟ 🗑️")) return;
-            try {
-                await deleteDoc(doc(firestoreDB, "companies", id.toString()));
-                db = db.filter(x => x.id != id);
-                document.getElementById('adminModal').style.display = 'none';
-                allData = [...db]; sortData(); render(currentFilter, currentPage);
-            } catch(e) { alert("حدث خطأ أثناء الحذف!"); }
+            try { await supabaseAdmin.from('companies').delete().eq('id', parseInt(id)); db = db.filter(x => x.id != id); document.getElementById('adminModal').style.display = 'none'; allData = [...db]; sortData(); render(currentFilter, currentPage); } 
+            catch(e) { alert("حدث خطأ أثناء الحذف!"); }
         };
 
+        // تقييم الطلاب
+        window.openReviewModal = function() {
+            if (!currentModalItem) return; document.getElementById('revCompanyName').innerText = currentModalItem.t;
+            setRating(0); document.getElementById('revComment').value = ''; document.getElementById('infoModal').style.display = 'none'; document.getElementById('reviewModal').style.display = 'flex';
+        };
+        window.closeReviewModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('reviewModal')) { document.getElementById('reviewModal').style.display = 'none'; if(currentModalItem) document.getElementById('infoModal').style.display = 'flex'; } };
+        window.setRating = function(val) { selectedRating = val; let starsIcons = document.getElementById('starSelection').children; for(let i = 0; i < 5; i++) { if (i < val) { starsIcons[i].classList.add('active'); } else { starsIcons[i].classList.remove('active'); } } };
+        window.submitReview = async function() {
+            if(selectedRating === 0) return alert("الرجاء اختيار عدد النجوم أولاً! ⭐");
+            let comment = document.getElementById('revComment').value.trim();
+            try { await supabase.from('reviews').insert([{ company_id: currentModalItem.id, rating: selectedRating, comment: comment }]); alert("تم إرسال تقييمك بنجاح! شكراً لك 🤍"); closeReviewModal(null, true); } 
+            catch (err) { alert("حدث خطأ أثناء إرسال التقييم."); }
+        };
+
+        // البطاقات والدوال الأساسية
         function getStatusInfo(item) {
-            let hasLink = item.e && item.e.startsWith('http') && item.e.length > 5;
-            let hasEmail = item.email || (item.e && item.e.includes('@'));
-            
+            let hasLink = item.e && item.e.startsWith('http') && item.e.length > 5; let hasEmail = item.email || (item.e && item.e.includes('@'));
             if (!hasLink && !hasEmail && (!item.endDate || item.endDate === "null")) return { html: '', score: 4 };
 
             if (item.endDate && item.endDate !== "null" && item.endDate !== "") {
-                let today = new Date(); today.setHours(0,0,0,0);
-                let end = new Date(item.endDate);
-                let diffTime = end - today;
-                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+                let today = new Date(); today.setHours(0,0,0,0); let end = new Date(item.endDate); let diffDays = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
                 if (diffDays < 0) return { html: '<div class="status-badge status-closed">مغلق 🔴</div>', score: 3 };
                 if (diffDays <= 3) return { html: '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>', score: 2 };
                 return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
             }
-
             if (hasEmail && !hasLink) return { html: '', score: 4 };
             if (item.s === "") return { html: '', score: 4 };
 
@@ -813,7 +739,6 @@
             if (s.includes("مفتوح")) return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
             if (s.includes("مغلق")) return { html: '<div class="status-badge status-closed">مغلق 🔴</div>', score: 3 };
             if (s.includes("قريبا") || s.includes("ينتهي")) return { html: '<div class="status-badge status-closing">ينتهي قريباً 🟠</div>', score: 2 };
-            
             return { html: '<div class="status-badge status-open">مفتوح 🟢</div>', score: 1 };
         }
 
@@ -821,11 +746,8 @@
             allData.sort((a, b) => { 
                 let sA = getStatusInfo(a).score, sB = getStatusInfo(b).score; 
                 if (sA !== sB) return sA - sB; 
-                
-                let aHasContact = (a.e && a.e.startsWith('http') && a.e.length > 5) || a.email ? 1 : 0;
-                let bHasContact = (b.e && b.e.startsWith('http') && b.e.length > 5) || b.email ? 1 : 0;
+                let aHasContact = (a.e && a.e.startsWith('http') && a.e.length > 5) || a.email ? 1 : 0; let bHasContact = (b.e && b.e.startsWith('http') && b.e.length > 5) || b.email ? 1 : 0;
                 if (aHasContact !== bHasContact) return bHasContact - aHasContact;
-
                 return (a.t || "") > (b.t || "") ? 1 : -1; 
             }); 
         }
@@ -840,25 +762,38 @@
             const totalPages = Math.ceil(filteredData.length / itemsPerPage);
             if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
             
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
+            const startIndex = (currentPage - 1) * itemsPerPage; const endIndex = startIndex + itemsPerPage;
             const pageData = filteredData.slice(startIndex, endIndex);
 
             pageData.forEach(item => {
                 const card = document.createElement('div'); card.className = 'company-card';
-                
-                // 🌟 تأثير التوهج والإطار البنفسجي للبطاقة الجديدة
-                if(item.isLive) {
-                    card.style.boxShadow = '0 0 25px rgba(217, 70, 239, 0.4), inset 0 0 10px rgba(217, 70, 239, 0.1)'; 
-                    card.style.borderColor = 'rgba(217, 70, 239, 0.8)';
-                }
-                
+                if(item.isLive) { card.style.boxShadow = '0 0 25px rgba(217, 70, 239, 0.4), inset 0 0 10px rgba(217, 70, 239, 0.1)'; card.style.borderColor = 'rgba(217, 70, 239, 0.8)'; }
                 card.onclick = (e) => { if(!e.target.closest('.admin-edit-btn')) openModal(item); };
+                
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
                 let statusObj = getStatusInfo(item);
                 let actualIcon = item.i ? item.i : "fa-building";
+                let posterImage = `https://picsum.photos/seed/${item.id + 100}/400/600`;
                 
-                card.innerHTML = `<div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div><div class="opp-number">رقم ${item.id}</div>${statusObj.html}<div class="company-icon" style="color:${iconColor}"><i class="fa-solid ${actualIcon}"></i></div><div class="company-name">${item.t}</div><div class="company-tag">${item.l || "غير محدد"}</div>`;
+                let starsHtml = item.reviewCount > 0 
+                    ? `<div class="company-rating">⭐ ${item.avgRating} <span style="font-size:0.65rem; color:#888;">(${item.reviewCount})</span></div>` 
+                    : `<div class="company-rating no-rating">لا توجد تقييمات</div>`;
+
+                // 🌟 دمجنا البوستر مع الأرقام والأيقونة حقتك فوقه 🌟
+                card.innerHTML = `
+                    <div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div>
+                    
+                    <div class="poster-container">
+                        <div class="opp-number">رقم ${item.id}</div>
+                        ${statusObj.html}
+                        <img src="${posterImage}" class="company-poster" loading="lazy">
+                        <div class="company-icon-overlay" style="color:${iconColor}"><i class="fa-solid ${actualIcon}"></i></div>
+                    </div>
+                    
+                    <div class="company-name">${item.t}</div>
+                    <div class="company-tag">${item.l || "غير محدد"}</div>
+                    ${starsHtml}
+                `;
                 grid.appendChild(card);
             });
 
@@ -869,9 +804,7 @@
             const container = document.getElementById('paginationContainer'); container.innerHTML = '';
             if (totalPages <= 1) return;
             for (let i = 1; i <= totalPages; i++) {
-                let btn = document.createElement('button');
-                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-                btn.innerText = i;
+                let btn = document.createElement('button'); btn.className = `page-btn ${i === currentPage ? 'active' : ''}`; btn.innerText = i;
                 btn.onclick = () => { render(currentFilter, i); window.scrollTo({ top: document.getElementById('filtersBlock').offsetTop - 20, behavior: 'smooth' }); };
                 container.appendChild(btn);
             }
@@ -882,8 +815,7 @@
         
         window.openModal = function(item) {
             currentModalItem = item;
-            let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
-            let actualIcon = item.i ? item.i : "fa-building";
+            let iconColor = item.isLive ? '#d946ef' : 'var(--accent)'; let actualIcon = item.i ? item.i : "fa-building";
             
             document.getElementById('mTopIcon').innerHTML = `<i class="fa-solid ${actualIcon}"></i>`; document.getElementById('mTopIcon').style.background = iconColor;
             document.getElementById('mTitle').innerText = item.t; document.getElementById('mLoc').innerText = item.l || "غير محدد";
