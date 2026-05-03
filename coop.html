@@ -47,32 +47,31 @@
         .filter-btn.email-btn:hover, .filter-btn.email-btn.active { background: #10b981; color: white; }
 
         /* =========================================
-           تعديل البطاقات لشكل البوسترات السينمائية
+           تعديل البطاقات لدعم "شعارات الشركات" بشكل مرتب
         ========================================= */
         .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
 
         .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
-        .poster-container { position: relative; width: 100%; aspect-ratio: 2 / 3; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.5); }
-        .company-poster { width: 100%; height: 100%; object-fit: cover; transition: 0.4s; }
-        .company-card:hover .company-poster { opacity: 0.7; transform: scale(1.05); }
+        /* 🌟 التعديل السحري للوغو: مقاس بالعرض 16:9 مع احتواء الصورة contain */
+        .poster-container { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #ffffff; /* خلفية بيضاء عشان تبرز الشعارات */ padding: 5px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .company-poster { width: 100%; height: 100%; object-fit: contain; /* Contain تمنع قص الشعار */ transition: 0.4s; }
+        .company-card:hover .company-poster { transform: scale(1.05); }
 
-        /* الأرقام وحالة الفرصة فوق البوستر (تصميمك الأصلي) */
-        .opp-number { position: absolute; top: 8px; right: 8px; background: rgba(20,20,20,0.8); color: #a1a1aa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); z-index: 5; backdrop-filter: blur(5px); }
-        .status-badge { position: absolute; top: 8px; left: 8px; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; z-index: 5; backdrop-filter: blur(5px); }
+        .opp-number { position: absolute; top: 4px; right: 4px; background: rgba(20,20,20,0.8); color: #a1a1aa; padding: 3px 6px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); z-index: 5; backdrop-filter: blur(5px); }
+        .status-badge { position: absolute; top: 4px; left: 4px; padding: 3px 6px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; z-index: 5; backdrop-filter: blur(5px); }
         
-        .status-open { background: rgba(16, 185, 129, 0.85); color: #fff; border: 1px solid rgba(16, 185, 129, 0.5); }
-        .status-closing { background: rgba(245, 158, 11, 0.85); color: #fff; border: 1px solid rgba(245, 158, 11, 0.5); }
-        .status-closed { background: rgba(239, 68, 68, 0.85); color: #fff; border: 1px solid rgba(239, 68, 68, 0.5); }
+        .status-open { background: rgba(16, 185, 129, 0.9); color: #fff; border: 1px solid rgba(16, 185, 129, 0.5); }
+        .status-closing { background: rgba(245, 158, 11, 0.9); color: #fff; border: 1px solid rgba(245, 158, 11, 0.5); }
+        .status-closed { background: rgba(239, 68, 68, 0.9); color: #fff; border: 1px solid rgba(239, 68, 68, 0.5); }
 
-        /* الأيقونة فوق البوستر */
-        .company-icon-overlay { position: absolute; bottom: 8px; right: 8px; width: 35px; height: 35px; background: rgba(20,20,20,0.85); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        /* الأيقونة أسفل الشعار */
+        .company-icon-overlay { position: absolute; bottom: 4px; right: 4px; width: 28px; height: 28px; background: rgba(20,20,20,0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
 
-        .company-name { color: white; font-weight: 600; margin: 10px 0 2px 0; font-size: 0.95rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-        .company-tag { color: var(--text-gray); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 6px; }
+        .company-name { color: white; font-weight: 600; margin: 12px 0 2px 0; font-size: 0.95rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .company-tag { color: var(--text-gray); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 8px; }
 
-        /* النجوم للتقييم */
         .company-rating { font-size: 0.8rem; color: #facc15; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(250, 204, 21, 0.1); padding: 4px 0; border-radius: 8px; border: 1px solid rgba(250, 204, 21, 0.2); width: 100%; }
         .company-rating.no-rating { color: #a1a1aa; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); font-weight: normal; }
 
@@ -486,6 +485,7 @@
 
         async function loadDatabase() {
             try {
+                // جلب الشركات مع التقييمات المقبولة
                 const { data: companies, error } = await supabase
                     .from('companies')
                     .select('*, reviews(rating, status)')
@@ -505,7 +505,7 @@
                     }
                     if (data.c === 'live') data.c = 'company';
 
-                    // حساب متوسط التقييم للشركة
+                    // حساب التقييم
                     let approvedReviews = data.reviews ? data.reviews.filter(r => r.status === 'approved') : [];
                     if (approvedReviews.length > 0) {
                         let sum = approvedReviews.reduce((acc, curr) => acc + curr.rating, 0);
@@ -714,11 +714,27 @@
         };
         window.closeReviewModal = function(e, isBtn) { if (isBtn || !e || e.target === document.getElementById('reviewModal')) { document.getElementById('reviewModal').style.display = 'none'; if(currentModalItem) document.getElementById('infoModal').style.display = 'flex'; } };
         window.setRating = function(val) { selectedRating = val; let starsIcons = document.getElementById('starSelection').children; for(let i = 0; i < 5; i++) { if (i < val) { starsIcons[i].classList.add('active'); } else { starsIcons[i].classList.remove('active'); } } };
+        
         window.submitReview = async function() {
             if(selectedRating === 0) return alert("الرجاء اختيار عدد النجوم أولاً! ⭐");
             let comment = document.getElementById('revComment').value.trim();
-            try { await supabase.from('reviews').insert([{ company_id: currentModalItem.id, rating: selectedRating, comment: comment }]); alert("تم إرسال تقييمك بنجاح! شكراً لك 🤍"); closeReviewModal(null, true); } 
-            catch (err) { alert("حدث خطأ أثناء إرسال التقييم."); }
+            try { 
+                await supabase.from('reviews').insert([{ company_id: currentModalItem.id, rating: selectedRating, comment: comment }]); 
+                alert("تم إرسال تقييمك بنجاح! سيظهر في الموقع مباشرة 🤍"); 
+                
+                // تحديث التقييم في الواجهة محلياً بدون ما ننتظر ريفرش الصفحة
+                let idx = db.findIndex(x => x.id === currentModalItem.id);
+                if (idx !== -1) {
+                    db[idx].reviewCount = (db[idx].reviewCount || 0) + 1;
+                    let currentTotal = (db[idx].avgRating || 0) * (db[idx].reviewCount - 1);
+                    db[idx].avgRating = ((currentTotal + selectedRating) / db[idx].reviewCount).toFixed(1);
+                    allData = [...db];
+                    render(currentFilter, currentPage);
+                }
+                
+                closeReviewModal(null, true); 
+            } 
+            catch (err) { alert("تأكد أنك قمت بإنشاء جدول التقييمات في Supabase!"); }
         };
 
         // البطاقات والدوال الأساسية
@@ -773,7 +789,7 @@
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
                 let statusObj = getStatusInfo(item);
                 let actualIcon = item.i ? item.i : "fa-building";
-                let posterImage = `https://picsum.photos/seed/${item.id + 100}/400/600`;
+                let posterImage = `https://picsum.photos/seed/${item.id + 100}/800/450`; // 🌟 صورة بالعرض للوغو
                 
                 let starsHtml = item.reviewCount > 0 
                     ? `<div class="company-rating">⭐ ${item.avgRating} <span style="font-size:0.65rem; color:#888;">(${item.reviewCount})</span></div>` 
