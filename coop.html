@@ -46,33 +46,24 @@
         .filter-btn.email-btn { border-color: #10b981; color: #10b981; }
         .filter-btn.email-btn:hover, .filter-btn.email-btn.active { background: #10b981; color: white; }
 
-        /* =========================================
-           تعديل البطاقات لدعم "شعارات الشركات" بشكل مرتب
-        ========================================= */
-        .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-bottom: 20px; }
 
-        .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
+        .company-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 40px 15px 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; -webkit-animation: fadeInUp 0.5s ease-out; animation: fadeInUp 0.5s ease-out; height: 100%; box-sizing: border-box; }
         .company-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(40,40,40,0.8); }
         
-        /* 🌟 التعديل السحري للوغو: مقاس بالعرض 16:9 مع احتواء الصورة contain */
-        .poster-container { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #ffffff; /* خلفية بيضاء عشان تبرز الشعارات */ padding: 5px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
-        .company-poster { width: 100%; height: 100%; object-fit: contain; /* Contain تمنع قص الشعار */ transition: 0.4s; }
-        .company-card:hover .company-poster { transform: scale(1.05); }
-
-        .opp-number { position: absolute; top: 4px; right: 4px; background: rgba(20,20,20,0.8); color: #a1a1aa; padding: 3px 6px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); z-index: 5; backdrop-filter: blur(5px); }
-        .status-badge { position: absolute; top: 4px; left: 4px; padding: 3px 6px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; z-index: 5; backdrop-filter: blur(5px); }
+        .opp-number { position: absolute; top: 12px; right: 15px; background: rgba(255,255,255,0.08); color: #a1a1aa; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
+        .status-badge { position: absolute; top: 12px; left: 15px; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; }
         
-        .status-open { background: rgba(16, 185, 129, 0.9); color: #fff; border: 1px solid rgba(16, 185, 129, 0.5); }
-        .status-closing { background: rgba(245, 158, 11, 0.9); color: #fff; border: 1px solid rgba(245, 158, 11, 0.5); }
-        .status-closed { background: rgba(239, 68, 68, 0.9); color: #fff; border: 1px solid rgba(239, 68, 68, 0.5); }
+        .status-open { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .status-closing { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .status-closed { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 
-        /* الأيقونة أسفل الشعار */
-        .company-icon-overlay { position: absolute; bottom: 4px; right: 4px; width: 28px; height: 28px; background: rgba(20,20,20,0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .company-icon { font-size: 2.2rem; color: var(--accent); margin-bottom: 12px; }
+        .company-name { color: white; font-weight: 600; margin-bottom: 5px; font-size: 1.05rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .company-tag { color: var(--text-gray); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 10px; }
 
-        .company-name { color: white; font-weight: 600; margin: 12px 0 2px 0; font-size: 0.95rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-        .company-tag { color: var(--text-gray); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 8px; }
-
-        .company-rating { font-size: 0.8rem; color: #facc15; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(250, 204, 21, 0.1); padding: 4px 0; border-radius: 8px; border: 1px solid rgba(250, 204, 21, 0.2); width: 100%; }
+        /* تنسيق النجوم داخل البطاقة الأصلية */
+        .company-rating { font-size: 0.85rem; color: #facc15; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(250, 204, 21, 0.1); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(250, 204, 21, 0.2); }
         .company-rating.no-rating { color: #a1a1aa; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); font-weight: normal; }
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin: 30px 0; flex-wrap: wrap; }
@@ -80,11 +71,9 @@
         .page-btn:hover { background: rgba(255, 255, 255, 0.15); }
         .page-btn.active { background: var(--accent); border-color: var(--accent); }
 
-        .admin-edit-btn { position: absolute; top: -10px; left: -10px; width: 35px; height: 35px; background: #eab308; color: #000; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; border: 3px solid #1a1a1a; z-index: 10; box-shadow: 0 5px 15px rgba(234, 179, 8, 0.4); transition: 0.3s; }
+        .admin-edit-btn { position: absolute; top: -15px; left: -15px; width: 35px; height: 35px; background: #eab308; color: #000; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; border: 3px solid #1a1a1a; z-index: 5; box-shadow: 0 5px 15px rgba(234, 179, 8, 0.4); transition: 0.3s; }
         .admin-edit-btn:hover { transform: scale(1.1); background: #facc15; }
         body.admin-mode .admin-edit-btn { display: flex; }
-
-        /* ========================================= */
 
         .footer-info { margin-top: 10px; padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .footer-logo-text { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
@@ -160,24 +149,20 @@
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 📱 ريسبونسف الموبايل: 3 بطاقات بالصف */
+        /* 📱 ريسبونسف الموبايل: بطاقتين بالصف زي تصميمك القديم بالضبط */
         @media (max-width: 600px) {
             .header-section { padding: 20px; padding-top: 60px; }
             .header-section h1 { font-size: 1.4rem; }
             .back-btn { top: 15px; right: 15px; width: 35px; height: 35px; font-size: 0.9rem; }
-            
-            .companies-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-            .company-card { padding: 6px; border-radius: 10px; }
-            
-            .opp-number { font-size: 0.55rem; padding: 2px 4px; top: 4px; right: 4px; border-radius: 4px; }
-            .status-badge { font-size: 0.55rem; padding: 2px 4px; top: 4px; left: 4px; border-radius: 4px; }
-            .company-icon-overlay { width: 22px; height: 22px; font-size: 0.7rem; bottom: 4px; right: 4px; }
-            
-            .company-name { font-size: 0.75rem; margin: 6px 0 2px 0; }
-            .company-tag { font-size: 0.6rem; }
-            .company-rating { font-size: 0.65rem; padding: 2px 0; border-radius: 6px; }
-
-            .main-container { width: 96%; margin: 20px 0; }
+            .companies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .company-card { padding: 35px 8px 12px 8px; border-radius: 14px; }
+            .opp-number { font-size: 0.55rem; padding: 2px 6px; top: 6px; right: 6px; border-radius: 4px; }
+            .status-badge { font-size: 0.55rem; padding: 2px 6px; top: 6px; left: 6px; border-radius: 4px; }
+            .company-icon { font-size: 1.5rem; margin-bottom: 8px; }
+            .company-name { font-size: 0.85rem; margin-bottom: 3px; }
+            .company-tag { font-size: 0.65rem; }
+            .company-rating { font-size: 0.7rem; padding: 2px 8px; }
+            .main-container { width: 94%; margin: 20px 0; }
             .filters-container { gap: 6px; }
             .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
             .footer-info { flex-direction: column; text-align: center; justify-content: center; }
@@ -485,7 +470,6 @@
 
         async function loadDatabase() {
             try {
-                // جلب الشركات مع التقييمات المقبولة
                 const { data: companies, error } = await supabase
                     .from('companies')
                     .select('*, reviews(rating, status)')
@@ -505,7 +489,7 @@
                     }
                     if (data.c === 'live') data.c = 'company';
 
-                    // حساب التقييم
+                    // حساب التقييم المعتمد فقط
                     let approvedReviews = data.reviews ? data.reviews.filter(r => r.status === 'approved') : [];
                     if (approvedReviews.length > 0) {
                         let sum = approvedReviews.reduce((acc, curr) => acc + curr.rating, 0);
@@ -789,23 +773,17 @@
                 let iconColor = item.isLive ? '#d946ef' : 'var(--accent)';
                 let statusObj = getStatusInfo(item);
                 let actualIcon = item.i ? item.i : "fa-building";
-                let posterImage = `https://picsum.photos/seed/${item.id + 100}/800/450`; // 🌟 صورة بالعرض للوغو
                 
                 let starsHtml = item.reviewCount > 0 
                     ? `<div class="company-rating">⭐ ${item.avgRating} <span style="font-size:0.65rem; color:#888;">(${item.reviewCount})</span></div>` 
                     : `<div class="company-rating no-rating">لا توجد تقييمات</div>`;
 
-                // 🌟 دمجنا البوستر مع الأرقام والأيقونة حقتك فوقه 🌟
+                // 🌟 تصميمك القديم بحذافيره 🌟
                 card.innerHTML = `
                     <div class="admin-edit-btn" onclick='openAdminModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'><i class="fa-solid fa-pen"></i></div>
-                    
-                    <div class="poster-container">
-                        <div class="opp-number">رقم ${item.id}</div>
-                        ${statusObj.html}
-                        <img src="${posterImage}" class="company-poster" loading="lazy">
-                        <div class="company-icon-overlay" style="color:${iconColor}"><i class="fa-solid ${actualIcon}"></i></div>
-                    </div>
-                    
+                    <div class="opp-number">رقم ${item.id}</div>
+                    ${statusObj.html}
+                    <div class="company-icon" style="color:${iconColor}"><i class="fa-solid ${actualIcon}"></i></div>
                     <div class="company-name">${item.t}</div>
                     <div class="company-tag">${item.l || "غير محدد"}</div>
                     ${starsHtml}
